@@ -1,6 +1,7 @@
 package com.openmeteo.mcp.resource;
 
 import com.openmeteo.mcp.resource.util.ResourceLoader;
+import org.springaicommunity.mcp.annotation.McpResource;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -33,6 +34,7 @@ public class ResourceService {
      *
      * @return JSON string containing weather codes data
      */
+    @McpResource(uri = "weather://codes", description = "WMO weather code reference with descriptions, categories, and travel impact assessments")
     public String getWeatherCodes() {
         return resourceLoader.loadResource("data/weather-codes.json");
     }
@@ -49,6 +51,7 @@ public class ResourceService {
      *
      * @return JSON string containing weather parameters data
      */
+    @McpResource(uri = "weather://parameters", description = "Available weather and snow parameters from Open-Meteo API with units and descriptions")
     public String getWeatherParameters() {
         return resourceLoader.loadResource("data/weather-parameters.json");
     }
@@ -65,6 +68,7 @@ public class ResourceService {
      *
      * @return JSON string containing AQI reference data
      */
+    @McpResource(uri = "weather://aqi-reference", description = "AQI scales, health implications, UV index guidance, and pollen level information")
     public String getAqiReference() {
         return resourceLoader.loadResource("data/aqi-reference.json");
     }
@@ -81,6 +85,7 @@ public class ResourceService {
      *
      * @return JSON string containing Swiss locations data
      */
+    @McpResource(uri = "weather://swiss-locations", description = "Swiss cities, mountains, passes, and lakes with GPS coordinates and elevation data")
     public String getSwissLocations() {
         return resourceLoader.loadResource("data/swiss-locations.json");
     }

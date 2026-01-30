@@ -1,5 +1,6 @@
 package com.openmeteo.mcp.prompt;
 
+import org.springaicommunity.mcp.annotation.McpPrompt;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -17,7 +18,7 @@ public class PromptService {
     /**
      * Ski trip weather planning prompt.
      * <p>
-     * Name: meteo__ski-trip-weather
+     * Name: ski-trip-weather
      * </p>
      * <p>
      * Provides a workflow for assessing ski conditions combining
@@ -28,6 +29,7 @@ public class PromptService {
      * @param dates  Travel dates (e.g., "this weekend", "January 10-15")
      * @return Workflow instructions for AI assistant
      */
+    @McpPrompt(name = "ski-trip-weather", description = "Ski trip weather planning with snow conditions and safety assessment")
     public String skiTripWeatherPrompt(String resort, String dates) {
         String resortInfo = (resort != null && !resort.isBlank())
                 ? "for " + resort
@@ -106,7 +108,7 @@ public class PromptService {
     /**
      * Outdoor activity planning prompt.
      * <p>
-     * Name: meteo__plan-outdoor-activity
+     * Name: plan-outdoor-activity
      * </p>
      * <p>
      * Provides a workflow for weather-aware activity planning with
@@ -118,6 +120,7 @@ public class PromptService {
      * @param timeframe When to do the activity (this weekend, next week)
      * @return Workflow instructions for AI assistant
      */
+    @McpPrompt(name = "plan-outdoor-activity", description = "Weather-aware outdoor activity planning with sensitivity assessment")
     public String planOutdoorActivityPrompt(String activity, String location, String timeframe) {
         String activityInfo = (activity != null && !activity.isBlank())
                 ? activity
@@ -231,7 +234,7 @@ public class PromptService {
     /**
      * Weather-aware travel planning prompt.
      * <p>
-     * Name: meteo__weather-aware-travel
+     * Name: weather-aware-travel
      * </p>
      * <p>
      * Provides a workflow for travel planning with weather-based
@@ -243,6 +246,7 @@ public class PromptService {
      * @param tripType    Type of trip (day trip, weekend, business, vacation)
      * @return Workflow instructions for AI assistant
      */
+    @McpPrompt(name = "weather-aware-travel", description = "Travel planning with weather integration and packing recommendations")
     public String weatherAwareTravelPrompt(String destination, String travelDates, String tripType) {
         String destInfo = (destination != null && !destination.isBlank())
                 ? destination
@@ -356,9 +360,9 @@ public class PromptService {
      */
     public Map<String, String> getAllPromptNames() {
         return Map.of(
-                "meteo__ski-trip-weather", "Ski trip weather planning with snow conditions",
-                "meteo__plan-outdoor-activity", "Weather-aware outdoor activity planning",
-                "meteo__weather-aware-travel", "Travel planning with weather integration"
+                "ski-trip-weather", "Ski trip weather planning with snow conditions",
+                "plan-outdoor-activity", "Weather-aware outdoor activity planning",
+                "weather-aware-travel", "Travel planning with weather integration"
         );
     }
 }
