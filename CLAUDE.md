@@ -6,8 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Open Meteo MCP (Java) is a **Model Context Protocol (MCP) server** providing weather, snow conditions, and air quality data via the [Open-Meteo API](https://open-meteo.com/). This is a **strategic migration** of the proven open-meteo-mcp (Python/FastMCP v3.2.0) to Java/Spring Boot for enterprise-grade architecture and Spring AI 2.0 integration.
 
-**Current Status**: ✅ v1.0.0 RELEASED - Phase 5 Complete & Production Ready
-**Latest Release**: v1.0.0 (January 30, 2026) - 81% test coverage, 279 tests passing, Production Ready
+**Current Status**: ✅ v1.0.0-alpha - MCP Server Configuration Complete
+**Latest Update**: January 30, 2026 - MCP Server annotations implemented, REST API endpoints functional, Spring Boot server running
 
 **Key Technologies:**
 
@@ -51,16 +51,22 @@ Open Meteo MCP (Java) is a **Model Context Protocol (MCP) server** providing wea
 ### Running the Application
 
 ```bash
-# Stdio mode (for MCP clients)
-java -jar target/open-meteo-mcp-1.0.0.jar
+# Start the MCP server (development mode)
+./mvnw spring-boot:run
 
-# With Spring AI integration
-export ANTHROPIC_API_KEY=your_key_here
-java -jar target/open-meteo-mcp-1.0.0.jar
+# Start with custom port
+./mvnw spring-boot:run -Dspring-boot.run.arguments="--server.port=9090"
 
-# Development mode with live reload
-./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+# Package JAR and run
+./mvnw package -DskipTests
+java -jar target/open-meteo-mcp-1.0.0-alpha.jar
+
+# Access endpoints
+curl http://localhost:8080/actuator/health
+curl http://localhost:8080/api/tools/search-location
 ```
+
+**Current Server**: Running on port 9090 with MCP components initialized
 
 ### Code Quality
 
@@ -147,32 +153,70 @@ src/main/java/com/openmeteo/mcp/
     └── JsonSerializationUtil.java  # JSON utilities
 ```
 
-### MCP Tools (4 tools to implement)
+### MCP Tools (4 tools implemented)
 
-| Tool                 | Description                                             | Status |
-| -------------------- | ------------------------------------------------------- | ------ |
-| `search_location`    | Geocoding - search locations by name                    | ⏳ Pending |
-| `get_weather`        | Get weather forecast with temperature, precipitation    | ⏳ Pending |
-| `get_snow_conditions`| Get snow depth, snowfall, mountain weather              | ⏳ Pending |
-| `get_air_quality`    | Get AQI, pollutants, UV index, pollen                   | ⏳ Pending |
+| Tool                 | Description                                             | Status | File Reference |
+| -------------------- | ------------------------------------------------------- | ------ | --------------- |
+| `search_location`    | Geocoding - search locations by name                    | ✅ Implemented | tool/McpToolsHandler.java:65 |
+| `get_weather`        | Get weather forecast with temperature, precipitation    | ✅ Implemented | tool/McpToolsHandler.java:100 |
+| `get_snow_conditions`| Get snow depth, snowfall, mountain weather              | ✅ Implemented | tool/McpToolsHandler.java:140 |
+| `get_air_quality`    | Get AQI, pollutants, UV index, pollen                   | ✅ Implemented | tool/McpToolsHandler.java:180 |
 
-### MCP Resources (5 resources to implement)
+### MCP Resources (4 resources implemented)
 
-| Resource URI                | Description                          | Data File                    |
-| --------------------------- | ------------------------------------ | ---------------------------- |
-| `weather://codes`           | WMO weather code reference           | data/weather-codes.json      |
-| `weather://ski-resorts`     | Ski resort coordinates               | data/ski-resorts.json        |
-| `weather://swiss-locations` | Swiss cities, mountains, passes      | data/swiss-locations.json    |
-| `weather://aqi-reference`   | AQI scales and health recommendations| data/aqi-reference.json      |
-| `weather://parameters`      | Available weather parameters         | data/weather-parameters.json |
+| Resource URI                | Description                          | Status | File Reference |
+| --------------------------- | ------------------------------------ | ------ | --------------- |
+| `weather://codes`           | WMO weather code reference           | ✅ Implemented | resource/ResourceService.java |
+| `weather://aqi-reference`   | AQI scales and health recommendations| ✅ Implemented | resource/ResourceService.java |
+| `weather://swiss-locations` | Swiss cities, mountains, passes      | ✅ Implemented | resource/ResourceService.java |
+| `weather://parameters`      | Available weather parameters         | ✅ Implemented | resource/ResourceService.java |
 
-### MCP Prompts (3 prompts to implement)
+### MCP Prompts (3 prompts implemented)
 
-| Prompt                   | Description                              | Arguments                     |
-| ------------------------ | ---------------------------------------- | ----------------------------- |
-| `ski-trip-weather`       | Ski trip planning with snow conditions   | resort, dates                 |
-| `plan-outdoor-activity`  | Weather-aware activity planning          | activity, location, timeframe |
-| `weather-aware-travel`   | Travel planning with weather integration | destination, travel_dates, trip_type |
+| Prompt                   | Description                              | Status | File Reference |
+| ------------------------ | ---------------------------------------- | ------ | --------------- |
+| `ski-trip-weather`       | Ski trip planning with snow conditions   | ✅ Implemented | prompt/PromptService.java |
+| `plan-outdoor-activity`  | Weather-aware activity planning          | ✅ Implemented | prompt/PromptService.java |
+| `weather-aware-travel`   | Travel planning with weather integration | ✅ Implemented | prompt/PromptService.java |
+
+## MCP Server Configuration
+
+### Overview
+
+The Spring Boot application is configured to expose MCP-annotated components via REST API endpoints. The `McpServerConfig` class manages component initialization and logging.
+
+**Current Implementation:**
+- ✅ `@McpTool` annotations on 4 weather/snow/air-quality/location methods
+- ✅ `@McpPrompt` annotations on 3 workflow prompts
+- ✅ `@McpResource` annotations on 4 reference data resources
+- ✅ REST API endpoints for all tools at `/api/tools/*`
+- ✅ Spring component discovery and auto-wiring
+
+**Configuration File**: `config/McpServerConfig.java`
+
+```java
+@Configuration
+public class McpServerConfig {
+    // Logs MCP component initialization
+    // Ensures all @McpTool, @McpPrompt, @McpResource components are registered
+}
+```
+
+**Server Status**:
+```
+✅ MCP Tools: search_location, get_weather, get_snow_conditions, get_air_quality
+✅ MCP Prompts: ski-trip-weather, plan-outdoor-activity, weather-aware-travel
+✅ MCP Resources: weather://codes, weather://parameters, weather://aqi-reference, weather://swiss-locations
+✅ Available via REST API at /api/tools/* endpoints
+✅ Spring Boot server running on port 9090
+```
+
+### Future Enhancement
+
+When Spring AI MCP server libraries become available, the framework can be extended to:
+- Expose tools/prompts/resources via MCP protocol (SSE/stdio/WebSocket)
+- Maintain backward compatibility with REST API endpoints
+- Enable direct MCP client connections
 
 ## Core Components
 
@@ -180,66 +224,81 @@ src/main/java/com/openmeteo/mcp/
 
 **Key Innovation**: Spring AI 2.0 provides native MCP protocol support via annotations, eliminating the need for custom protocol implementation.
 
-**MCP Tool Example**:
+**MCP Tool Example** (from `tool/McpToolsHandler.java`):
 ```java
-@Service
-public class WeatherToolService {
+@Component
+public class McpToolsHandler {
+    private final LocationService locationService;
     private final WeatherService weatherService;
 
-    @McpTool(
-        name = "get_weather",
-        description = "Get weather forecast with temperature, precipitation, wind, UV index"
-    )
-    public CompletableFuture<WeatherResponse> getWeather(
-        @McpParam(value = "latitude", description = "Latitude in decimal degrees", required = true)
+    @McpTool(description = "Get weather forecast with temperature, precipitation, wind...")
+    public CompletableFuture<Map<String, Object>> getWeather(
         double latitude,
-
-        @McpParam(value = "longitude", description = "Longitude in decimal degrees", required = true)
         double longitude,
-
-        @McpParam(value = "forecast_days", description = "Number of forecast days (1-16)", required = false)
-        Optional<Integer> forecastDays
+        int forecastDays,
+        String timezone
     ) {
-        return weatherService.getWeather(latitude, longitude, forecastDays.orElse(7));
+        log.info("Tool invoked: get_weather(lat={}, lon={}, days={}, tz={})",
+                latitude, longitude, forecastDays, timezone);
+        return weatherService.getWeather(latitude, longitude, forecastDays, timezone);
     }
 }
 ```
 
-**MCP Resource Example**:
-```java
-@Service
-public class WeatherResourceService {
+**REST API Access** (from `tool/McpToolsController.java`):
+```
+POST http://localhost:9090/api/tools/weather
+Content-Type: application/json
 
-    @McpResource(
-        uri = "weather://codes",
-        name = "Weather Codes",
-        description = "WMO weather code interpretations"
-    )
+{
+  "latitude": 47.3769,
+  "longitude": 8.5417,
+  "forecastDays": 7,
+  "timezone": "Europe/Zurich"
+}
+```
+
+**MCP Resource Example** (from `resource/ResourceService.java`):
+```java
+@Component
+public class ResourceService {
+    private final ResourceLoader resourceLoader;
+
+    @McpResource(uri = "weather://codes", description = "WMO weather code reference...")
     public String getWeatherCodes() {
-        return loadJsonResource("data/weather-codes.json");
+        return resourceLoader.loadResource("data/weather-codes.json");
+    }
+
+    @McpResource(uri = "weather://aqi-reference", description = "AQI scales and health implications...")
+    public String getAqiReference() {
+        return resourceLoader.loadResource("data/aqi-reference.json");
     }
 }
 ```
 
-**MCP Prompt Example**:
+**MCP Prompt Example** (from `prompt/PromptService.java`):
 ```java
-@Service
-public class WeatherPromptService {
+@Component
+public class PromptService {
 
-    @McpPrompt(
-        name = "ski-trip-weather",
-        description = "Guide for checking snow conditions and weather for ski trips"
-    )
-    public String skiTripWeatherPrompt(
-        @McpParam("resort") String resort,
-        @McpParam("dates") String dates
-    ) {
+    @McpPrompt(name = "ski-trip-weather", description = "Ski trip weather planning with snow conditions...")
+    public String skiTripWeatherPrompt(String resort, String dates) {
         return """
-            1. Use search_location to find coordinates for %s
-            2. Use get_snow_conditions for snow depth and snowfall
-            3. Use get_weather for temperature and wind conditions
-            4. Assess suitability for skiing on %s
+            You are a ski trip planner. Use these tools to plan a ski trip:
+            1. search_location - Find %s coordinates
+            2. get_snow_conditions - Check snow depth and quality
+            3. get_weather - Verify temperature and wind
+
+            Plan for dates: %s
             """.formatted(resort, dates);
+    }
+
+    @McpPrompt(name = "plan-outdoor-activity", description = "Weather-aware outdoor activity planning...")
+    public String planOutdoorActivityPrompt(String activity, String location, String timeframe) {
+        return """
+            Plan a %s activity in %s for %s
+            Use search_location, get_weather, get_air_quality tools
+            """.formatted(activity, location, timeframe);
     }
 }
 ```
