@@ -1,16 +1,17 @@
 {
   "folders": [
-	{
-		"path": "../open-meteo-mcp"
-	},
-	{
-		"path": "."
-	},
-	{
-		"path": "../open-meteo-mcp-ts"
-	}
-],
+    {
+      "path": "../open-meteo-mcp",
+    },
+    {
+      "path": ".",
+    },
+    {
+      "path": "../open-meteo-mcp-ts",
+    },
+  ],
   "settings": {
-    "java.compile.nullAnalysis.mode": "automatic"
-  }
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.updateBuildConfiguration": "interactive",
+  },
 }
