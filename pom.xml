@@ -55,16 +55,10 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- Spring AI MCP Annotations -->
+        <!-- Spring AI MCP Annotations (from springaicommunity) -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-mcp-annotations</artifactId>
-        </dependency>
-
-        <!-- Spring AI MCP Server -->
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-mcp-spring</artifactId>
         </dependency>
 
         <!-- Spring AI Starters - Choose one or more based on your AI provider needs -->
