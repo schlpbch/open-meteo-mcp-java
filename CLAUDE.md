@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Open Meteo MCP (Java) is a **Model Context Protocol (MCP) server** providing weather, snow conditions, and air quality data via the [Open-Meteo API](https://open-meteo.com/). This is a **strategic migration** of the proven open-meteo-mcp (Python/FastMCP v3.2.0) to Java/Spring Boot for enterprise-grade architecture and Spring AI 2.0 integration.
 
-**Current Status**: 🔄 Phase 2 - Services & Utilities Complete (Weeks 3-4 of 9-week migration)
+**Current Status**: 🔄 Phase 3 - Resources & Prompts Complete (Week 5 of 9-week migration)
 
 **Key Technologies:**
 
@@ -107,6 +107,14 @@ src/main/java/com/openmeteo/mcp/
 │       ├── WeatherFormatter.java      # Temperature, wind, AQI formatting ✅
 │       └── ValidationUtil.java        # Input validation helpers ✅
 │
+├── resource/                       # MCP Resource layer ✅
+│   ├── ResourceService.java       # Serves MCP resources ✅
+│   └── util/                       # Resource utilities ✅
+│       └── ResourceLoader.java    # Loads JSON from classpath ✅
+│
+├── prompt/                         # MCP Prompt layer ✅
+│   └── PromptService.java         # Generates MCP workflow prompts ✅
+│
 ├── client/                         # Client layer (external APIs)
 │   ├── OpenMeteoClient.java       # Open-Meteo API client
 │   └── OpenMeteoClientConfig.java # Client configuration
@@ -129,6 +137,7 @@ src/main/java/com/openmeteo/mcp/
 ├── exception/                      # Exception layer
 │   ├── OpenMeteoException.java    # Custom exceptions
 │   ├── McpException.java
+│   ├── ResourceLoadException.java # Resource loading errors ✅
 │   └── GlobalExceptionHandler.java # @RestControllerAdvice
 │
 └── util/                           # Utility layer

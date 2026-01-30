@@ -17,12 +17,12 @@ This is a **strategic migration** of the proven [open-meteo-mcp](https://github.
 - ✅ Better integration with Swiss AI MCP infrastructure
 - ✅ JVM performance and scalability characteristics
 
-**Current Status** (Phase 2 - Services & Utilities):
+**Current Status** (Phase 3 - Resources & Prompts):
 
 - ✅ Phase 1: Foundation complete - Project structure, API client, 18 data models
 - ✅ Phase 2: Services & Utilities complete - 4 services, 4 utility classes, 87 tests passing
-- 🔄 Phase 3: Resources & Prompts (next)
-- ⏳ Phase 4: AI Enhancement with Spring AI 2.0 (@McpTool annotations)
+- ✅ Phase 3: Resources & Prompts complete - 4 resources, 3 prompts, 112 tests passing (67% coverage)
+- 🔄 Phase 4: AI Enhancement with Spring AI 2.0 (next)
 - ⏳ Phase 5: Integration testing and documentation
 
 **Target Release**: Q2 2026 (v1.0.0)
@@ -36,19 +36,18 @@ This is a **strategic migration** of the proven [open-meteo-mcp](https://github.
 - **`get_snow_conditions`**: Snow depth, snowfall, mountain weather
 - **`get_air_quality`**: AQI, pollutants, UV index, pollen data (Europe)
 
-### 📚 MCP Resources (Planned)
+### 📚 MCP Resources
 
-- Weather codes (WMO interpretations)
-- Ski resort coordinates
-- Swiss locations (cities, mountains, passes)
-- AQI reference (health recommendations)
-- Weather parameters (available API fields)
+- **`weather://codes`**: Weather codes (WMO interpretations)
+- **`weather://parameters`**: Weather parameters (available API fields)
+- **`weather://aqi-reference`**: AQI reference (health recommendations)
+- **`weather://swiss-locations`**: Swiss locations (cities, mountains, passes)
 
-### 🎯 MCP Prompts (Planned)
+### 🎯 MCP Prompts
 
-- `ski-trip-weather`: Ski trip planning workflow
-- `plan-outdoor-activity`: Weather-aware activity planning
-- `weather-aware-travel`: Travel planning with weather integration
+- **`meteo__ski-trip-weather`**: Ski trip planning workflow with snow conditions
+- **`meteo__plan-outdoor-activity`**: Weather-aware outdoor activity planning
+- **`meteo__weather-aware-travel`**: Travel planning with weather integration
 
 ## Technology Stack
 
@@ -231,11 +230,11 @@ open-meteo-mcp-java/
 2. **Phase 2: Services & Utilities** (Weeks 3-4) - ✅ Complete
    - 4 service classes, 4 utility classes, 87 unit tests (78-100% coverage)
 
-3. **Phase 3: Resources & Prompts** (Week 5)
-   - Implement 5 resources and 3 prompts
+3. **Phase 3: Resources & Prompts** (Week 5) - ✅ Complete
+   - ResourceService with 4 resources, PromptService with 3 prompts, 112 tests (67% coverage)
 
 4. **Phase 4: AI Enhancement** (Week 6)
-   - Spring AI ChatClient integration
+   - Spring AI ChatClient integration, @McpTool annotations
 
 5. **Phase 5: Testing & Documentation** (Weeks 7-8)
    - 80%+ test coverage, complete docs
