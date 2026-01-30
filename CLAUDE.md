@@ -672,14 +672,42 @@ echo $ANTHROPIC_API_KEY
 
 **Note**: @McpTool annotations will be added in Phase 4 when Spring AI 2.0 becomes available
 
-### Phase 3-6: See CONSTITUTION.md Section 15
+### Phase 3: Resources & Prompts (Week 5) - ✅ Complete
+
+**Tasks**:
+
+- [x] Create ResourceLoadException for error handling
+- [x] Create ResourceLoader utility to load JSON from classpath
+- [x] Create ResourceService to serve 4 MCP resources
+- [x] Create PromptService to generate 3 MCP workflow prompts
+- [x] Write comprehensive unit tests (25 tests for Phase 3)
+
+**Results**:
+- ResourceService with 4 resources (weather codes, parameters, AQI reference, Swiss locations)
+- PromptService with 3 prompts (ski trip, outdoor activity, travel planning)
+- 112 tests passing total (87 from Phase 2 + 25 from Phase 3)
+- Phase 3 coverage: 75-100% for resource/prompt layers
+- Overall project coverage: 67%
+
+**Resources Implemented**:
+- `weather://codes` - WMO weather code reference
+- `weather://parameters` - Available weather parameters
+- `weather://aqi-reference` - AQI scales and health guidance
+- `weather://swiss-locations` - Swiss cities, mountains, passes
+
+**Prompts Implemented**:
+- `meteo__ski-trip-weather` - Ski trip planning with snow conditions
+- `meteo__plan-outdoor-activity` - Weather-aware outdoor activity planning
+- `meteo__weather-aware-travel` - Travel planning with weather integration
+
+### Phase 4-6: See CONSTITUTION.md Section 15
 
 ## Project Status
 
-**Current Version**: 1.0.0-alpha (Migration Phase)
+**Current Version**: 1.0.0-alpha.3 (Migration Phase)
 **Target Release**: Q2 2026 (v1.0.0)
-**Test Coverage**: 64% overall (78-100% for Phase 2 service/util layers - target met ✅)
-**Tests Passing**: 87/87 (100%)
+**Test Coverage**: 67% overall (75-100% for Phase 3 resource/prompt layers - target met ✅)
+**Tests Passing**: 112/112 (100%)
 **Python Reference**: v3.2.0 (production)
 
 ## Important Reminders
