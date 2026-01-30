@@ -27,6 +27,7 @@
         <swiss-ai-mcp-commons.version>1.1.0</swiss-ai-mcp-commons.version>
     </properties>
 
+
     <dependencies>
         <!-- Spring Boot Starters -->
         <dependency>
@@ -42,10 +43,11 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- Spring AI - Commented out for Phase 1, will be added in Phase 4 when Spring AI 2.0 is released
+        <!-- Spring AI Core (includes MCP support) - Available in Spring AI 2.0.0+ -->
+        <!-- NOTE: Will be uncommented in Phase 4 when Spring AI MCP support is available
         <dependency>
             <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-mcp-spring-boot-starter</artifactId>
+            <artifactId>spring-ai-core</artifactId>
             <version>${spring-ai.version}</version>
         </dependency>
         -->
@@ -73,8 +75,8 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Swiss AI MCP Commons (for JSON serialization utilities - future) -->
-        <!-- Commenting out for Phase 1, will add in Phase 2
+        <!-- Swiss AI MCP Commons (for JSON serialization utilities) - Internal dependency -->
+        <!-- NOTE: This dependency will be available in Phase 4 from internal/company repository
         <dependency>
             <groupId>com.swiss-ai</groupId>
             <artifactId>swiss-ai-mcp-commons</artifactId>
@@ -100,6 +102,29 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <!-- Spring Milestone Repository for Spring AI v2.0.0-M2 -->
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
     <build>
         <plugins>

@@ -701,9 +701,57 @@ echo $ANTHROPIC_API_KEY
 - `meteo__plan-outdoor-activity` - Weather-aware outdoor activity planning
 - `meteo__weather-aware-travel` - Travel planning with weather integration
 
-### Phase 4: AI Enhancement (Week 6) - ⏭️ Skipped
+### Phase 4: AI Enhancement (Week 6) - 🔄 In Progress
 
-**Note**: Phase 4 (Spring AI ChatClient integration) is deferred until Spring AI 2.0 MCP annotations become available. Moving directly to Phase 5.
+**Spring AI v2.0.0 Integration Progress**:
+
+✅ **Completed**:
+- Updated pom.xml with Spring AI v2.0.0 configuration
+- Added Spring milestones repository for milestone/RC releases
+- Configured Maven to support future Spring AI MCP artifacts
+- Documented MCP integration approach using Spring AI annotations
+
+⏳ **Pending (Spring AI SDK availability)**:
+- Spring AI MCP modules (spring-ai-core, spring-ai-mcp) not yet available in standard repositories
+- Swiss AI MCP Commons (internal dependency) - requires company Maven repository configuration
+- Will implement `@McpTool`, `@McpResource`, `@McpPrompt` annotations once Spring AI SDK is available
+
+**Next Steps for Phase 4**:
+1. Monitor Spring AI releases for MCP module availability
+2. When available, uncomment Spring AI dependencies in pom.xml:
+   - `spring-ai-core` (2.0.0+)
+   - `spring-ai-mcp` (for MCP annotations)
+3. Create Spring MCP Tool Services with @McpTool annotations:
+   - WeatherToolService - @McpTool methods for weather forecasts
+   - SnowToolService - @McpTool methods for snow conditions
+   - AirQualityToolService - @McpTool methods for AQI data
+   - LocationToolService - @McpTool methods for geocoding
+4. Create MCP Resource Services with @McpResource annotations
+5. Create MCP Prompt Services with @McpPrompt annotations
+6. Integrate with Spring AI ChatClient for LLM integration
+
+**Spring AI MCP Annotation Examples** (ready to implement):
+
+```java
+@Service
+public class WeatherToolService {
+    private final WeatherService weatherService;
+
+    @McpTool(name = "get_weather", description = "Get weather forecast")
+    public CompletableFuture<WeatherResponse> getWeather(
+        @McpParam(value = "latitude", description = "Latitude", required = true) double latitude,
+        @McpParam(value = "longitude", description = "Longitude", required = true) double longitude,
+        @McpParam(value = "forecast_days", description = "Days (1-16)", required = false) Optional<Integer> days
+    ) {
+        return weatherService.getWeather(latitude, longitude, days.orElse(7));
+    }
+}
+```
+
+**Repository Configuration for Phase 4**:
+- Already configured: Spring Milestones repository
+- Needed: Internal company Maven repository for swiss-ai-mcp-commons
+- Deployment: MCP endpoints will be auto-configured via @SpringAiApplication annotation
 
 ### Phase 5: Testing & Documentation (Weeks 7-8) - ✅ Complete
 
