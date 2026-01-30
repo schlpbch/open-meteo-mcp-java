@@ -56,7 +56,6 @@ This is a **strategic migration** of the proven [open-meteo-mcp](https://github.
 - **Java 21** - LTS with virtual threads
 - **Spring Boot 3.5** - Latest stable
 - **Spring AI 2.0** - AI integration + native MCP annotations
-- **Spring WebFlux** - Async/non-blocking architecture
 - **Maven 3.9+** - Build tool
 - **Jackson** - JSON serialization with compression
 - **Micrometer** - Observability and metrics
