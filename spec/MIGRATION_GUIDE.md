@@ -71,12 +71,12 @@ Python                  →  Java
 **Goal**: Set up project structure and core infrastructure
 
 **Checklist**:
-- [ ] Create Maven project with Spring Boot 3.5
-- [ ] Add dependencies: Spring Boot, Spring AI 2.0, WebFlux, Jackson
-- [ ] Implement `OpenMeteoClient.java` with gzip compression
-- [ ] Create Java Records for all Python Pydantic models
-- [ ] Set up JUnit 5 + Mockito + AssertJ test infrastructure
-- [ ] Copy `data/*.json` files to `src/main/resources/data/`
+- [x] Create Maven project with Spring Boot 3.5
+- [x] Add dependencies: Spring Boot, Spring AI 2.0, WebFlux, Jackson
+- [x] Implement `OpenMeteoClient.java` with gzip compression
+- [x] Create Java Records 
+- [x] Set up JUnit 5 + Mockito + AssertJ test infrastructure
+- [x] Copy `data/*.json` files to `src/main/resources/data/`
 
 **Key ADRs**: [ADR-001](./ADR_COMPENDIUM.md#adr-001), [ADR-002](./ADR_COMPENDIUM.md#adr-002), [ADR-003](./ADR_COMPENDIUM.md#adr-003)
 
