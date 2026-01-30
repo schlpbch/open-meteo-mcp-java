@@ -138,15 +138,15 @@ class PromptServiceTest {
 
         assertThat(prompts).hasSize(3);
         assertThat(prompts).containsKeys(
-                "meteo__ski-trip-weather",
-                "meteo__plan-outdoor-activity",
-                "meteo__weather-aware-travel"
+                "ski-trip-weather",
+                "plan-outdoor-activity",
+                "weather-aware-travel"
         );
-        assertThat(prompts.get("meteo__ski-trip-weather"))
+        assertThat(prompts.get("ski-trip-weather"))
                 .contains("Ski trip");
-        assertThat(prompts.get("meteo__plan-outdoor-activity"))
+        assertThat(prompts.get("plan-outdoor-activity"))
                 .contains("outdoor activity");
-        assertThat(prompts.get("meteo__weather-aware-travel"))
+        assertThat(prompts.get("weather-aware-travel"))
                 .contains("Travel");
     }
 
