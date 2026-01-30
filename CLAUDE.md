@@ -6,8 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Open Meteo MCP (Java) is a **Model Context Protocol (MCP) server** providing weather, snow conditions, and air quality data via the [Open-Meteo API](https://open-meteo.com/). This is a **strategic migration** of the proven open-meteo-mcp (Python/FastMCP v3.2.0) to Java/Spring Boot for enterprise-grade architecture and Spring AI 2.0 integration.
 
-**Current Status**: ✅ Phase 5 Complete - Testing & Documentation Finished (v1.0.0-alpha.6)
-**Latest Release**: v1.0.0-alpha.6 (January 30, 2026) - 81% test coverage, 279 tests passing
+**Current Status**: ✅ v1.0.0 RELEASED - Phase 5 Complete & Production Ready
+**Latest Release**: v1.0.0 (January 30, 2026) - 81% test coverage, 279 tests passing, Production Ready
 
 **Key Technologies:**
 
@@ -748,28 +748,30 @@ echo $ANTHROPIC_API_KEY
 - ✅ CLAUDE.md updated with comprehensive Phase 5 results
 - ✅ Test Coverage Report: target/site/jacoco/index.html
 
-### Phase 6: Deployment (Week 9) - ⏳ Pending
+### Phase 6: Deployment (Week 9) - ⏳ In Progress
 
 See CONSTITUTION.md Section 15 for full details.
 
 ## Project Status
 
-**Current Version**: 1.0.0-alpha.6 (Phase 5 Complete - Ready for v1.0.0 Production Release)
-**Target Release**: Q2 2026 (v1.0.0)
-**Test Coverage**: 81% overall (target: ≥80%) - **GOAL ACHIEVED!** ✅
+**Current Version**: 1.0.0 (Phase 5 Complete - ✅ RELEASED)
+**Release Date**: January 30, 2026
+**Status**: Production Ready ✅
+**Test Coverage**: 81% overall (target: ≥80%) - **GOAL EXCEEDED!** ✅
 **Tests Passing**: 279/279 (100%)
+**Git Tag**: `v1.0.0`
 **Python Reference**: v3.2.0 (production)
 
-## Phase 5 Summary
+## Phase 5 Summary - ✅ COMPLETE
 
-Phase 5 successfully completed all testing and documentation objectives:
+Phase 5 successfully completed all testing and documentation objectives and has been released as **v1.0.0**.
 
-**Metrics**:
+**Achievement Metrics**:
 - Added **167 new tests** (from 112 to 279 total)
 - Improved coverage **14 percentage points** (from 67% to 81%)
-- Achieved **81% coverage** (exceeding 80% target by 1%)
+- Achieved **81% coverage** (exceeding 80% target by 1% ✅)
 - Created **7 new test classes** with 500+ test methods
-- Generated comprehensive **API documentation**
+- Generated comprehensive **API documentation** (docs/API_REFERENCE.md)
 
 **Quality Indicators**:
 - All 279 tests pass ✅
@@ -777,9 +779,18 @@ Phase 5 successfully completed all testing and documentation objectives:
 - model.dto package: 94% coverage (up from 65%) ✅
 - Core service layers: 100% coverage ✅
 - No critical bugs identified ✅
+- Production ready: YES ✅
+
+**v1.0.0 Release Details**:
+- **Release Date**: January 30, 2026
+- **Git Tag**: `v1.0.0`
+- **Status**: Production Ready ✅
+- **Build Status**: Passing ✅
+- **Documentation**: Complete ✅
 
 **Next Phase (Phase 6)**:
-The project is now ready for Phase 6 (Deployment & Release). See CONSTITUTION.md Section 15 for deployment strategy.
+The project is now moving into Phase 6 (Deployment & Release). See CONSTITUTION.md Section 15 for deployment strategy.
+Timeline: Target Q2 2026 for v1.0.0 production deployment.
 
 ## Important Reminders
 
@@ -791,13 +802,43 @@ The project is now ready for Phase 6 (Deployment & Release). See CONSTITUTION.md
 6. **ALWAYS write tests** - target ≥80% coverage (ADR-010)
 7. **ALWAYS use structured JSON logging** with SLF4J (ADR-008)
 
+## v1.0.0 Release Information
+
+**Release Highlights**:
+- ✅ 81% code coverage (exceeding 80% goal by 1%)
+- ✅ 279 tests passing (100% pass rate)
+- ✅ 4 fully-functional MCP tools
+- ✅ 4 MCP resources with reference data
+- ✅ 3 workflow prompts for common use cases
+- ✅ Complete API documentation
+- ✅ Zero critical bugs
+- ✅ Production ready
+
+**Key Files**:
+- [README.md](README.md) - Project overview with Phase 5 status
+- [RELEASE_NOTES.md](RELEASE_NOTES.md) - Comprehensive release notes for v1.0.0
+- [docs/API_REFERENCE.md](docs/API_REFERENCE.md) - Complete API documentation
+- [spec/CONSTITUTION.md](spec/CONSTITUTION.md) - Project governance & migration strategy
+- [spec/ADR_COMPENDIUM.md](spec/ADR_COMPENDIUM.md) - 15 Architecture Decision Records
+- [spec/MIGRATION_GUIDE.md](spec/MIGRATION_GUIDE.md) - Python to Java migration patterns
+
+**Build & Run**:
+```bash
+# Build
+./mvnw clean install
+
+# Test with coverage
+./mvnw test jacoco:report
+
+# Run application
+java -jar target/open-meteo-mcp-1.0.0.jar
+```
+
 ## Quick Links
 
 - **Python Reference**: `c:\Users\schlp\code\open-meteo-mcp`
 - **Java Implementation**: `c:\Users\schlp\code\open-meteo-mcp-java`
-- **ADR Compendium**: [spec/ADR_COMPENDIUM.md](spec/ADR_COMPENDIUM.md)
-- **Constitution**: [spec/CONSTITUTION.md](spec/CONSTITUTION.md)
-- **Migration Guide**: [spec/MIGRATION_GUIDE.md](spec/MIGRATION_GUIDE.md)
+- **Release Tag**: `v1.0.0` (January 30, 2026)
 - **Spring AI Docs**: https://docs.spring.io/spring-ai/reference/
 - **Open-Meteo API**: https://open-meteo.com/en/docs
 - **MCP Protocol**: https://modelcontextprotocol.io/
@@ -805,3 +846,5 @@ The project is now ready for Phase 6 (Deployment & Release). See CONSTITUTION.md
 ---
 
 **For detailed migration strategy, see [CONSTITUTION.md Section 15](spec/CONSTITUTION.md#15-migration-strategy-python-to-java)**
+
+**v1.0.0 Status**: ✅ RELEASED & PRODUCTION READY
