@@ -1,0 +1,181 @@
+{
+  "european_aqi": {
+    "name": "European Air Quality Index",
+    "scale": "0-100+",
+    "levels": [
+      {
+        "range": "0-20",
+        "level": "Good",
+        "color": "#50F0E6",
+        "description": "Air quality is considered satisfactory",
+        "health_implications": "Air quality is satisfactory for the general population",
+        "cautionary_statement": "None"
+      },
+      {
+        "range": "20-40",
+        "level": "Fair",
+        "color": "#50CCAA",
+        "description": "Air quality is acceptable",
+        "health_implications": "Air quality is acceptable for most people",
+        "cautionary_statement": "Unusually sensitive people should consider reducing prolonged outdoor exertion"
+      },
+      {
+        "range": "40-60",
+        "level": "Moderate",
+        "color": "#F0E641",
+        "description": "Air quality is acceptable for most",
+        "health_implications": "Members of sensitive groups may experience health effects",
+        "cautionary_statement": "Active children and adults, and people with respiratory disease should limit prolonged outdoor exertion"
+      },
+      {
+        "range": "60-80",
+        "level": "Poor",
+        "color": "#FF5050",
+        "description": "Air quality is poor",
+        "health_implications": "Everyone may begin to experience health effects",
+        "cautionary_statement": "Active children and adults, and people with respiratory disease should avoid prolonged outdoor exertion"
+      },
+      {
+        "range": "80-100",
+        "level": "Very Poor",
+        "color": "#960032",
+        "description": "Air quality is very poor",
+        "health_implications": "Health warnings of emergency conditions",
+        "cautionary_statement": "Everyone should avoid all outdoor exertion"
+      },
+      {
+        "range": "100+",
+        "level": "Extremely Poor",
+        "color": "#7D2181",
+        "description": "Air quality is extremely poor",
+        "health_implications": "Health alert: everyone may experience serious health effects",
+        "cautionary_statement": "Everyone should avoid all outdoor exertion; stay indoors with windows closed"
+      }
+    ]
+  },
+  "us_aqi": {
+    "name": "United States Air Quality Index",
+    "scale": "0-500",
+    "levels": [
+      {
+        "range": "0-50",
+        "level": "Good",
+        "color": "#00E400",
+        "description": "Air quality is satisfactory",
+        "health_implications": "Air quality is satisfactory, and air pollution poses little or no risk",
+        "cautionary_statement": "None"
+      },
+      {
+        "range": "51-100",
+        "level": "Moderate",
+        "color": "#FFFF00",
+        "description": "Air quality is acceptable",
+        "health_implications": "Air quality is acceptable for most people",
+        "cautionary_statement": "Unusually sensitive people should consider reducing prolonged outdoor exertion"
+      },
+      {
+        "range": "101-150",
+        "level": "Unhealthy for Sensitive Groups",
+        "color": "#FF7E00",
+        "description": "Sensitive groups may experience health effects",
+        "health_implications": "Members of sensitive groups may experience health effects",
+        "cautionary_statement": "Active children and adults, and people with respiratory disease should limit prolonged outdoor exertion"
+      },
+      {
+        "range": "151-200",
+        "level": "Unhealthy",
+        "color": "#FF0000",
+        "description": "Everyone may experience health effects",
+        "health_implications": "Everyone may begin to experience health effects",
+        "cautionary_statement": "Active children and adults, and people with respiratory disease should avoid prolonged outdoor exertion; everyone else should limit prolonged outdoor exertion"
+      },
+      {
+        "range": "201-300",
+        "level": "Very Unhealthy",
+        "color": "#8F3F97",
+        "description": "Health alert",
+        "health_implications": "Health warnings of emergency conditions",
+        "cautionary_statement": "Active children and adults, and people with respiratory disease should avoid all outdoor exertion; everyone else should limit outdoor exertion"
+      },
+      {
+        "range": "301-500",
+        "level": "Hazardous",
+        "color": "#7E0023",
+        "description": "Health emergency",
+        "health_implications": "Everyone may experience serious health effects",
+        "cautionary_statement": "Everyone should avoid all outdoor exertion"
+      }
+    ]
+  },
+  "uv_index": {
+    "name": "UV Index",
+    "scale": "0-11+",
+    "levels": [
+      {
+        "range": "0-2",
+        "level": "Low",
+        "color": "#289500",
+        "protection": "No protection required. You can safely stay outside"
+      },
+      {
+        "range": "3-5",
+        "level": "Moderate",
+        "color": "#F7E400",
+        "protection": "Seek shade during midday hours. Wear sunscreen and a hat"
+      },
+      {
+        "range": "6-7",
+        "level": "High",
+        "color": "#F85900",
+        "protection": "Reduce time in the sun between 10am-4pm. Wear protective clothing, sunscreen, and sunglasses"
+      },
+      {
+        "range": "8-10",
+        "level": "Very High",
+        "color": "#D8001D",
+        "protection": "Minimize sun exposure between 10am-4pm. Protective clothing, sunscreen SPF 30+, and sunglasses essential"
+      },
+      {
+        "range": "11+",
+        "level": "Extreme",
+        "color": "#6B49C8",
+        "protection": "Avoid sun exposure between 10am-4pm. Protective clothing, sunscreen SPF 50+, and sunglasses required"
+      }
+    ]
+  },
+  "pollen_levels": {
+    "name": "Pollen Concentration",
+    "unit": "grains/m³",
+    "note": "Pollen data available for Europe only",
+    "types": [
+      "Alder",
+      "Birch",
+      "Grass",
+      "Mugwort",
+      "Olive",
+      "Ragweed"
+    ],
+    "levels": [
+      {
+        "range": "0-10",
+        "level": "Low",
+        "description": "Pollen levels are low"
+      },
+      {
+        "range": "10-50",
+        "level": "Moderate",
+        "description": "Pollen levels are moderate; allergy sufferers may experience symptoms"
+      },
+      {
+        "range": "50-100",
+        "level": "High",
+        "description": "Pollen levels are high; most allergy sufferers will experience symptoms"
+      },
+      {
+        "range": "100+",
+        "level": "Very High",
+        "description": "Pollen levels are very high; all allergy sufferers will experience symptoms"
+      }
+    ]
+  }
+}

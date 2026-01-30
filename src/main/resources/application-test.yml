@@ -1,0 +1,13 @@
+spring:
+  main:
+    banner-mode: "off"
+
+logging:
+  level:
+    com.openmeteo.mcp: INFO
+    reactor.netty: WARN
+    org.springframework: WARN
+
+openmeteo:
+  api:
+    timeout-seconds: 10  # Shorter timeout for tests

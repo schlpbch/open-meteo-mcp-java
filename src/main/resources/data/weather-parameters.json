@@ -1,0 +1,183 @@
+{
+  "weatherParameters": {
+    "hourly": [
+      {
+        "name": "temperature_2m",
+        "description": "Air temperature at 2 meters above ground",
+        "unit": "°C",
+        "category": "Temperature"
+      },
+      {
+        "name": "relative_humidity_2m",
+        "description": "Relative humidity at 2 meters above ground",
+        "unit": "%",
+        "category": "Humidity"
+      },
+      {
+        "name": "precipitation",
+        "description": "Total precipitation (rain, showers, snow)",
+        "unit": "mm",
+        "category": "Precipitation"
+      },
+      {
+        "name": "rain",
+        "description": "Rain from large scale weather systems",
+        "unit": "mm",
+        "category": "Precipitation"
+      },
+      {
+        "name": "weather_code",
+        "description": "WMO weather interpretation code",
+        "unit": "code",
+        "category": "Conditions"
+      },
+      {
+        "name": "cloud_cover",
+        "description": "Total cloud cover",
+        "unit": "%",
+        "category": "Clouds"
+      },
+      {
+        "name": "wind_speed_10m",
+        "description": "Wind speed at 10 meters above ground",
+        "unit": "km/h",
+        "category": "Wind"
+      },
+      {
+        "name": "wind_direction_10m",
+        "description": "Wind direction at 10 meters above ground",
+        "unit": "°",
+        "category": "Wind"
+      },
+      {
+        "name": "wind_gusts_10m",
+        "description": "Wind gusts at 10 meters above ground",
+        "unit": "km/h",
+        "category": "Wind"
+      },
+      {
+        "name": "visibility",
+        "description": "Viewing distance",
+        "unit": "meters",
+        "category": "Visibility"
+      },
+      {
+        "name": "snowfall",
+        "description": "Snowfall amount",
+        "unit": "cm",
+        "category": "Snow"
+      },
+      {
+        "name": "snow_depth",
+        "description": "Snow depth on the ground",
+        "unit": "meters",
+        "category": "Snow"
+      }
+    ],
+    "daily": [
+      {
+        "name": "temperature_2m_max",
+        "description": "Maximum daily air temperature at 2 meters",
+        "unit": "°C",
+        "category": "Temperature"
+      },
+      {
+        "name": "temperature_2m_min",
+        "description": "Minimum daily air temperature at 2 meters",
+        "unit": "°C",
+        "category": "Temperature"
+      },
+      {
+        "name": "precipitation_sum",
+        "description": "Sum of daily precipitation",
+        "unit": "mm",
+        "category": "Precipitation"
+      },
+      {
+        "name": "rain_sum",
+        "description": "Sum of daily rain",
+        "unit": "mm",
+        "category": "Precipitation"
+      },
+      {
+        "name": "sunshine_duration",
+        "description": "Number of seconds of sunshine per day",
+        "unit": "seconds",
+        "category": "Sun"
+      },
+      {
+        "name": "weather_code",
+        "description": "Most severe WMO weather code of the day",
+        "unit": "code",
+        "category": "Conditions"
+      },
+      {
+        "name": "snowfall_sum",
+        "description": "Sum of daily snowfall",
+        "unit": "cm",
+        "category": "Snow"
+      },
+      {
+        "name": "snow_depth_max",
+        "description": "Maximum snow depth of the day",
+        "unit": "meters",
+        "category": "Snow"
+      },
+      {
+        "name": "wind_speed_10m_max",
+        "description": "Maximum daily wind speed at 10 meters",
+        "unit": "km/h",
+        "category": "Wind"
+      },
+      {
+        "name": "wind_gusts_10m_max",
+        "description": "Maximum daily wind gusts at 10 meters",
+        "unit": "km/h",
+        "category": "Wind"
+      }
+    ]
+  },
+  "categories": {
+    "Temperature": "Air temperature measurements",
+    "Humidity": "Moisture content in the air",
+    "Precipitation": "Rain, snow, and other forms of water falling from the sky",
+    "Conditions": "Overall weather conditions and codes",
+    "Clouds": "Cloud coverage and types",
+    "Wind": "Wind speed, direction, and gusts",
+    "Visibility": "How far you can see",
+    "Snow": "Snow-related measurements",
+    "Sun": "Sunshine and solar radiation"
+  },
+  "usage": {
+    "weather": {
+      "hourly": [
+        "temperature_2m",
+        "relative_humidity_2m",
+        "precipitation",
+        "rain",
+        "weather_code",
+        "cloud_cover",
+        "wind_speed_10m"
+      ],
+      "daily": [
+        "temperature_2m_max",
+        "temperature_2m_min",
+        "precipitation_sum",
+        "rain_sum",
+        "sunshine_duration",
+        "weather_code"
+      ]
+    },
+    "snow": {
+      "hourly": ["snowfall", "snow_depth", "temperature_2m"],
+      "daily": [
+        "snowfall_sum",
+        "snow_depth_max",
+        "temperature_2m_max",
+        "temperature_2m_min"
+      ]
+    }
+  },
+  "source": "Open-Meteo API Documentation",
+  "reference": "https://open-meteo.com/en/docs"
+}

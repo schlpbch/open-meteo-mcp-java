@@ -1,0 +1,234 @@
+{
+  "codes": [
+    {
+      "code": 0,
+      "description": "Clear sky",
+      "category": "Clear",
+      "icon": "☀️",
+      "travelImpact": "Ideal conditions"
+    },
+    {
+      "code": 1,
+      "description": "Mainly clear",
+      "category": "Partly Cloudy",
+      "icon": "🌤️",
+      "travelImpact": "Ideal conditions"
+    },
+    {
+      "code": 2,
+      "description": "Partly cloudy",
+      "category": "Partly Cloudy",
+      "icon": "⛅",
+      "travelImpact": "Generally good, reduced visibility"
+    },
+    {
+      "code": 3,
+      "description": "Overcast",
+      "category": "Cloudy",
+      "icon": "☁️",
+      "travelImpact": "Generally good, reduced visibility"
+    },
+    {
+      "code": 45,
+      "description": "Fog",
+      "category": "Fog",
+      "icon": "🌫️",
+      "travelImpact": "Delays possible, reduced visibility"
+    },
+    {
+      "code": 48,
+      "description": "Depositing rime fog",
+      "category": "Fog",
+      "icon": "🌫️",
+      "travelImpact": "Delays possible, reduced visibility"
+    },
+    {
+      "code": 51,
+      "description": "Drizzle: Light intensity",
+      "category": "Drizzle",
+      "icon": "🌦️",
+      "travelImpact": "Possible delays, wet surfaces"
+    },
+    {
+      "code": 53,
+      "description": "Drizzle: Moderate intensity",
+      "category": "Drizzle",
+      "icon": "🌦️",
+      "travelImpact": "Possible delays, wet surfaces"
+    },
+    {
+      "code": 55,
+      "description": "Drizzle: Dense intensity",
+      "category": "Drizzle",
+      "icon": "🌧️",
+      "travelImpact": "Possible delays, wet surfaces"
+    },
+    {
+      "code": 56,
+      "description": "Freezing drizzle: Light",
+      "category": "Freezing Rain",
+      "icon": "🌧️❄️",
+      "travelImpact": "Significant delays possible, slippery conditions"
+    },
+    {
+      "code": 57,
+      "description": "Freezing drizzle: Dense",
+      "category": "Freezing Rain",
+      "icon": "🌧️❄️",
+      "travelImpact": "Significant delays possible, slippery conditions"
+    },
+    {
+      "code": 61,
+      "description": "Rain: Slight intensity",
+      "category": "Rain",
+      "icon": "🌧️",
+      "travelImpact": "Possible delays, wet surfaces"
+    },
+    {
+      "code": 63,
+      "description": "Rain: Moderate intensity",
+      "category": "Rain",
+      "icon": "🌧️",
+      "travelImpact": "Possible delays, wet surfaces"
+    },
+    {
+      "code": 65,
+      "description": "Rain: Heavy intensity",
+      "category": "Rain",
+      "icon": "🌧️",
+      "travelImpact": "Possible delays, wet surfaces"
+    },
+    {
+      "code": 66,
+      "description": "Freezing rain: Light",
+      "category": "Freezing Rain",
+      "icon": "🌧️❄️",
+      "travelImpact": "Significant delays possible, slippery conditions"
+    },
+    {
+      "code": 67,
+      "description": "Freezing rain: Heavy",
+      "category": "Freezing Rain",
+      "icon": "🌧️❄️",
+      "travelImpact": "Significant delays possible, slippery conditions"
+    },
+    {
+      "code": 71,
+      "description": "Snow fall: Slight intensity",
+      "category": "Snow",
+      "icon": "🌨️",
+      "travelImpact": "Significant delays possible, slippery conditions"
+    },
+    {
+      "code": 73,
+      "description": "Snow fall: Moderate intensity",
+      "category": "Snow",
+      "icon": "🌨️",
+      "travelImpact": "Significant delays possible, slippery conditions"
+    },
+    {
+      "code": 75,
+      "description": "Snow fall: Heavy intensity",
+      "category": "Snow",
+      "icon": "🌨️",
+      "travelImpact": "Significant delays possible, slippery conditions"
+    },
+    {
+      "code": 77,
+      "description": "Snow grains",
+      "category": "Snow",
+      "icon": "🌨️",
+      "travelImpact": "Significant delays possible, slippery conditions"
+    },
+    {
+      "code": 80,
+      "description": "Rain showers: Slight",
+      "category": "Showers",
+      "icon": "🌦️",
+      "travelImpact": "Possible delays, wet surfaces"
+    },
+    {
+      "code": 81,
+      "description": "Rain showers: Moderate",
+      "category": "Showers",
+      "icon": "🌧️",
+      "travelImpact": "Possible delays, wet surfaces"
+    },
+    {
+      "code": 82,
+      "description": "Rain showers: Violent",
+      "category": "Showers",
+      "icon": "🌧️",
+      "travelImpact": "Possible delays, wet surfaces"
+    },
+    {
+      "code": 85,
+      "description": "Snow showers: Slight",
+      "category": "Snow Showers",
+      "icon": "🌨️",
+      "travelImpact": "Significant delays possible, slippery conditions"
+    },
+    {
+      "code": 86,
+      "description": "Snow showers: Heavy",
+      "category": "Snow Showers",
+      "icon": "🌨️",
+      "travelImpact": "Significant delays possible, slippery conditions"
+    },
+    {
+      "code": 95,
+      "description": "Thunderstorm: Slight or moderate",
+      "category": "Thunderstorm",
+      "icon": "⛈️",
+      "travelImpact": "Major disruptions possible, consider rescheduling"
+    },
+    {
+      "code": 96,
+      "description": "Thunderstorm with slight hail",
+      "category": "Thunderstorm",
+      "icon": "⛈️",
+      "travelImpact": "Major disruptions possible, consider rescheduling"
+    },
+    {
+      "code": 99,
+      "description": "Thunderstorm with heavy hail",
+      "category": "Thunderstorm",
+      "icon": "⛈️",
+      "travelImpact": "Major disruptions possible, consider rescheduling"
+    }
+  ],
+  "categories": {
+    "Clear": {
+      "codes": [0, 1],
+      "characteristics": "Good visibility, minimal precipitation",
+      "travelImpact": "Ideal conditions"
+    },
+    "Cloudy": {
+      "codes": [2, 3],
+      "characteristics": "Reduced sunshine, no precipitation",
+      "travelImpact": "Generally good, reduced visibility"
+    },
+    "Fog": {
+      "codes": [45, 48],
+      "characteristics": "Very low visibility",
+      "travelImpact": "Delays possible, reduced visibility"
+    },
+    "Rain": {
+      "codes": [51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82],
+      "characteristics": "Wet conditions, varying intensity",
+      "travelImpact": "Possible delays, wet surfaces"
+    },
+    "Snow": {
+      "codes": [71, 73, 75, 77, 85, 86],
+      "characteristics": "Cold, reduced visibility",
+      "travelImpact": "Significant delays possible, slippery conditions"
+    },
+    "Thunderstorms": {
+      "codes": [95, 96, 99],
+      "characteristics": "Severe weather, lightning",
+      "travelImpact": "Major delays, safety concerns"
+    }
+  },
+  "source": "WMO standard as implemented by Open-Meteo API",
+  "reference": "https://open-meteo.com/en/docs"
+}

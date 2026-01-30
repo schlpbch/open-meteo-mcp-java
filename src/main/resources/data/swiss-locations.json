@@ -1,0 +1,188 @@
+{
+  "cities": [
+    {
+      "name": "Zurich",
+      "latitude": 47.3769,
+      "longitude": 8.5417,
+      "elevation": 408,
+      "population": 402762,
+      "canton": "Zurich"
+    },
+    {
+      "name": "Geneva",
+      "latitude": 46.2044,
+      "longitude": 6.1432,
+      "elevation": 375,
+      "population": 201818,
+      "canton": "Geneva"
+    },
+    {
+      "name": "Basel",
+      "latitude": 47.5596,
+      "longitude": 7.5886,
+      "elevation": 260,
+      "population": 177654,
+      "canton": "Basel-Stadt"
+    },
+    {
+      "name": "Bern",
+      "latitude": 46.9480,
+      "longitude": 7.4474,
+      "elevation": 542,
+      "population": 133115,
+      "canton": "Bern"
+    },
+    {
+      "name": "Lausanne",
+      "latitude": 46.5197,
+      "longitude": 6.6323,
+      "elevation": 495,
+      "population": 139111,
+      "canton": "Vaud"
+    },
+    {
+      "name": "Lucerne",
+      "latitude": 47.0502,
+      "longitude": 8.3093,
+      "elevation": 436,
+      "population": 81592,
+      "canton": "Lucerne"
+    },
+    {
+      "name": "Lugano",
+      "latitude": 46.0037,
+      "longitude": 8.9511,
+      "elevation": 273,
+      "population": 63185,
+      "canton": "Ticino"
+    },
+    {
+      "name": "St. Gallen",
+      "latitude": 47.4245,
+      "longitude": 9.3767,
+      "elevation": 670,
+      "population": 75833,
+      "canton": "St. Gallen"
+    },
+    {
+      "name": "Interlaken",
+      "latitude": 46.6863,
+      "longitude": 7.8632,
+      "elevation": 568,
+      "population": 5610,
+      "canton": "Bern"
+    },
+    {
+      "name": "Montreux",
+      "latitude": 46.4312,
+      "longitude": 6.9107,
+      "elevation": 390,
+      "population": 26574,
+      "canton": "Vaud"
+    }
+  ],
+  "mountains": [
+    {
+      "name": "Matterhorn",
+      "latitude": 45.9763,
+      "longitude": 7.6586,
+      "elevation": 4478,
+      "description": "Iconic pyramid-shaped peak"
+    },
+    {
+      "name": "Eiger",
+      "latitude": 46.5771,
+      "longitude": 8.0056,
+      "elevation": 3970,
+      "description": "Famous north face"
+    },
+    {
+      "name": "Jungfrau",
+      "latitude": 46.5369,
+      "longitude": 7.9626,
+      "elevation": 4158,
+      "description": "Top of Europe"
+    },
+    {
+      "name": "Pilatus",
+      "latitude": 46.9789,
+      "longitude": 8.2525,
+      "elevation": 2128,
+      "description": "Mountain overlooking Lucerne"
+    },
+    {
+      "name": "Rigi",
+      "latitude": 47.0569,
+      "longitude": 8.4856,
+      "elevation": 1798,
+      "description": "Queen of the Mountains"
+    }
+  ],
+  "passes": [
+    {
+      "name": "Gotthard Pass",
+      "latitude": 46.5578,
+      "longitude": 8.5647,
+      "elevation": 2106,
+      "description": "Historic alpine pass"
+    },
+    {
+      "name": "Simplon Pass",
+      "latitude": 46.2494,
+      "longitude": 8.0325,
+      "elevation": 2005,
+      "description": "Pass to Italy"
+    },
+    {
+      "name": "Furka Pass",
+      "latitude": 46.5722,
+      "longitude": 8.4147,
+      "elevation": 2429,
+      "description": "Scenic mountain pass"
+    },
+    {
+      "name": "Grimsel Pass",
+      "latitude": 46.5714,
+      "longitude": 8.3356,
+      "elevation": 2164,
+      "description": "High alpine pass"
+    }
+  ],
+  "lakes": [
+    {
+      "name": "Lake Geneva",
+      "latitude": 46.4531,
+      "longitude": 6.5619,
+      "elevation": 372,
+      "description": "Largest lake in Switzerland"
+    },
+    {
+      "name": "Lake Zurich",
+      "latitude": 47.2256,
+      "longitude": 8.7217,
+      "elevation": 406,
+      "description": "Lake in Zurich region"
+    },
+    {
+      "name": "Lake Lucerne",
+      "latitude": 47.0024,
+      "longitude": 8.4003,
+      "elevation": 434,
+      "description": "Four Cantons Lake"
+    },
+    {
+      "name": "Lake Constance",
+      "latitude": 47.5922,
+      "longitude": 9.3958,
+      "elevation": 395,
+      "description": "Border lake with Germany/Austria"
+    },
+    {
+      "name": "Lake Maggiore",
+      "latitude": 46.1167,
+      "longitude": 8.7333,
+      "elevation": 193,
+      "description": "Lake in Ticino"
+    }
+  ]
+}

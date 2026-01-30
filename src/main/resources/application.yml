@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: open-meteo-mcp
+  webflux:
+    base-path: /api
+
+openmeteo:
+  api:
+    weather-url: https://api.open-meteo.com/v1
+    air-quality-url: https://air-quality-api.open-meteo.com/v1
+    geocoding-url: https://geocoding-api.open-meteo.com/v1
+    marine-url: https://marine-api.open-meteo.com/v1
+    timeout-seconds: 30
+    gzip-enabled: true
+
+logging:
+  level:
+    com.openmeteo.mcp: DEBUG
+    reactor.netty: INFO
+    org.springframework.web: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized

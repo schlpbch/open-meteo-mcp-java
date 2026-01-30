@@ -1,0 +1,14 @@
+logging:
+  level:
+    com.openmeteo.mcp: TRACE
+    reactor.netty: DEBUG
+    org.springframework.web: DEBUG
+
+openmeteo:
+  api:
+    timeout-seconds: 60  # Longer timeout for development
+
+management:
+  endpoint:
+    health:
+      show-details: always
