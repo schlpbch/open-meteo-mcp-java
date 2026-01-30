@@ -86,7 +86,7 @@ public class McpToolsHandler {
      *           elevation (meters), country, timezone, population
      */
     @McpTool(description = """
-            Searches for locations by name to get coordinates for weather queries.
+            Provides geocoding search: Searches for locations by name to get coordinates for weather queries.
 
             Convert location names to coordinates using fuzzy search. Essential for natural language weather queries like "weather in Zurich" instead of requiring latitude/longitude coordinates.
 

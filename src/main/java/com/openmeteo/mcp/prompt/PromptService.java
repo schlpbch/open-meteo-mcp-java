@@ -327,7 +327,7 @@ public class PromptService {
      * @return Workflow instructions for AI assistant with comprehensive travel planning guidance
      */
     @McpPrompt(name = "weather-aware-travel", description = """
-            Provides a comprehensive guide for travel planning with weather integration.
+            Travel planning with weather integration: Provides a comprehensive guide for travel planning with weather integration.
 
             Complete travel planning workflow with temperature-based packing recommendations, activity suggestions, and weather-aware travel advice.
 
