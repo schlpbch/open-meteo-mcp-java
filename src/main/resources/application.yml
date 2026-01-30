@@ -3,6 +3,11 @@ spring:
     name: open-meteo-mcp
   webflux:
     base-path: /api
+  ai:
+    mcp:
+      server:
+        type: SYNC
+        protocol: SSE
 
 openmeteo:
   api:

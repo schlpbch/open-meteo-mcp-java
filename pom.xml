@@ -61,6 +61,13 @@
             <artifactId>spring-ai-mcp-annotations</artifactId>
         </dependency>
 
+        <!-- Spring AI MCP Server Boot Starter for WebFlux -->
+        <!-- Auto-configures MCP server with SSE transport, auto-discovers @McpTool/@McpPrompt/@McpResource -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-mcp-server-webflux</artifactId>
+        </dependency>
+
         <!-- Spring AI Starters - Choose one or more based on your AI provider needs -->
         <!-- spring-ai-core does not exist in v2.0.0-M2; use provider-specific starters below -->
 
