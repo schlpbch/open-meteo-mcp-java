@@ -49,19 +49,71 @@ public class McpToolsHandler {
     /**
      * MCP Tool: search_location
      *
-     * Search for locations by name using geocoding.
+     * Searches for locations by name to get coordinates for weather queries.
      *
-     * @param name     Location name to search for (e.g., "London", "New York", "Tokyo")
-     * @param count    Maximum number of results to return (default: 10, max: 100)
-     * @param language Language code for results (e.g., "en" for English, "de" for German)
-     * @param country  Optional ISO 3166-1 alpha-2 country code to filter results
-     * @return CompletableFuture with GeocodingResponse containing location results
+     * Convert location names to coordinates using fuzzy search. Essential for
+     * natural language weather queries like "weather in Zurich" instead of
+     * requiring latitude/longitude coordinates.
      *
-     * Example usage:
-     * - search_location("London", 10, "en", "") → Returns 10 locations named London
-     * - search_location("Zurich", 5, "en", "CH") → Returns 5 locations in Switzerland
+     * EXAMPLES:
+     * - "Zurich" → Returns Zurich, Switzerland with coordinates
+     * - "Bern" → Returns multiple matches (Bern CH, Bern US, etc.)
+     * - "Zermatt" → Returns ski resort with elevation data
+     * - "Lake Geneva" → Returns lake coordinates
+     *
+     * FEATURES:
+     * - Fuzzy matching (handles typos)
+     * - Multi-language support
+     * - Country filtering (e.g., country="CH" for Switzerland only)
+     * - Returns population, timezone, elevation
+     *
+     * WORKFLOW:
+     * 1. Search for location by name
+     * 2. Select result (usually first is best match)
+     * 3. Use latitude/longitude for get_weather or get_snow_conditions
+     *
+     * USE THIS TOOL WHEN:
+     * - User provides location name instead of coordinates
+     * - Need to find coordinates for a city, mountain, or landmark
+     * - Want to discover locations in a specific country
+     *
+     * @param name     Location name to search for (e.g., "Zurich", "Eiger", "Lake Lucerne")
+     * @param count    Number of results to return (1-100, default: 10)
+     * @param language Language for results (default: 'en', options: 'de', 'fr', 'it', etc.)
+     * @param country  Optional country code filter (e.g., 'CH' for Switzerland, 'DE' for Germany)
+     * @return CompletableFuture with GeocodingResponse containing:
+     *         - results (list): List of matching locations with name, latitude, longitude,
+     *           elevation (meters), country, timezone, population
      */
-    @McpTool(description = "Search for locations by name using geocoding. Returns multiple location results with coordinates, elevation, and country information.")
+    @McpTool(description = """
+            Searches for locations by name to get coordinates for weather queries.
+
+            Convert location names to coordinates using fuzzy search. Essential for natural language weather queries like "weather in Zurich" instead of requiring latitude/longitude coordinates.
+
+            EXAMPLES:
+            - "Zurich" → Returns Zurich, Switzerland with coordinates
+            - "Bern" → Returns multiple matches (Bern CH, Bern US, etc.)
+            - "Zermatt" → Returns ski resort with elevation data
+            - "Lake Geneva" → Returns lake coordinates
+
+            FEATURES:
+            - Fuzzy matching (handles typos)
+            - Multi-language support (en, de, fr, it, etc.)
+            - Country filtering (e.g., country="CH" for Switzerland only)
+            - Returns population, timezone, elevation
+
+            WORKFLOW:
+            1. Search for location by name
+            2. Select result (usually first is best match)
+            3. Use latitude/longitude for get_weather or get_snow_conditions
+
+            USE THIS TOOL WHEN:
+            - User provides location name instead of coordinates
+            - Need to find coordinates for a city, mountain, or landmark
+            - Want to discover locations in a specific country
+
+            RETURNS: List of locations with name, latitude, longitude, elevation (meters), country, timezone, population
+            """)
     public CompletableFuture<GeocodingResponse> searchLocation(
             String name,
             int count,
@@ -100,25 +152,71 @@ public class McpToolsHandler {
     /**
      * MCP Tool: get_weather
      *
-     * Get weather forecast with temperature, precipitation, wind, and current conditions.
-     * Returns enriched data with WMO code interpretation and travel impact assessment.
+     * Retrieves weather forecast for a location (temperature, rain, sunshine).
      *
-     * @param latitude      Latitude in decimal degrees (-90 to 90)
-     * @param longitude     Longitude in decimal degrees (-180 to 180)
-     * @param forecastDays  Number of forecast days to retrieve (1-16, default: 7)
-     * @param timezone      Timezone identifier (e.g., "UTC", "Europe/London", "America/New_York")
-     * @return CompletableFuture with enriched weather data including:
-     *         - Current weather conditions with interpretation
-     *         - Hourly forecast (24-hour format)
-     *         - Daily summary with max/min temperatures
-     *         - WMO weather code interpretation
-     *         - Travel impact assessment
+     * Get current weather conditions for any location in Switzerland (or worldwide).
      *
-     * Example usage:
-     * - get_weather(51.5074, -0.1278, 7, "Europe/London") → 7-day forecast for London
-     * - get_weather(48.8566, 2.3522, 5, "Europe/Paris") → 5-day forecast for Paris
+     * EXAMPLES:
+     * - "What's the weather in Zürich?" → latitude: 47.3769, longitude: 8.5417
+     * - "Weather at destination" → Use coordinates from journey endpoint
+     * - "Is it raining in Bern?" → Check precipitation field
+     *
+     * PROVIDES:
+     * - Current temperature (°C)
+     * - Weather condition (clear, cloudy, rain, snow)
+     * - Precipitation amount (mm)
+     * - Wind speed (km/h)
+     * - Humidity (%)
+     * - Hourly and daily forecasts
+     *
+     * DATA SOURCE: Open-Meteo API (free, no API key required)
+     * PERFORMANCE: < 200ms
+     *
+     * USE THIS TOOL WHEN:
+     * - User asks about weather conditions
+     * - Planning outdoor activities
+     * - Checking if weather affects travel
+     * - Combined with journey planning
+     *
+     * @param latitude      Latitude in decimal degrees (e.g., 46.9479 for Bern)
+     * @param longitude     Longitude in decimal degrees (e.g., 7.4474 for Bern)
+     * @param forecastDays  Number of forecast days (1-16, default: 7)
+     * @param timezone      Timezone for timestamps (e.g., 'Europe/Zurich', default: 'UTC')
+     * @return CompletableFuture with weather data containing:
+     *         - current (map): Current weather with temperature, weather_code, wind_speed, humidity
+     *         - hourly (list | null): Hourly forecasts if available
+     *         - daily (list): Daily forecasts with min/max temps, precipitation, weather codes
+     *         - location (map): Location metadata with coordinates and timezone
      */
-    @McpTool(description = "Get weather forecast with temperature, precipitation, wind, and current conditions. Returns enriched data with WMO code interpretation and travel impact assessment.")
+    @McpTool(description = """
+            Retrieves weather forecast for a location (temperature, rain, sunshine).
+
+            Get current weather conditions for any location in Switzerland (or worldwide).
+
+            EXAMPLES:
+            - "What's the weather in Zürich?" → latitude: 47.3769, longitude: 8.5417
+            - "Weather at destination" → Use coordinates from journey endpoint
+            - "Is it raining in Bern?" → Check precipitation field
+
+            PROVIDES:
+            - Current temperature (°C)
+            - Weather condition (clear, cloudy, rain, snow)
+            - Precipitation amount (mm)
+            - Wind speed (km/h)
+            - Humidity (%)
+            - Hourly and daily forecasts
+
+            DATA SOURCE: Open-Meteo API (free, no API key required)
+            PERFORMANCE: < 200ms
+
+            USE THIS TOOL WHEN:
+            - User asks about weather conditions
+            - Planning outdoor activities
+            - Checking if weather affects travel
+            - Combined with journey planning
+
+            RETURNS: Weather data with current conditions, hourly forecasts, daily summaries, and location metadata
+            """)
     public CompletableFuture<Map<String, Object>> getWeather(
             double latitude,
             double longitude,
@@ -154,27 +252,67 @@ public class McpToolsHandler {
     /**
      * MCP Tool: get_snow_conditions
      *
-     * Get snow conditions for ski trip planning with depth, recent snowfall, and assessments.
-     * Returns enriched data with ski condition assessment based on snow depth, recent snowfall,
-     * temperature, and current weather conditions.
+     * Retrieves snow conditions and forecasts for mountain locations.
      *
-     * @param latitude      Latitude in decimal degrees (-90 to 90)
-     * @param longitude     Longitude in decimal degrees (-180 to 180)
+     * PARAMETERS:
+     * - latitude (required): Latitude in decimal degrees
+     * - longitude (required): Longitude in decimal degrees
+     * - forecastDays (optional): Number of forecast days (1-16, default: 7)
+     * - timezone (optional): Timezone for timestamps (default: "Europe/Zurich")
+     *
+     * RETURNS:
+     * - Current snow depth (meters)
+     * - Recent snowfall (cm)
+     * - Forecast snowfall
+     * - Temperature trends
+     * - Hourly and daily snow data
+     *
+     * USE THIS TOOL FOR:
+     * - Ski trip planning
+     * - Checking snow conditions at resorts
+     * - Mountain weather forecasts
+     * - Avalanche risk assessment (via snow depth trends)
+     *
+     * @param latitude      Latitude in decimal degrees (e.g., 45.9763 for Zermatt)
+     * @param longitude     Longitude in decimal degrees (e.g., 7.6586 for Zermatt)
      * @param forecastDays  Number of forecast days (1-16, default: 7)
-     * @param timezone      Timezone identifier (e.g., "UTC", "Europe/Zurich")
-     * @return CompletableFuture with enriched snow data including:
-     *         - Current and forecast snow depth in meters
-     *         - Snowfall totals in cm
-     *         - Snow conditions assessment ("Poor", "Fair", "Good", "Excellent")
-     *         - Temperature forecast
-     *         - Weather conditions
-     *         - Hourly snow data (if available)
-     *
-     * Example usage:
-     * - get_snow_conditions(46.4917, 10.2619, 5, "Europe/Zurich") → 5-day ski conditions for Alps
-     * - get_snow_conditions(45.4872, 11.8753, 3, "Europe/Venice") → 3-day snow forecast for Dolomites
+     * @param timezone      Timezone for timestamps (default: 'Europe/Zurich')
+     * @return CompletableFuture with snow data containing:
+     *         - current (map): Current snow depth and recent snowfall
+     *         - hourly (list | null): Hourly snow data if available
+     *         - daily (list): Daily snow forecasts with accumulation and temperature
+     *         - location (map): Mountain location metadata
      */
-    @McpTool(description = "Get snow conditions for ski trip planning with depth, recent snowfall, and assessments. Returns enriched data with ski condition assessment.")
+    @McpTool(description = """
+            Retrieves snow conditions and forecasts for mountain locations.
+
+            Essential for ski trip planning and mountain weather assessment.
+
+            PARAMETERS:
+            - latitude (required): Latitude in decimal degrees
+            - longitude (required): Longitude in decimal degrees
+            - forecastDays (optional): Number of forecast days (1-16, default: 7)
+            - timezone (optional): Timezone for timestamps (default: "Europe/Zurich")
+
+            RETURNS:
+            - Current snow depth (meters)
+            - Recent snowfall (cm)
+            - Forecast snowfall
+            - Temperature trends
+            - Hourly and daily snow data
+
+            USE THIS TOOL FOR:
+            - Ski trip planning
+            - Checking snow conditions at resorts
+            - Mountain weather forecasts
+            - Avalanche risk assessment (via snow depth trends)
+
+            CONDITION ASSESSMENT:
+            - Excellent: Fresh snow (>10cm), -15°C to -5°C, clear skies
+            - Good: Good depth (>50cm), stable temps (<0°C), mostly clear
+            - Fair: Minimal depth (>20cm), temps below freezing, acceptable visibility
+            - Poor: Insufficient snow, warm temps (>5°C), poor weather
+            """)
     public CompletableFuture<Map<String, Object>> getSnowConditions(
             double latitude,
             double longitude,
@@ -210,27 +348,74 @@ public class McpToolsHandler {
     /**
      * MCP Tool: get_air_quality
      *
-     * Get air quality forecast with AQI, pollutants, UV index, and pollen data.
-     * Returns enriched data with AQI level interpretation and UV index guidance.
+     * Retrieves air quality forecast including AQI, pollutants, UV index, and pollen data.
      *
-     * @param latitude      Latitude in decimal degrees (-90 to 90)
-     * @param longitude     Longitude in decimal degrees (-180 to 180)
-     * @param forecastDays  Number of forecast days (1-5, default: 3)
-     * @param includePollen Whether to include pollen data (Europe only, default: true)
-     * @param timezone      Timezone identifier (e.g., "UTC", "Europe/Berlin")
-     * @return CompletableFuture with enriched air quality data including:
-     *         - Current European AQI (0-500) with level interpretation
-     *         - Current US AQI (0-500) with level interpretation
-     *         - Pollutant concentrations (PM10, PM2.5, O3, NO2, SO2, CO)
-     *         - UV Index with health guidance
-     *         - Pollen data (6 types: alder, birch, grass, mugwort, olive, ragweed)
-     *         - Hourly and daily forecasts
+     * Monitor air quality for health-aware outdoor planning, allergy management,
+     * and UV exposure assessment. Provides both European and US Air Quality Indices
+     * along with detailed pollutant measurements.
      *
-     * Example usage:
-     * - get_air_quality(52.5200, 13.4050, 3, true, "Europe/Berlin") → 3-day AQI forecast for Berlin with pollen
-     * - get_air_quality(40.7128, -74.0060, 2, false, "America/New_York") → 2-day AQI forecast for NYC
+     * EXAMPLES:
+     * - "What's the air quality in Zurich?" → AQI, PM2.5, PM10, ozone levels
+     * - "Pollen forecast for Bern?" → Grass, birch, alder pollen counts
+     * - "UV index for tomorrow?" → UV radiation forecast
+     *
+     * PROVIDES:
+     * - European AQI (0-100+) and US AQI (0-500)
+     * - Particulate matter (PM10, PM2.5)
+     * - Gases (O3, NO2, SO2, CO, NH3)
+     * - UV index (current and clear sky)
+     * - Pollen data (Europe only): alder, birch, grass, mugwort, olive, ragweed
+     *
+     * HEALTH GUIDELINES:
+     * - European AQI: 0-20 (Good), 20-40 (Fair), 40-60 (Moderate), 60-80 (Poor), 80-100 (Very Poor), 100+ (Extremely Poor)
+     * - US AQI: 0-50 (Good), 51-100 (Moderate), 101-150 (Unhealthy for Sensitive), 151-200 (Unhealthy), 201-300 (Very Unhealthy), 301-500 (Hazardous)
+     * - UV Index: 0-2 (Low), 3-5 (Moderate), 6-7 (High), 8-10 (Very High), 11+ (Extreme)
+     *
+     * USE THIS TOOL WHEN:
+     * - Planning outdoor activities for people with asthma/allergies
+     * - Assessing air quality for exercise or sports
+     * - Checking pollen levels during allergy season
+     * - Monitoring UV exposure for sun safety
+     *
+     * @param latitude      Latitude in decimal degrees
+     * @param longitude     Longitude in decimal degrees
+     * @param forecastDays  Number of forecast days (1-5, default: 5)
+     * @param includePollen Include pollen data (default: true, Europe only)
+     * @param timezone      Timezone for timestamps (default: 'auto')
+     * @return CompletableFuture with air quality data containing:
+     *         - current (map): Current AQI, pollutants (PM10, PM2.5, O3, NO2, SO2, CO), UV index
+     *         - hourly (list): Hourly air quality forecasts
+     *         - pollen (map | null): Pollen data if includePollen=true and location is in Europe
+     *         - location (map): Location metadata
      */
-    @McpTool(description = "Get air quality forecast with AQI, pollutants, UV index, and pollen data. Returns enriched data with AQI level interpretation and UV index guidance.")
+    @McpTool(description = """
+            Retrieves air quality forecast including AQI, pollutants, UV index, and pollen data.
+
+            Monitor air quality for health-aware outdoor planning, allergy management, and UV exposure assessment. Provides both European and US Air Quality Indices along with detailed pollutant measurements.
+
+            EXAMPLES:
+            - "What's the air quality in Zurich?" → AQI, PM2.5, PM10, ozone levels
+            - "Pollen forecast for Bern?" → Grass, birch, alder pollen counts
+            - "UV index for tomorrow?" → UV radiation forecast
+
+            PROVIDES:
+            - European AQI (0-100+) and US AQI (0-500)
+            - Particulate matter (PM10, PM2.5)
+            - Gases (O3, NO2, SO2, CO, NH3)
+            - UV index (current and clear sky)
+            - Pollen data (Europe only): alder, birch, grass, mugwort, olive, ragweed
+
+            HEALTH GUIDELINES:
+            - European AQI: 0-20 (Good), 20-40 (Fair), 40-60 (Moderate), 60-80 (Poor), 80-100 (Very Poor), 100+ (Extremely Poor)
+            - US AQI: 0-50 (Good), 51-100 (Moderate), 101-150 (Unhealthy for Sensitive), 151-200 (Unhealthy), 201-300 (Very Unhealthy), 301-500 (Hazardous)
+            - UV Index: 0-2 (Low), 3-5 (Moderate), 6-7 (High), 8-10 (Very High), 11+ (Extreme)
+
+            USE THIS TOOL WHEN:
+            - Planning outdoor activities for people with asthma/allergies
+            - Assessing air quality for exercise or sports
+            - Checking pollen levels during allergy season
+            - Monitoring UV exposure for sun safety
+            """)
     public CompletableFuture<Map<String, Object>> getAirQuality(
             double latitude,
             double longitude,

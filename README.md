@@ -2,8 +2,9 @@
 
 A Model Context Protocol (MCP) server providing weather, snow conditions, and air quality tools via the [Open-Meteo API](https://open-meteo.com/).
 
-**Version**: 1.0.0-alpha (MCP Server Configuration Complete)
-**Status**: ✅ MCP Server Configured - All Tools, Prompts & Resources Implemented
+**Version**: 1.0.0 (Production Ready)
+**Status**: ✅ MCP Server Complete - Enhanced Descriptions with Examples & Health Guidelines
+**Release Date**: January 30, 2026
 **License**: Apache 2.0
 
 ## 🎉 Project Milestone
@@ -22,17 +23,23 @@ This is a **strategic migration** of the proven [open-meteo-mcp](https://github.
 - ✅ **4 MCP Tools**: search_location, get_weather, get_snow_conditions, get_air_quality
 - ✅ **4 MCP Resources**: weather://codes, weather://parameters, weather://aqi-reference, weather://swiss-locations
 - ✅ **3 MCP Prompts**: ski-trip-weather, plan-outdoor-activity, weather-aware-travel
+- ✅ **Enhanced Descriptions**: All components include comprehensive examples, features, use cases, and health guidelines
 - ✅ **MCP Server Configuration**: Spring Boot with @McpTool/@McpPrompt/@McpResource annotations
-- ✅ **REST API Endpoints**: All tools accessible via HTTP at `/api/tools/*`
-- ✅ **Server Running**: Spring Boot 3.5.0 on port 9090
+- ✅ **SSE Transport**: Full MCP protocol support via HTTP/SSE at `/sse` endpoint
+- ✅ **MCP Inspector Integration**: Tested with MCP Inspector web UI
+- ✅ **Server Running**: Spring Boot 3.5.0 on port 8888
 
-**v1.0.0-alpha Highlights**:
-- Spring AI 2.0 MCP annotations on all components
-- REST API endpoints for all 4 tools
-- Comprehensive test coverage across all services
-- JSON resource files for weather codes, AQI reference, and Swiss locations
-- Production-ready Spring Boot configuration with gzip compression
-- Ready for full MCP protocol support (SSE/stdio/WebSocket) when Spring AI libraries available
+**v1.0.0 Release Highlights**:
+- ✅ Spring AI 2.0 MCP annotations with comprehensive multiline descriptions
+- ✅ All tools include examples, features, use cases, and health guidelines
+- ✅ All resources include detailed documentation and use cases
+- ✅ All prompts include step-by-step workflows
+- ✅ HTTP/SSE transport configured and tested
+- ✅ Integrated with MCP Inspector for protocol validation
+- ✅ Production-ready Spring Boot configuration with gzip compression
+- ✅ Comprehensive test coverage across all services
+- ✅ JSON resource files for weather codes, AQI reference, and Swiss locations
+- ✅ Ready for enterprise deployment
 
 ## Features
 
@@ -132,7 +139,7 @@ cd open-meteo-mcp-java
 ./mvnw spring-boot:run
 ```
 
-Server will start on `http://localhost:8080` (or `http://localhost:9090` if port 8080 is in use)
+Server will start on `http://localhost:8888`
 
 **Gradle:**
 ```bash
@@ -144,9 +151,18 @@ Server will start on `http://localhost:8080` (or `http://localhost:9090` if port
 Once running, test the endpoints:
 
 ```bash
+# MCP Inspector (Web UI)
+# Use MCP Inspector to interact with tools, resources, and prompts
+# Visit: http://localhost:6274 (when MCP Inspector is running)
+npx @modelcontextprotocol/inspector http://localhost:8888/sse
+
 # Health check
 curl http://localhost:8080/actuator/health
 
+# Test SSE endpoint (MCP protocol)
+curl http://localhost:8888/sse
+
+# REST API endpoints (optional)
 # Search for a location
 curl -X POST http://localhost:8080/api/tools/search-location \
   -H "Content-Type: application/json" \
@@ -221,12 +237,19 @@ The MCP server is configured in `config/McpServerConfig.java`:
 Check the startup logs for MCP component initialization:
 
 ```
-2026-01-30T17:36:12.401+01:00  INFO 4736 --- [open-meteo-mcp] c.openmeteo.mcp.config.McpServerConfig   : MCP Server configuration initialized
-2026-01-30T17:36:12.401+01:00  INFO 4736 --- [open-meteo-mcp] c.openmeteo.mcp.config.McpServerConfig   :   - MCP Tools: search_location, get_weather, get_snow_conditions, get_air_quality
-2026-01-30T17:36:12.401+01:00  INFO 4736 --- [open-meteo-mcp] c.openmeteo.mcp.config.McpServerConfig   :   - MCP Prompts: ski-trip-weather, plan-outdoor-activity, weather-aware-travel
-2026-01-30T17:36:12.401+01:00  INFO 4736 --- [open-meteo-mcp] c.openmeteo.mcp.config.McpServerConfig   :   - MCP Resources: weather://codes, weather://parameters, weather://aqi-reference, weather://swiss-locations
-2026-01-30T17:36:13.128+01:00  INFO 4736 --- [open-meteo-mcp] o.s.b.web.embedded.netty.NettyWebServer  : Netty started on port 9090
+2026-01-30T18:27:13.299+01:00  INFO 25520 --- [open-meteo-mcp] c.openmeteo.mcp.config.McpServerConfig   : MCP Server configuration initialized
+2026-01-30T18:27:13.299+01:00  INFO 25520 --- [open-meteo-mcp] c.openmeteo.mcp.config.McpServerConfig   :   - MCP Tools: search_location, get_weather, get_snow_conditions, get_air_quality
+2026-01-30T18:27:13.299+01:00  INFO 25520 --- [open-meteo-mcp] c.openmeteo.mcp.config.McpServerConfig   :   - MCP Prompts: ski-trip-weather, plan-outdoor-activity, weather-aware-travel
+2026-01-30T18:27:13.299+01:00  INFO 25520 --- [open-meteo-mcp] c.openmeteo.mcp.config.McpServerConfig   :   - MCP Resources: weather://codes, weather://parameters, weather://aqi-reference, weather://swiss-locations
+2026-01-30T18:27:13.650+01:00  INFO 25520 --- [open-meteo-mcp] o.s.b.web.embedded.netty.NettyWebServer  : Netty started on port 8888 (http)
+2026-01-30T18:27:13.660+01:00  INFO 25520 --- [open-meteo-mcp] c.openmeteo.mcp.OpenMeteoMcpApplication  : Started OpenMeteoMcpApplication in 2.904 seconds
 ```
+
+**MCP Protocol Support**:
+- ✅ SSE Endpoint: `http://localhost:8888/sse`
+- ✅ MCP Inspector Web UI: `http://localhost:6274` (when running `npx @modelcontextprotocol/inspector`)
+- ✅ Protocol: HTTP/SSE (Server-Sent Events)
+- ✅ Auto-discovered components: 4 tools, 3 prompts, 4 resources
 
 ### Check Health
 

@@ -17,19 +17,48 @@ public class PromptService {
 
     /**
      * Ski trip weather planning prompt.
-     * <p>
-     * Name: ski-trip-weather
-     * </p>
-     * <p>
+     *
+     * Generates a guide for checking snow conditions and weather for ski trips to Swiss resorts.
+     *
      * Provides a workflow for assessing ski conditions combining
      * snow depth, weather forecasts, and safety considerations.
-     * </p>
      *
-     * @param resort Ski resort name (e.g., "Zermatt", "Verbier")
+     * WORKFLOW:
+     * 1. Identify the resort location
+     * 2. Check snow conditions with get_snow_conditions tool
+     * 3. Check general weather with get_weather tool
+     * 4. Assess ski conditions (Excellent/Good/Fair/Poor)
+     * 5. Provide recommendations and gear suggestions
+     *
+     * @param resort Ski resort name (e.g., "Zermatt", "Verbier", "St. Moritz")
      * @param dates  Travel dates (e.g., "this weekend", "January 10-15")
-     * @return Workflow instructions for AI assistant
+     * @return Workflow instructions for AI assistant with multi-step ski condition assessment
      */
-    @McpPrompt(name = "ski-trip-weather", description = "Ski trip weather planning with snow conditions and safety assessment")
+    @McpPrompt(name = "ski-trip-weather", description = """
+            Generates a guide for checking snow conditions and weather for ski trips to Swiss resorts.
+
+            Comprehensive workflow for assessing ski conditions combining snow depth, weather forecasts, and safety considerations.
+
+            WORKFLOW:
+            1. Identify the resort location (use search_location if needed)
+            2. Check snow conditions with get_snow_conditions tool
+               - Current snow depth (ideal: >50cm)
+               - Recent snowfall (fresh powder: >10cm in last 24h)
+               - Temperature (ideal: -10°C to -5°C)
+            3. Check general weather with get_weather tool
+               - Weather codes (reference weather://codes)
+               - Wind speed and gusts (concerning if >50 km/h)
+               - Visibility (important for safety)
+               - Precipitation probability
+            4. Assess ski conditions (Excellent/Good/Fair/Poor)
+            5. Provide recommendations:
+               - Best days to ski
+               - Gear recommendations
+               - Safety warnings
+               - Alternative dates if conditions are poor
+
+            RESOURCES: weather://codes, weather://swiss-locations, weather://parameters
+            """)
     public String skiTripWeatherPrompt(String resort, String dates) {
         String resortInfo = (resort != null && !resort.isBlank())
                 ? "for " + resort
@@ -107,20 +136,58 @@ public class PromptService {
 
     /**
      * Outdoor activity planning prompt.
-     * <p>
-     * Name: plan-outdoor-activity
-     * </p>
-     * <p>
+     *
+     * Generates a weather-aware outdoor activity planning workflow for hiking, cycling, and other outdoor pursuits.
+     *
      * Provides a workflow for weather-aware activity planning with
      * sensitivity assessments and safety recommendations.
-     * </p>
+     *
+     * ACTIVITY SENSITIVITY LEVELS:
+     * - High: Rock climbing, via ferrata, high-altitude hiking, water activities
+     * - Medium: Day hiking, road cycling, trail running, camping
+     * - Low: Walking, photography, mixed activities
+     *
+     * WORKFLOW:
+     * 1. Understand activity weather sensitivity
+     * 2. Get location coordinates
+     * 3. Check weather forecast with get_weather tool
+     * 4. Assess suitability (Ideal/Acceptable/Poor)
+     * 5. Provide recommendations and gear suggestions
      *
      * @param activity  Activity type (hiking, cycling, climbing, camping)
      * @param location  Location for activity
      * @param timeframe When to do the activity (this weekend, next week)
-     * @return Workflow instructions for AI assistant
+     * @return Workflow instructions for AI assistant with weather-aware activity assessment
      */
-    @McpPrompt(name = "plan-outdoor-activity", description = "Weather-aware outdoor activity planning with sensitivity assessment")
+    @McpPrompt(name = "plan-outdoor-activity", description = """
+            Generates a weather-aware outdoor activity planning workflow for hiking, cycling, and other outdoor pursuits.
+
+            ACTIVITY SENSITIVITY LEVELS:
+            - High: Rock climbing, via ferrata, high-altitude hiking (>2500m), water activities
+            - Medium: Day hiking (<2000m), road cycling, trail running, camping
+            - Low: Walking, urban sightseeing, photography, mixed activities
+
+            WORKFLOW:
+            1. Understand activity weather sensitivity
+            2. Get location coordinates (use search_location if needed)
+            3. Check weather forecast with get_weather tool
+               - Weather codes (reference weather://codes)
+               - Temperature range
+               - Precipitation probability
+               - Wind conditions
+               - UV index (for sun exposure activities)
+            4. Assess suitability:
+               - Ideal: Clear/partly cloudy, appropriate temps, low precipitation (<20%), moderate wind (<20 km/h)
+               - Acceptable: Light clouds/mist, tolerable temps, low precipitation (<40%), safe winds
+               - Poor: Rain/snow, extreme temps, high precipitation (>60%), strong winds (>30 km/h)
+            5. Provide recommendations:
+               - Best time windows (specific hours if available)
+               - Gear recommendations (rain gear, sun protection, layers)
+               - Safety considerations (lightning, heat/cold stress)
+               - Backup plans or alternative activities
+
+            RESOURCES: weather://codes, weather://parameters, weather://aqi-reference
+            """)
     public String planOutdoorActivityPrompt(String activity, String location, String timeframe) {
         String activityInfo = (activity != null && !activity.isBlank())
                 ? activity
@@ -233,20 +300,67 @@ public class PromptService {
 
     /**
      * Weather-aware travel planning prompt.
-     * <p>
-     * Name: weather-aware-travel
-     * </p>
-     * <p>
+     *
+     * Provides a comprehensive guide for travel planning with weather integration and packing recommendations.
+     *
      * Provides a workflow for travel planning with weather-based
      * packing recommendations and activity suggestions.
-     * </p>
+     *
+     * WORKFLOW:
+     * 1. Extract destination information and get coordinates
+     * 2. Determine travel timeframe and forecast period
+     * 3. Check destination weather with get_weather tool
+     * 4. Provide weather-aware advice with temperature and precipitation guidance
+     * 5. Suggest activities based on weather conditions
+     * 6. Provide detailed packing list recommendations
+     *
+     * PACKING GUIDANCE BY WEATHER:
+     * - Cold (<5°C): Warm layers, winter coat, gloves, hat
+     * - Cool (5-15°C): Light jacket, layers, long pants
+     * - Mild (15-20°C): Light layers, mix of short/long clothing
+     * - Warm (20-25°C): Summer clothes, sun protection
+     * - Hot (>25°C): Light clothing, sunscreen, hat, hydration
      *
      * @param destination Travel destination
-     * @param travelDates When traveling
+     * @param travelDates When traveling (e.g., 'next week', 'January 10-15')
      * @param tripType    Type of trip (day trip, weekend, business, vacation)
-     * @return Workflow instructions for AI assistant
+     * @return Workflow instructions for AI assistant with comprehensive travel planning guidance
      */
-    @McpPrompt(name = "weather-aware-travel", description = "Travel planning with weather integration and packing recommendations")
+    @McpPrompt(name = "weather-aware-travel", description = """
+            Provides a comprehensive guide for travel planning with weather integration.
+
+            Complete travel planning workflow with temperature-based packing recommendations, activity suggestions, and weather-aware travel advice.
+
+            WORKFLOW:
+            1. Extract destination information and get coordinates (use search_location if needed)
+               - Note elevation (affects temperature)
+               - Consider multiple locations if multi-city trip
+            2. Determine travel timeframe
+               - Forecast range based on travel dates
+               - Consider arrival/departure timing
+            3. Check destination weather with get_weather tool
+               - Temperature range (highs and lows)
+               - Precipitation probability by day
+               - Weather codes (reference weather://codes)
+               - Wind conditions
+               - UV index (for sunny destinations)
+            4. Provide weather-aware advice:
+               - Temperature Guidance:
+                 - Cold (<5°C): Warm layers, winter coat, gloves, hat
+                 - Cool (5-15°C): Light jacket, layers, long pants
+                 - Mild (15-20°C): Light layers, mix of short/long clothing
+                 - Warm (20-25°C): Summer clothes, sun protection
+                 - Hot (>25°C): Light clothing, sunscreen, hat, hydration
+               - Precipitation Packing:
+                 - Clear/Sunny (0-1): Sunglasses, sunscreen, light clothing
+                 - Partly Cloudy (2-3): Layers, light jacket, optional umbrella
+                 - Rainy (51-82): Waterproof jacket, umbrella, water-resistant shoes
+                 - Snowy (71-86): Winter coat, warm layers, waterproof boots
+            5. Suggest activities based on weather conditions
+            6. Provide detailed packing list recommendations
+
+            RESOURCES: weather://codes, weather://parameters
+            """)
     public String weatherAwareTravelPrompt(String destination, String travelDates, String tripType) {
         String destInfo = (destination != null && !destination.isBlank())
                 ? destination

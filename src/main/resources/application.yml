@@ -1,8 +1,9 @@
+server:
+  port: 8888
+
 spring:
   application:
     name: open-meteo-mcp
-  webflux:
-    base-path: /api
   ai:
     mcp:
       server:

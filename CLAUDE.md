@@ -6,8 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Open Meteo MCP (Java) is a **Model Context Protocol (MCP) server** providing weather, snow conditions, and air quality data via the [Open-Meteo API](https://open-meteo.com/). This is a **strategic migration** of the proven open-meteo-mcp (Python/FastMCP v3.2.0) to Java/Spring Boot for enterprise-grade architecture and Spring AI 2.0 integration.
 
-**Current Status**: ✅ v1.0.0-alpha - MCP Server Configuration Complete
-**Latest Update**: January 30, 2026 - MCP Server annotations implemented, REST API endpoints functional, Spring Boot server running
+**Current Status**: ✅ v1.0.0 - Production Ready - Enhanced MCP Descriptions Complete
+**Latest Update**: January 30, 2026 - Enhanced MCP descriptions with examples, features, use cases, and health guidelines. HTTP/SSE transport configured and tested. MCP Inspector integration complete.
 
 **Key Technologies:**
 
@@ -59,14 +59,14 @@ Open Meteo MCP (Java) is a **Model Context Protocol (MCP) server** providing wea
 
 # Package JAR and run
 ./mvnw package -DskipTests
-java -jar target/open-meteo-mcp-1.0.0-alpha.jar
+java -jar target/open-meteo-mcp-1.0.0.jar
 
 # Access endpoints
-curl http://localhost:8080/actuator/health
-curl http://localhost:8080/api/tools/search-location
+curl http://localhost:8888/actuator/health
+curl http://localhost:8888/sse
 ```
 
-**Current Server**: Running on port 9090 with MCP components initialized
+**Current Server**: Running on port 8888 with MCP components initialized. SSE endpoint at `/sse` for MCP protocol support.
 
 ### Code Quality
 
@@ -207,16 +207,36 @@ public class McpServerConfig {
 ✅ MCP Tools: search_location, get_weather, get_snow_conditions, get_air_quality
 ✅ MCP Prompts: ski-trip-weather, plan-outdoor-activity, weather-aware-travel
 ✅ MCP Resources: weather://codes, weather://parameters, weather://aqi-reference, weather://swiss-locations
-✅ Available via REST API at /api/tools/* endpoints
-✅ Spring Boot server running on port 9090
+✅ Available via MCP protocol (HTTP/SSE) at `/sse` endpoint
+✅ Available via REST API at `/api/tools/*` endpoints (optional)
+✅ Spring Boot server running on port 8888
+✅ Enhanced descriptions with examples, features, use cases, health guidelines
+✅ MCP Inspector integration tested and verified
 ```
 
-### Future Enhancement
+### MCP Protocol Implementation (v1.0.0 Complete)
 
-When Spring AI MCP server libraries become available, the framework can be extended to:
-- Expose tools/prompts/resources via MCP protocol (SSE/stdio/WebSocket)
-- Maintain backward compatibility with REST API endpoints
-- Enable direct MCP client connections
+✅ **Full MCP Protocol Support**:
+- HTTP/SSE transport implemented and tested
+- Auto-discovered @McpTool, @McpPrompt, @McpResource annotations
+- Enhanced multiline descriptions with comprehensive information
+- Integrated with MCP Inspector web UI
+- Server-Sent Events streaming protocol
+
+**Enhanced Description Features**:
+- **Tools**: Examples, features, use cases, return types
+- **Prompts**: Multi-step workflows, parameters, expected outcomes
+- **Resources**: Data categories, use cases, content descriptions
+- **Health Guidelines**: EU/US AQI scales, UV index levels, pollen information
+
+**MCP Inspector Integration**:
+```bash
+# Start the MCP Inspector
+npx @modelcontextprotocol/inspector http://localhost:8888/sse
+
+# Access web UI at: http://localhost:6274
+# Discover and test all tools, prompts, and resources
+```
 
 ## Core Components
 
@@ -861,9 +881,11 @@ See CONSTITUTION.md Section 15 for full details.
 
 ## Project Status
 
-**Current Version**: 1.0.0 (Phase 5 Complete - ✅ RELEASED)
+**Current Version**: 1.0.0 (Phase 6 Complete - ✅ RELEASED WITH ENHANCED DESCRIPTIONS)
 **Release Date**: January 30, 2026
 **Status**: Production Ready ✅
+**MCP Protocol**: HTTP/SSE implemented and tested ✅
+**Descriptions**: Enhanced with examples, features, use cases, health guidelines ✅
 **Test Coverage**: 81% overall (target: ≥80%) - **GOAL EXCEEDED!** ✅
 **Tests Passing**: 279/279 (100%)
 **Git Tag**: `v1.0.0`
