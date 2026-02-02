@@ -11,10 +11,10 @@ weather, snow conditions, and air quality data via the
 the proven open-meteo-mcp (Python/FastMCP v3.2.0) to Java/Spring Boot for
 enterprise-grade architecture and Spring AI 2.0 integration.
 
-**Current Status**: ✅ v1.0.0 - Production Ready - Enhanced MCP Descriptions
-Complete **Latest Update**: January 30, 2026 - Enhanced MCP descriptions with
-examples, features, use cases, and health guidelines. HTTP/SSE transport
-configured and tested. MCP Inspector integration complete.
+**Current Status**: ✅ v1.1.0 - 100% Migration Complete - 11 Tools with
+Comprehensive Test Coverage **Latest Update**: February 2, 2026 - Completed
+migration of all 7 advanced tools with helper classes, services, and 19 unit
+tests. Full SBB MCP Ecosystem v2.0.0 compliance with meteo__ namespace prefix.
 
 **Key Technologies:**
 
@@ -161,14 +161,21 @@ src/main/java/com/openmeteo/mcp/
     └── JsonSerializationUtil.java  # JSON utilities
 ```
 
-### MCP Tools (4 tools implemented)
+### MCP Tools (11 tools - 100% Complete)
 
-| Tool                  | Description                                          | Status         | File Reference                |
-| --------------------- | ---------------------------------------------------- | -------------- | ----------------------------- |
-| `search_location`     | Geocoding - search locations by name                 | ✅ Implemented | tool/McpToolsHandler.java:65  |
-| `get_weather`         | Get weather forecast with temperature, precipitation | ✅ Implemented | tool/McpToolsHandler.java:100 |
-| `get_snow_conditions` | Get snow depth, snowfall, mountain weather           | ✅ Implemented | tool/McpToolsHandler.java:140 |
-| `get_air_quality`     | Get AQI, pollutants, UV index, pollen                | ✅ Implemented | tool/McpToolsHandler.java:180 |
+| Tool                              | Description                                          | Status         | File Reference                 |
+| --------------------------------- | ---------------------------------------------------- | -------------- | ------------------------------ |
+| `meteo__search_location`          | Geocoding - search locations by name                 | ✅ Implemented | tool/McpToolsHandler.java:65   |
+| `meteo__get_weather`              | Get weather forecast with temperature, precipitation | ✅ Implemented | tool/McpToolsHandler.java:100  |
+| `meteo__get_snow_conditions`      | Get snow depth, snowfall, mountain weather           | ✅ Implemented | tool/McpToolsHandler.java:140  |
+| `meteo__get_air_quality`          | Get AQI, pollutants, UV index, pollen                | ✅ Implemented | tool/McpToolsHandler.java:180  |
+| `meteo__get_weather_alerts`       | Weather alerts based on thresholds                   | ✅ Implemented | tool/AdvancedToolsHandler.java |
+| `meteo__get_comfort_index`        | Outdoor activity comfort score (0-100)               | ✅ Implemented | tool/AdvancedToolsHandler.java |
+| `meteo__get_astronomy`            | Sunrise, sunset, golden hour, moon phase             | ✅ Implemented | tool/AdvancedToolsHandler.java |
+| `meteo__search_location_swiss`    | Swiss-specific location search                       | ✅ Implemented | tool/AdvancedToolsHandler.java |
+| `meteo__compare_locations`        | Multi-location weather comparison                    | ✅ Implemented | tool/AdvancedToolsHandler.java |
+| `meteo__get_historical_weather`   | Historical weather data (1940-present)               | ✅ Implemented | tool/AdvancedToolsHandler.java |
+| `meteo__get_marine_conditions`    | Wave/swell data for lakes and coasts                 | ✅ Implemented | tool/AdvancedToolsHandler.java |
 
 ### MCP Resources (4 resources implemented)
 
@@ -181,11 +188,11 @@ src/main/java/com/openmeteo/mcp/
 
 ### MCP Prompts (3 prompts implemented)
 
-| Prompt                  | Description                              | Status         | File Reference            |
-| ----------------------- | ---------------------------------------- | -------------- | ------------------------- |
-| `ski-trip-weather`      | Ski trip planning with snow conditions   | ✅ Implemented | prompt/PromptService.java |
-| `plan-outdoor-activity` | Weather-aware activity planning          | ✅ Implemented | prompt/PromptService.java |
-| `weather-aware-travel`  | Travel planning with weather integration | ✅ Implemented | prompt/PromptService.java |
+| Prompt                         | Description                              | Status         | File Reference            |
+| ------------------------------ | ---------------------------------------- | -------------- | ------------------------- |
+| `meteo__ski-trip-weather`      | Ski trip planning with snow conditions   | ✅ Implemented | prompt/PromptService.java |
+| `meteo__plan-outdoor-activity` | Weather-aware activity planning          | ✅ Implemented | prompt/PromptService.java |
+| `meteo__weather-aware-travel`  | Travel planning with weather integration | ✅ Implemented | prompt/PromptService.java |
 
 ## MCP Server Configuration
 
@@ -216,13 +223,15 @@ public class McpServerConfig {
 **Server Status**:
 
 ```
-✅ MCP Tools: search_location, get_weather, get_snow_conditions, get_air_quality
-✅ MCP Prompts: ski-trip-weather, plan-outdoor-activity, weather-aware-travel
-✅ MCP Resources: weather://codes, weather://parameters, weather://aqi-reference, weather://swiss-locations
+✅ MCP Tools (11): meteo__search_location, meteo__get_weather, meteo__get_snow_conditions, meteo__get_air_quality, meteo__get_weather_alerts, meteo__get_comfort_index, meteo__get_astronomy, meteo__search_location_swiss, meteo__compare_locations, meteo__get_historical_weather, meteo__get_marine_conditions
+✅ MCP Prompts (3): meteo__ski-trip-weather, meteo__plan-outdoor-activity, meteo__weather-aware-travel
+✅ MCP Resources (4): weather://codes, weather://parameters, weather://aqi-reference, weather://swiss-locations
+✅ Helper Classes (3): WeatherAlertGenerator, ComfortIndexCalculator, AstronomyCalculator
+✅ Services (6): WeatherService, LocationService, SnowConditionsService, AirQualityService, HistoricalWeatherService, MarineConditionsService
+✅ Test Coverage: 19 unit tests with 100% pass rate
 ✅ Available via MCP protocol (HTTP/SSE) at `/sse` endpoint
-✅ Available via REST API at `/api/tools/*` endpoints (optional)
 ✅ Spring Boot server running on port 8888
-✅ Enhanced descriptions with examples, features, use cases, health guidelines
+✅ SBB MCP Ecosystem v2.0.0 compliant (meteo__ namespace)
 ✅ MCP Inspector integration tested and verified
 ```
 

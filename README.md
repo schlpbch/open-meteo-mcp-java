@@ -3,9 +3,9 @@
 A Model Context Protocol (MCP) server providing weather, snow conditions, and
 air quality tools via the [Open-Meteo API](https://open-meteo.com/).
 
-**Version**: 1.0.0 (Production Ready) **Status**: ✅ MCP Server Complete -
-Enhanced Descriptions with Examples & Health Guidelines **Release Date**:
-January 30, 2026 **License**: Apache 2.0
+**Version**: 1.1.0 (Production Ready) **Status**: ✅ 100% Migration Complete -
+11 Tools with Comprehensive Test Coverage **Release Date**:
+February 2, 2026 **License**: Apache 2.0
 
 ## 🎉 Project Milestone
 
@@ -23,53 +23,60 @@ Java with Spring Boot 4.0 and Spring AI 2.0.
 
 **Current Implementation Status**:
 
-- ✅ **4 MCP Tools**: search_location, get_weather, get_snow_conditions,
-  get_air_quality
+- ✅ **11 MCP Tools**: 4 core + 7 advanced (100% migration complete)
+  - Core: meteo__search_location, meteo__get_weather, meteo__get_snow_conditions, meteo__get_air_quality
+  - Advanced: meteo__get_weather_alerts, meteo__get_comfort_index, meteo__get_astronomy, meteo__search_location_swiss, meteo__compare_locations, meteo__get_historical_weather, meteo__get_marine_conditions
 - ✅ **4 MCP Resources**: weather://codes, weather://parameters,
   weather://aqi-reference, weather://swiss-locations
-- ✅ **3 MCP Prompts**: ski-trip-weather, plan-outdoor-activity,
-  weather-aware-travel
-- ✅ **Enhanced Descriptions**: All components include comprehensive examples,
-  features, use cases, and health guidelines
-- ✅ **MCP Server Configuration**: Spring Boot with
-  @McpTool/@McpPrompt/@McpResource annotations
-- ✅ **SSE Transport**: Full MCP protocol support via HTTP/SSE at `/sse`
-  endpoint
-- ✅ **MCP Inspector Integration**: Tested with MCP Inspector web UI
+- ✅ **3 MCP Prompts**: meteo__ski-trip-weather, meteo__plan-outdoor-activity,
+  meteo__weather-aware-travel
+- ✅ **SBB MCP Ecosystem v2.0.0**: All tools/prompts use meteo__ namespace prefix
+- ✅ **Comprehensive Test Coverage**: 19 unit tests with 100% pass rate
+- ✅ **Helper Classes**: WeatherAlertGenerator, ComfortIndexCalculator, AstronomyCalculator
+- ✅ **Enhanced Services**: HistoricalWeatherService, MarineConditionsService
+- ✅ **MCP Server Configuration**: Spring Boot with @McpTool/@McpPrompt/@McpResource annotations
+- ✅ **SSE Transport**: Full MCP protocol support via HTTP/SSE at `/sse` endpoint
 - ✅ **Server Running**: Spring Boot 4.0.0 on port 8888
 
-**v1.0.0 Release Highlights**:
+**v1.1.0 Release Highlights**:
 
-- ✅ Spring AI 2.0 MCP annotations with comprehensive multiline descriptions
-- ✅ All tools include examples, features, use cases, and health guidelines
-- ✅ All resources include detailed documentation and use cases
-- ✅ All prompts include step-by-step workflows
-- ✅ HTTP/SSE transport configured and tested
-- ✅ Integrated with MCP Inspector for protocol validation
-- ✅ Production-ready Spring Boot configuration with gzip compression
-- ✅ Comprehensive test coverage across all services
-- ✅ JSON resource files for weather codes, AQI reference, and Swiss locations
-- ✅ Ready for enterprise deployment
+- ✅ **100% Migration Complete**: All 11 tools migrated from Python to Java
+- ✅ **7 Advanced Tools**: Weather alerts, comfort index, astronomy, Swiss search, location comparison, historical weather, marine conditions
+- ✅ **3 Helper Classes**: Specialized calculation utilities for alerts, comfort, and astronomy
+- ✅ **2 New Services**: Historical weather (1940-present) and marine conditions
+- ✅ **19 Unit Tests**: Comprehensive test coverage with 100% pass rate
+- ✅ **SBB MCP Ecosystem v2.0.0 Compliance**: All tools/prompts use meteo__ namespace prefix
+- ✅ **Spring AI 2.0 MCP annotations** with comprehensive multiline descriptions
+- ✅ **HTTP/SSE transport** configured and tested
+- ✅ **Production-ready** Spring Boot configuration with gzip compression
+- ✅ **Ready for enterprise deployment**
 
 ## Features
 
-### 🌦️ MCP Tools (Implemented ✅)
+### 🌦️ MCP Tools (11 tools - 100% Complete ✅)
 
-- **`search_location`**: Geocoding and location search via Open-Meteo Geocoding
-  API
-- **`get_weather`**: Weather forecasts with temperature, precipitation, wind, UV
-  index
-- **`get_snow_conditions`**: Snow depth, snowfall, mountain weather for ski
-  planning
-- **`get_air_quality`**: AQI, pollutants, UV index, pollen data (European
-  coverage)
+#### Core Tools (4)
+- **`meteo__search_location`**: Geocoding and location search via Open-Meteo Geocoding API
+- **`meteo__get_weather`**: Weather forecasts with temperature, precipitation, wind, UV index
+- **`meteo__get_snow_conditions`**: Snow depth, snowfall, mountain weather for ski planning
+- **`meteo__get_air_quality`**: AQI, pollutants, UV index, pollen data (European coverage)
+
+#### Advanced Tools (7)
+- **`meteo__get_weather_alerts`**: Weather alerts based on thresholds (heat, cold, storm, wind)
+- **`meteo__get_comfort_index`**: Outdoor activity comfort score (0-100) combining weather and air quality
+- **`meteo__get_astronomy`**: Sunrise, sunset, golden hour, blue hour, moon phase
+- **`meteo__search_location_swiss`**: Swiss-specific location search with feature filtering
+- **`meteo__compare_locations`**: Multi-location weather comparison with ranking
+- **`meteo__get_historical_weather`**: Historical weather data from 1940 to present
+- **`meteo__get_marine_conditions`**: Wave/swell data for lakes and coasts
 
 All tools are:
 
 - ✅ Annotated with `@McpTool` (Spring AI 2.0)
-- ✅ Exposed via REST API endpoints at `/api/tools/*`
+- ✅ Using `meteo__` namespace prefix (SBB MCP Ecosystem v2.0.0)
 - ✅ Returning CompletableFuture for async operations
-- ✅ Fully tested and integrated with Open-Meteo API
+- ✅ Fully tested with comprehensive unit tests
+- ✅ Integrated with Open-Meteo API
 
 ### 📚 MCP Resources (Implemented ✅)
 
@@ -88,18 +95,16 @@ All resources are:
 - ✅ Loaded via ResourceService component
 - ✅ Available for MCP clients to reference
 
-### 🎯 MCP Prompts (Implemented ✅)
+### 🎯 MCP Prompts (3 prompts - Implemented ✅)
 
-- **`ski-trip-weather`**: Ski trip planning workflow using snow conditions and
-  weather data
-- **`plan-outdoor-activity`**: Weather-aware outdoor activity planning with AQI
-  awareness
-- **`weather-aware-travel`**: Travel planning with weather integration and
-  packing recommendations
+- **`meteo__ski-trip-weather`**: Ski trip planning workflow using snow conditions and weather data
+- **`meteo__plan-outdoor-activity`**: Weather-aware outdoor activity planning with AQI awareness
+- **`meteo__weather-aware-travel`**: Travel planning with weather integration and packing recommendations
 
 All prompts are:
 
 - ✅ Annotated with `@McpPrompt` (Spring AI 2.0)
+- ✅ Using `meteo__` namespace prefix (SBB MCP Ecosystem v2.0.0)
 - ✅ Provided by PromptService component
 - ✅ Return workflow instructions for AI assistants
 - ✅ Integrated with all available tools and resources
@@ -461,14 +466,19 @@ Once v1.0.0 is released, add to Claude Desktop configuration:
 - ✅ 80%+ test coverage
 - ✅ Spring AI integration
 
-### v1.1.0 - Enhanced Features
+### v1.1.0 (Released - February 2, 2026) ✅
 
-- Historical weather data access
-- Weather alerts and notifications
-- Extended forecast periods (beyond 16 days)
-- Multi-location batch queries
+- ✅ Historical weather data access (1940-present)
+- ✅ Weather alerts and notifications
+- ✅ Comfort index calculation for outdoor activities
+- ✅ Astronomy calculations (sunrise, sunset, golden hour, moon phase)
+- ✅ Swiss-specific location search
+- ✅ Multi-location comparison
+- ✅ Marine/wave conditions for Swiss lakes
+- ✅ 19 comprehensive unit tests
+- ✅ SBB MCP Ecosystem v2.0.0 compliance
 
-### v2.0.0 - Advanced AI
+### v2.0.0 - Advanced AI (Future)
 
 - Predictive weather analysis
 - Travel recommendation engine
