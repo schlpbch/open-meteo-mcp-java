@@ -13,9 +13,9 @@
 
     <groupId>com.openmeteo</groupId>
     <artifactId>open-meteo-mcp</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <name>Open Meteo MCP Server (Java)</name>
-    <description>Model Context Protocol server providing weather, snow conditions, and air quality tools via Open-Meteo API</description>
+    <description>Model Context Protocol server providing weather, snow conditions, and air quality tools via Open-Meteo API with conversational AI interface</description>
 
     <properties>
         <java.version>25</java.version>
