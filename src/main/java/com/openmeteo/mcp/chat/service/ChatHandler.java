@@ -2,6 +2,7 @@ package com.openmeteo.mcp.chat.service;
 
 import com.openmeteo.mcp.chat.exception.ChatException;
 import com.openmeteo.mcp.chat.model.*;
+import com.openmeteo.mcp.chat.observability.ChatMetrics;
 import com.openmeteo.mcp.chat.rag.ContextEnrichmentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,15 +30,18 @@ public class ChatHandler {
     private final ChatModel chatModel;
     private final ConversationMemoryService memoryService;
     private final ContextEnrichmentService contextEnrichment;
+    private final ChatMetrics metrics;
     
     public ChatHandler(
         ChatModel chatModel,
         ConversationMemoryService memoryService,
-        ContextEnrichmentService contextEnrichment
+        ContextEnrichmentService contextEnrichment,
+        ChatMetrics metrics
     ) {
         this.chatModel = chatModel;
         this.memoryService = memoryService;
         this.contextEnrichment = contextEnrichment;
+        this.metrics = metrics;
     }
     
     /**
@@ -49,6 +53,7 @@ public class ChatHandler {
      */
     public CompletableFuture<AiResponse> chat(String sessionId, String userMessage) {
         log.info("Processing chat message for session: {}", sessionId);
+        metrics.recordRequest();
         
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -57,6 +62,7 @@ public class ChatHandler {
                     .join()
                     .orElseGet(() -> {
                         log.info("Creating new session: {}", sessionId);
+                        metrics.incrementActiveSessions();
                         var newSession = ChatSession.create(sessionId);
                         memoryService.saveSession(newSession).join();
                         return newSession;
@@ -91,6 +97,7 @@ public class ChatHandler {
                 
                 // Calculate latency
                 var latencyMs = endTime.toEpochMilli() - startTime.toEpochMilli();
+                metrics.recordResponseTime(latencyMs);
                 
                 // Save assistant response
                 var assistantMsg = Message.assistant(sessionId, response);
@@ -107,10 +114,12 @@ public class ChatHandler {
                 metadata.put("sessionId", sessionId);
                 
                 log.info("Chat response generated in {}ms for session: {}", latencyMs, sessionId);
+                metrics.recordSuccess();
                 return AiResponse.of(response, metadata);
                 
             } catch (Exception e) {
                 log.error("Error processing chat message for session: {}", sessionId, e);
+                metrics.recordFailure();
                 throw new ChatException("Failed to process chat message", e);
             }
         });
