@@ -8,6 +8,7 @@ import com.openmeteo.mcp.service.WeatherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springaicommunity.mcp.annotation.McpTool;
+import org.springaicommunity.mcp.annotation.McpToolParam;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -38,8 +39,7 @@ public class McpToolsHandler {
             LocationService locationService,
             WeatherService weatherService,
             SnowConditionsService snowConditionsService,
-            AirQualityService airQualityService
-    ) {
+            AirQualityService airQualityService) {
         this.locationService = locationService;
         this.weatherService = weatherService;
         this.snowConditionsService = snowConditionsService;
@@ -77,15 +77,19 @@ public class McpToolsHandler {
      * - Need to find coordinates for a city, mountain, or landmark
      * - Want to discover locations in a specific country
      *
-     * @param name     Location name to search for (e.g., "Zurich", "Eiger", "Lake Lucerne")
+     * @param name     Location name to search for (e.g., "Zurich", "Eiger", "Lake
+     *                 Lucerne")
      * @param count    Number of results to return (1-100, default: 10)
-     * @param language Language for results (default: 'en', options: 'de', 'fr', 'it', etc.)
-     * @param country  Optional country code filter (e.g., 'CH' for Switzerland, 'DE' for Germany)
+     * @param language Language for results (default: 'en', options: 'de', 'fr',
+     *                 'it', etc.)
+     * @param country  Optional country code filter (e.g., 'CH' for Switzerland,
+     *                 'DE' for Germany)
      * @return CompletableFuture with GeocodingResponse containing:
-     *         - results (list): List of matching locations with name, latitude, longitude,
-     *           elevation (meters), country, timezone, population
+     *         - results (list): List of matching locations with name, latitude,
+     *         longitude,
+     *         elevation (meters), country, timezone, population
      */
-    @McpTool(description = """
+    @McpTool(name = "search_location", description = """
             Provides geocoding search: Searches for locations by name to get coordinates for weather queries.
 
             Convert location names to coordinates using fuzzy search. Essential for natural language weather queries like "weather in Zurich" instead of requiring latitude/longitude coordinates.
@@ -115,11 +119,10 @@ public class McpToolsHandler {
             RETURNS: List of locations with name, latitude, longitude, elevation (meters), country, timezone, population
             """)
     public CompletableFuture<GeocodingResponse> searchLocation(
-            String name,
-            int count,
-            String language,
-            String country
-    ) {
+            @McpToolParam(description = "Location name to search for (e.g., \"Zurich\", \"Eiger\", \"Lake Lucerne\")") String name,
+            @McpToolParam(description = "Number of results to return (1-100, default: 10)") int count,
+            @McpToolParam(description = "Language for results (default: 'en', options: 'de', 'fr', 'it', etc.)") String language,
+            @McpToolParam(description = "Optional country code filter (e.g., 'CH' for Switzerland, 'DE' for Germany)") String country) {
         log.info("Tool invoked: search_location(name={}, count={}, language={}, country={})",
                 name, count, language, country != null && !country.isEmpty() ? country : "none");
 
@@ -154,7 +157,8 @@ public class McpToolsHandler {
      *
      * Retrieves weather forecast for a location (temperature, rain, sunshine).
      *
-     * Get current weather conditions for any location in Switzerland (or worldwide).
+     * Get current weather conditions for any location in Switzerland (or
+     * worldwide).
      *
      * EXAMPLES:
      * - "What's the weather in Zürich?" → latitude: 47.3769, longitude: 8.5417
@@ -178,14 +182,17 @@ public class McpToolsHandler {
      * - Checking if weather affects travel
      * - Combined with journey planning
      *
-     * @param latitude      Latitude in decimal degrees (e.g., 46.9479 for Bern)
-     * @param longitude     Longitude in decimal degrees (e.g., 7.4474 for Bern)
-     * @param forecastDays  Number of forecast days (1-16, default: 7)
-     * @param timezone      Timezone for timestamps (e.g., 'Europe/Zurich', default: 'UTC')
+     * @param latitude     Latitude in decimal degrees (e.g., 46.9479 for Bern)
+     * @param longitude    Longitude in decimal degrees (e.g., 7.4474 for Bern)
+     * @param forecastDays Number of forecast days (1-16, default: 7)
+     * @param timezone     Timezone for timestamps (e.g., 'Europe/Zurich', default:
+     *                     'UTC')
      * @return CompletableFuture with weather data containing:
-     *         - current (map): Current weather with temperature, weather_code, wind_speed, humidity
+     *         - current (map): Current weather with temperature, weather_code,
+     *         wind_speed, humidity
      *         - hourly (list | null): Hourly forecasts if available
-     *         - daily (list): Daily forecasts with min/max temps, precipitation, weather codes
+     *         - daily (list): Daily forecasts with min/max temps, precipitation,
+     *         weather codes
      *         - location (map): Location metadata with coordinates and timezone
      */
     @McpTool(description = """
@@ -218,11 +225,10 @@ public class McpToolsHandler {
             RETURNS: Weather data with current conditions, hourly forecasts, daily summaries, and location metadata
             """)
     public CompletableFuture<Map<String, Object>> getWeather(
-            double latitude,
-            double longitude,
-            int forecastDays,
-            String timezone
-    ) {
+            @McpToolParam(description = "Latitude in decimal degrees (e.g., 46.9479 for Bern)") double latitude,
+            @McpToolParam(description = "Longitude in decimal degrees (e.g., 7.4474 for Bern)") double longitude,
+            @McpToolParam(description = "Number of forecast days (1-16, default: 7)") int forecastDays,
+            @McpToolParam(description = "Timezone for timestamps (e.g., 'Europe/Zurich', default: 'UTC')") String timezone) {
         log.info("Tool invoked: get_weather(lat={}, lon={}, days={}, timezone={})",
                 latitude, longitude, forecastDays, timezone);
 
@@ -237,8 +243,7 @@ public class McpToolsHandler {
         }
 
         return weatherService.getWeatherWithInterpretation(
-                latitude, longitude, forecastDays, true, timezone
-        )
+                latitude, longitude, forecastDays, true, timezone)
                 .whenComplete((result, ex) -> {
                     if (ex != null) {
                         log.error("Tool error: get_weather failed", ex);
@@ -273,14 +278,15 @@ public class McpToolsHandler {
      * - Mountain weather forecasts
      * - Avalanche risk assessment (via snow depth trends)
      *
-     * @param latitude      Latitude in decimal degrees (e.g., 45.9763 for Zermatt)
-     * @param longitude     Longitude in decimal degrees (e.g., 7.6586 for Zermatt)
-     * @param forecastDays  Number of forecast days (1-16, default: 7)
-     * @param timezone      Timezone for timestamps (default: 'Europe/Zurich')
+     * @param latitude     Latitude in decimal degrees (e.g., 45.9763 for Zermatt)
+     * @param longitude    Longitude in decimal degrees (e.g., 7.6586 for Zermatt)
+     * @param forecastDays Number of forecast days (1-16, default: 7)
+     * @param timezone     Timezone for timestamps (default: 'Europe/Zurich')
      * @return CompletableFuture with snow data containing:
      *         - current (map): Current snow depth and recent snowfall
      *         - hourly (list | null): Hourly snow data if available
-     *         - daily (list): Daily snow forecasts with accumulation and temperature
+     *         - daily (list): Daily snow forecasts with accumulation and
+     *         temperature
      *         - location (map): Mountain location metadata
      */
     @McpTool(description = """
@@ -314,11 +320,10 @@ public class McpToolsHandler {
             - Poor: Insufficient snow, warm temps (>5°C), poor weather
             """)
     public CompletableFuture<Map<String, Object>> getSnowConditions(
-            double latitude,
-            double longitude,
-            int forecastDays,
-            String timezone
-    ) {
+            @McpToolParam(description = "Latitude in decimal degrees (e.g., 45.9763 for Zermatt)", required = true) double latitude,
+            @McpToolParam(description = "Longitude in decimal degrees (e.g., 7.6586 for Zermatt)", required = true) double longitude,
+            @McpToolParam(description = "Number of forecast days (1-16, default: 7)") int forecastDays,
+            @McpToolParam(description = "Timezone for timestamps (e.g., 'Europe/Zurich', default: 'UTC')") String timezone) {
         log.info("Tool invoked: get_snow_conditions(lat={}, lon={}, days={}, timezone={})",
                 latitude, longitude, forecastDays, timezone);
 
@@ -333,8 +338,7 @@ public class McpToolsHandler {
         }
 
         return snowConditionsService.getSnowConditionsWithAssessment(
-                latitude, longitude, forecastDays, true, timezone
-        )
+                latitude, longitude, forecastDays, true, timezone)
                 .whenComplete((result, ex) -> {
                     if (ex != null) {
                         log.error("Tool error: get_snow_conditions failed", ex);
@@ -348,7 +352,8 @@ public class McpToolsHandler {
     /**
      * MCP Tool: get_air_quality
      *
-     * Retrieves air quality forecast including AQI, pollutants, UV index, and pollen data.
+     * Retrieves air quality forecast including AQI, pollutants, UV index, and
+     * pollen data.
      *
      * Monitor air quality for health-aware outdoor planning, allergy management,
      * and UV exposure assessment. Provides both European and US Air Quality Indices
@@ -367,9 +372,12 @@ public class McpToolsHandler {
      * - Pollen data (Europe only): alder, birch, grass, mugwort, olive, ragweed
      *
      * HEALTH GUIDELINES:
-     * - European AQI: 0-20 (Good), 20-40 (Fair), 40-60 (Moderate), 60-80 (Poor), 80-100 (Very Poor), 100+ (Extremely Poor)
-     * - US AQI: 0-50 (Good), 51-100 (Moderate), 101-150 (Unhealthy for Sensitive), 151-200 (Unhealthy), 201-300 (Very Unhealthy), 301-500 (Hazardous)
-     * - UV Index: 0-2 (Low), 3-5 (Moderate), 6-7 (High), 8-10 (Very High), 11+ (Extreme)
+     * - European AQI: 0-20 (Good), 20-40 (Fair), 40-60 (Moderate), 60-80 (Poor),
+     * 80-100 (Very Poor), 100+ (Extremely Poor)
+     * - US AQI: 0-50 (Good), 51-100 (Moderate), 101-150 (Unhealthy for Sensitive),
+     * 151-200 (Unhealthy), 201-300 (Very Unhealthy), 301-500 (Hazardous)
+     * - UV Index: 0-2 (Low), 3-5 (Moderate), 6-7 (High), 8-10 (Very High), 11+
+     * (Extreme)
      *
      * USE THIS TOOL WHEN:
      * - Planning outdoor activities for people with asthma/allergies
@@ -383,9 +391,11 @@ public class McpToolsHandler {
      * @param includePollen Include pollen data (default: true, Europe only)
      * @param timezone      Timezone for timestamps (default: 'auto')
      * @return CompletableFuture with air quality data containing:
-     *         - current (map): Current AQI, pollutants (PM10, PM2.5, O3, NO2, SO2, CO), UV index
+     *         - current (map): Current AQI, pollutants (PM10, PM2.5, O3, NO2, SO2,
+     *         CO), UV index
      *         - hourly (list): Hourly air quality forecasts
-     *         - pollen (map | null): Pollen data if includePollen=true and location is in Europe
+     *         - pollen (map | null): Pollen data if includePollen=true and location
+     *         is in Europe
      *         - location (map): Location metadata
      */
     @McpTool(description = """
@@ -417,12 +427,11 @@ public class McpToolsHandler {
             - Monitoring UV exposure for sun safety
             """)
     public CompletableFuture<Map<String, Object>> getAirQuality(
-            double latitude,
-            double longitude,
-            int forecastDays,
-            boolean includePollen,
-            String timezone
-    ) {
+            @McpToolParam(description = "Latitude in decimal degrees", required = true) double latitude,
+            @McpToolParam(description = "Longitude in decimal degrees", required = true) double longitude,
+            @McpToolParam(description = "Number of forecast days (1-5, default: 5)") int forecastDays,
+            @McpToolParam(description = "Include pollen data (default: true, Europe only)") boolean includePollen,
+            @McpToolParam(description = "Timezone for timestamps (e.g., 'Europe/Zurich', default: 'auto')") String timezone) {
         log.info("Tool invoked: get_air_quality(lat={}, lon={}, days={}, pollen={}, timezone={})",
                 latitude, longitude, forecastDays, includePollen, timezone);
 
@@ -437,8 +446,7 @@ public class McpToolsHandler {
         }
 
         return airQualityService.getAirQualityWithInterpretation(
-                latitude, longitude, forecastDays, includePollen, timezone
-        )
+                latitude, longitude, forecastDays, includePollen, timezone)
                 .whenComplete((result, ex) -> {
                     if (ex != null) {
                         log.error("Tool error: get_air_quality failed", ex);
