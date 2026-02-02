@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # Redis for conversation memory
+  redis:
+    image: redis:7-alpine
+    container_name: openmeteo-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - openmeteo-network
+
+  # Open-Meteo MCP Server with ChatHandler
+  openmeteo-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: openmeteo-mcp
+    ports:
+      - "8080:8080"
+    environment:
+      # ChatHandler Configuration
+      - OPENMETEO_CHAT_ENABLED=true
+      - OPENMETEO_CHAT_MEMORY_TYPE=redis
+      - OPENMETEO_CHAT_MEMORY_SESSION_TTL=1440
+      
+      # Redis Configuration
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PORT=6379
+      
+      # Azure OpenAI Configuration
+      - AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY}
+      - AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
+      - SPRING_AI_AZURE_OPENAI_CHAT_OPTIONS_DEPLOYMENT_NAME=gpt-4
+      
+      # Logging
+      - LOGGING_LEVEL_COM_OPENMETEO_MCP_CHAT=INFO
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - openmeteo-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  redis-data:
+    driver: local
+
+networks:
+  openmeteo-network:
+    driver: bridge

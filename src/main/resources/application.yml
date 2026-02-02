@@ -9,6 +9,40 @@ spring:
       server:
         type: SYNC
         protocol: SSE
+    # Azure OpenAI (Primary Provider for ChatHandler)
+    azure:
+      openai:
+        api-key: ${AZURE_OPENAI_KEY:}
+        endpoint: ${AZURE_OPENAI_ENDPOINT:}
+        deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4}
+        chat:
+          options:
+            model: gpt-4
+            temperature: 0.7
+            max-tokens: 2000
+    # OpenAI (Fallback Provider)
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      chat:
+        options:
+          model: gpt-4-turbo
+          temperature: 0.7
+          max-tokens: 2000
+    # Anthropic Claude (Fallback Provider)
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY:}
+      chat:
+        options:
+          model: claude-3-5-sonnet-20241022
+          temperature: 0.7
+          max-tokens: 2000
+  # Redis for Conversation Memory
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2000ms
   main:
     banner-mode: 'off'
 
@@ -20,6 +54,23 @@ openmeteo:
     marine-url: https://marine-api.open-meteo.com/v1
     timeout-seconds: 30
     gzip-enabled: true
+  # ChatHandler Configuration (Phase 4.1)
+  chat:
+    enabled: ${CHAT_ENABLED:false}  # Disabled by default until Phase 4.1 complete
+    default-provider: azure-openai
+    fallback-providers: openai,anthropic
+    timeout-seconds: 30
+    max-tokens: 2000
+    temperature: 0.7
+    # Azure OpenAI specific settings
+    azure:
+      retry-attempts: 3
+      retry-delay-ms: 1000
+    # Conversation memory settings
+    memory:
+      type: ${MEMORY_TYPE:inmemory}  # inmemory or redis
+      max-messages-per-session: 50
+      session-ttl-minutes: 60
 
 logging:
   level:

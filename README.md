@@ -104,7 +104,6 @@ All resources are:
 All prompts are:
 
 - ✅ Annotated with `@McpPrompt` (Spring AI 2.0)
-- ✅ Using `meteo__` namespace prefix (SBB MCP Ecosystem v2.0.0)
 - ✅ Provided by PromptService component
 - ✅ Return workflow instructions for AI assistants
 - ✅ Integrated with all available tools and resources
