@@ -317,7 +317,6 @@ sequenceDiagram
     Memory->>Redis: SET session:sessionId
     Redis-->>Memory: OK
     deactivate Memory
-    deactivate Memory
 
     Chat-->>ChatAPI: Chat Response
     deactivate Chat
