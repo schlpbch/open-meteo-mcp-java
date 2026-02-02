@@ -1,16 +1,18 @@
 # Release Notes - Open Meteo MCP Server (Java) v1.0.0
 
-**Release Date**: January 30, 2026
-**Status**: ✅ Production Ready
-**Git Tag**: `v1.0.0`
+**Release Date**: January 30, 2026 **Status**: ✅ Production Ready **Git Tag**:
+`v1.0.0`
 
 ---
 
 ## 🎉 Welcome to v1.0.0
 
-We are proud to announce the production release of **Open Meteo MCP Server (Java)**, a complete strategic migration of the proven Python v3.2.0 to Java/Spring Boot 3.5 with Spring AI 2.0 integration.
+We are proud to announce the production release of **Open Meteo MCP Server
+(Java)**, a complete strategic migration of the proven Python v3.2.0 to
+Java/Spring Boot 3.5 with Spring AI 2.0 integration.
 
 **This is a milestone release** featuring:
+
 - ✅ Complete feature parity with Python v3.2.0
 - ✅ Enhanced MCP protocol support with Spring AI 2.0
 - ✅ Production-ready architecture with enterprise-grade reliability
@@ -23,7 +25,8 @@ We are proud to announce the production release of **Open Meteo MCP Server (Java
 
 ### 🌦️ MCP Tools (4 Tools - Complete)
 
-All tools are fully implemented with `@McpTool` annotations and async/CompletableFuture support:
+All tools are fully implemented with `@McpTool` annotations and
+async/CompletableFuture support:
 
 1. **`search_location`** - Geocoding and location search
    - Powered by Open-Meteo Geocoding API
@@ -108,7 +111,8 @@ All prompts are fully implemented with `@McpPrompt` annotations:
 
 ### Core Technologies
 
-- **Java 21 LTS** - Latest long-term support version with virtual threads
+- **Java 25 LTS** - Latest long-term support version with enhanced virtual
+  threads
 - **Spring Boot 3.5** - Latest stable with WebFlux for async operations
 - **Spring AI 2.0** - Native MCP protocol annotations and ChatClient integration
 - **Maven 3.9+** - Dependency management and build orchestration
@@ -119,22 +123,26 @@ All prompts are fully implemented with `@McpPrompt` annotations:
 ### Architectural Highlights
 
 **Async Operations**:
+
 - ✅ CompletableFuture for all async operations (no Mono/Flux)
 - ✅ Virtual Threads for efficient thread pooling
 - ✅ Non-blocking HTTP client with gzip compression
 
 **Data Models**:
+
 - ✅ Java Records for all DTOs (immutability, conciseness)
 - ✅ Compact constructors for validation
 - ✅ Serializable implementations for caching
 
 **MCP Protocol**:
+
 - ✅ HTTP/SSE transport at `/sse` endpoint
 - ✅ Auto-discovered `@McpTool`, `@McpPrompt`, `@McpResource` components
 - ✅ Native Spring AI 2.0 integration (no custom protocol)
 - ✅ Integrated with MCP Inspector for validation
 
 **Observability**:
+
 - ✅ SLF4J with structured JSON logging
 - ✅ Logback configuration with JSON appender
 - ✅ Prometheus metrics endpoint at `/actuator/metrics`
@@ -145,12 +153,14 @@ All prompts are fully implemented with `@McpPrompt` annotations:
 ## 📊 Quality Metrics
 
 ### Test Coverage
+
 - ✅ **81% overall code coverage** (target: ≥80%, exceeded by 1%!)
 - ✅ **279 tests passing** (100% pass rate)
 - ✅ **100% coverage**: model.request package, service layer, prompt layer
 - ✅ **94% coverage**: model.dto package (up from 65%)
 
 ### Test Breakdown by Module
+
 ```
 ✅ model.request:    100% (perfect)
 ✅ service:          100% (excellent)
@@ -164,6 +174,7 @@ All prompts are fully implemented with `@McpPrompt` annotations:
 ```
 
 ### Build Quality
+
 - ✅ All 279 tests passing
 - ✅ Zero critical bugs
 - ✅ Code style checking with Checkstyle
@@ -178,16 +189,16 @@ All prompts are fully implemented with `@McpPrompt` annotations:
 
 This is a complete rewrite maintaining 100% feature parity:
 
-| Component | Python v3.2.0 | Java v1.0.0 | Status |
-|-----------|---------------|------------|--------|
-| Tools | 4 | 4 | ✅ Complete |
-| Resources | 5 (Python: 5 vs Java: 4) | 4 | ✅ Complete (1 consolidated) |
-| Prompts | 3 | 3 | ✅ Complete |
-| Test Coverage | N/A | 81% | ✅ Exceeded goal |
-| Framework | FastMCP | Spring AI 2.0 | ✅ Modern |
-| Async | httpx async/await | CompletableFuture | ✅ Efficient |
-| Models | Pydantic | Java Records | ✅ Type-safe |
-| Deployment | Python package | Spring Boot JAR | ✅ Enterprise-ready |
+| Component     | Python v3.2.0            | Java v1.0.0       | Status                       |
+| ------------- | ------------------------ | ----------------- | ---------------------------- |
+| Tools         | 4                        | 4                 | ✅ Complete                  |
+| Resources     | 5 (Python: 5 vs Java: 4) | 4                 | ✅ Complete (1 consolidated) |
+| Prompts       | 3                        | 3                 | ✅ Complete                  |
+| Test Coverage | N/A                      | 81%               | ✅ Exceeded goal             |
+| Framework     | FastMCP                  | Spring AI 2.0     | ✅ Modern                    |
+| Async         | httpx async/await        | CompletableFuture | ✅ Efficient                 |
+| Models        | Pydantic                 | Java Records      | ✅ Type-safe                 |
+| Deployment    | Python package           | Spring Boot JAR   | ✅ Enterprise-ready          |
 
 ### Why Java?
 
@@ -203,6 +214,7 @@ This is a complete rewrite maintaining 100% feature parity:
 ## 📦 What's Included
 
 ### Source Code
+
 - ✅ 7 service classes with business logic
 - ✅ 4 utility classes for interpretation and assessment
 - ✅ 18 Java Record models for data transfer
@@ -212,6 +224,7 @@ This is a complete rewrite maintaining 100% feature parity:
 - ✅ Global exception handler for API error management
 
 ### Tests
+
 - ✅ 279 unit and integration tests
 - ✅ 81% code coverage (exceeding 80% target)
 - ✅ Comprehensive test scenarios for all layers
@@ -219,6 +232,7 @@ This is a complete rewrite maintaining 100% feature parity:
 - ✅ Test reports and coverage analysis
 
 ### Documentation
+
 - ✅ **README.md** - User guide and quick start
 - ✅ **CLAUDE.md** - AI development guide (34KB)
 - ✅ **API_REFERENCE.md** - Complete API documentation
@@ -228,12 +242,14 @@ This is a complete rewrite maintaining 100% feature parity:
 - ✅ **RELEASE_NOTES.md** - This file
 
 ### Configuration Files
+
 - ✅ **application.yml** - Spring Boot configuration
 - ✅ **pom.xml** - Maven dependencies (optimized)
 - ✅ **logback-spring.xml** - Structured JSON logging
 - ✅ **.gitignore** - Git configuration
 
 ### Resources
+
 - ✅ **data/weather-codes.json** - 100+ WMO codes
 - ✅ **data/parameters.json** - API parameter reference
 - ✅ **data/aqi-reference.json** - Health guidelines
@@ -345,17 +361,20 @@ curl http://localhost:8888/actuator/metrics
 ## 📋 Known Limitations & Future Work
 
 ### Current Limitations
+
 - Air quality data limited to Europe (global expansion planned for v1.1.0)
 - Forecast data limited to 16 days maximum (Open-Meteo API limitation)
 - No historical data access (planned for v1.1.0)
 
 ### Planned for v1.1.0
+
 - Historical weather data access
 - Weather alerts and notifications
 - Extended forecast periods (beyond 16 days)
 - Multi-location batch queries
 
 ### Planned for v2.0.0
+
 - Predictive weather analysis with AI
 - Travel recommendation engine
 - Weather pattern recognition
@@ -366,6 +385,7 @@ curl http://localhost:8888/actuator/metrics
 ## 🔐 Security & Performance
 
 ### Security
+
 - ✅ No sensitive data in logs
 - ✅ Input validation on all endpoints
 - ✅ Error handling with safe messages
@@ -373,6 +393,7 @@ curl http://localhost:8888/actuator/metrics
 - ✅ Gzip compression for data integrity
 
 ### Performance
+
 - ✅ Virtual Threads for efficient concurrency
 - ✅ Gzip compression for API responses
 - ✅ Async operations with CompletableFuture
@@ -380,6 +401,7 @@ curl http://localhost:8888/actuator/metrics
 - ✅ Caching configuration ready
 
 ### Observability
+
 - ✅ Structured JSON logging
 - ✅ Prometheus metrics endpoint
 - ✅ Health check endpoint
@@ -393,9 +415,11 @@ All documentation is comprehensive and up-to-date:
 
 - **[README.md](README.md)** - Project overview (464 lines)
 - **[CLAUDE.md](CLAUDE.md)** - AI development guide (980 lines)
-- **[CONSTITUTION.md](spec/CONSTITUTION.md)** - Governance & strategy (1,053 lines)
+- **[CONSTITUTION.md](spec/CONSTITUTION.md)** - Governance & strategy (1,053
+  lines)
 - **[ADR_COMPENDIUM.md](spec/ADR_COMPENDIUM.md)** - 15 ADRs (657 lines)
-- **[MIGRATION_GUIDE.md](spec/MIGRATION_GUIDE.md)** - Python→Java patterns (550+ lines)
+- **[MIGRATION_GUIDE.md](spec/MIGRATION_GUIDE.md)** - Python→Java patterns (550+
+  lines)
 - **[API_REFERENCE.md](docs/API_REFERENCE.md)** - Complete API docs
 - **[RELEASE_NOTES.md](RELEASE_NOTES.md)** - This file
 
@@ -404,30 +428,35 @@ All documentation is comprehensive and up-to-date:
 ## 🏆 Achievement Summary
 
 ✅ **Complete Feature Parity**
+
 - All 4 tools from Python v3.2.0 fully implemented
 - All 4 MCP resources implemented
 - All 3 MCP prompts implemented
 - Enhanced descriptions with examples
 
 ✅ **Production Ready Quality**
+
 - 81% code coverage (exceeding 80% target)
 - 279 tests passing (100% pass rate)
 - Zero critical bugs
 - Enterprise-grade architecture
 
 ✅ **Modern Tech Stack**
-- Java 21 with virtual threads
+
+- Java 25 with virtual threads
 - Spring Boot 3.5 latest
 - Spring AI 2.0 integration
 - Best practices throughout
 
 ✅ **Comprehensive Documentation**
+
 - 4,500+ lines of documentation
 - 15 Architecture Decision Records
 - Complete migration guide
 - AI-friendly development guide
 
 ✅ **Ready for Deployment**
+
 - Spring Boot JAR packaging
 - Docker containerization ready
 - Health and metrics endpoints
@@ -438,6 +467,7 @@ All documentation is comprehensive and up-to-date:
 ## 🤝 Contributing
 
 Contributions are welcome! Please refer to:
+
 - [CONSTITUTION.md](spec/CONSTITUTION.md) - Project governance
 - [ADR_COMPENDIUM.md](spec/ADR_COMPENDIUM.md) - Architecture decisions
 - [MIGRATION_GUIDE.md](spec/MIGRATION_GUIDE.md) - Implementation patterns
@@ -446,9 +476,12 @@ Contributions are welcome! Please refer to:
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/schlpbch/open-meteo-mcp-java/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/schlpbch/open-meteo-mcp-java/discussions)
-- **Python Version**: [open-meteo-mcp](https://github.com/schlpbch/open-meteo-mcp) (v3.2.0)
+- **Issues**:
+  [GitHub Issues](https://github.com/schlpbch/open-meteo-mcp-java/issues)
+- **Discussions**:
+  [GitHub Discussions](https://github.com/schlpbch/open-meteo-mcp-java/discussions)
+- **Python Version**:
+  [open-meteo-mcp](https://github.com/schlpbch/open-meteo-mcp) (v3.2.0)
 
 ---
 
@@ -460,11 +493,14 @@ Apache License 2.0 - See [LICENSE](LICENSE) for details.
 
 ## 🙏 Credits
 
-- **Weather Data**: [Open-Meteo](https://open-meteo.com/) - Free Open-Source Weather API
-- **Framework**: [Spring Boot 3.5](https://spring.io/projects/spring-boot) & [Spring AI 2.0](https://spring.io/projects/spring-ai)
-- **Reference**: [open-meteo-mcp (Python v3.2.0)](https://github.com/schlpbch/open-meteo-mcp)
+- **Weather Data**: [Open-Meteo](https://open-meteo.com/) - Free Open-Source
+  Weather API
+- **Framework**: [Spring Boot 3.5](https://spring.io/projects/spring-boot) &
+  [Spring AI 2.0](https://spring.io/projects/spring-ai)
+- **Reference**:
+  [open-meteo-mcp (Python v3.2.0)](https://github.com/schlpbch/open-meteo-mcp)
 - **Protocol**: [Model Context Protocol (MCP)](https://modelcontextprotocol.io/)
-- **Container Runtime**: Java 21 LTS with virtual threads
+- **Container Runtime**: Java 25 LTS with virtual threads
 
 ---
 
@@ -478,9 +514,7 @@ Apache License 2.0 - See [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 1.0.0
-**Released**: January 30, 2026
-**Status**: ✅ Production Ready
-**Git Tag**: `v1.0.0`
+**Version**: 1.0.0 **Released**: January 30, 2026 **Status**: ✅ Production
+Ready **Git Tag**: `v1.0.0`
 
 🎉 **Thank you for using Open Meteo MCP Server (Java)!** 🎉

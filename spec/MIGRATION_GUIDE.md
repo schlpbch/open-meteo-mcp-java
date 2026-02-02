@@ -1,18 +1,19 @@
 # Open Meteo MCP - Python to Java Migration Guide
 
-**Version**: 1.0.0
-**Date**: January 30, 2026
-**Status**: Active Migration
+**Version**: 1.0.0 **Date**: January 30, 2026 **Status**: Active Migration
 **Target Release**: Q2 2026 (v1.0.0)
 
 ---
 
 ## Overview
 
-This guide provides a practical roadmap for migrating **Open Meteo MCP** from Python/FastMCP v3.2.0 to Java with Spring Boot 3.5 and Spring AI 2.0.
+This guide provides a practical roadmap for migrating **Open Meteo MCP** from
+Python/FastMCP v3.2.0 to Java with Spring Boot 3.5 and Spring AI 2.0.
 
 **Key Documents**:
-- **[CONSTITUTION.md](./CONSTITUTION.md)** - Complete migration strategy (Section 15)
+
+- **[CONSTITUTION.md](./CONSTITUTION.md)** - Complete migration strategy
+  (Section 15)
 - **[ADR_COMPENDIUM.md](./ADR_COMPENDIUM.md)** - 15 architecture decisions
 - **Python Reference**: `c:\Users\schlp\code\open-meteo-mcp`
 
@@ -29,28 +30,28 @@ This guide provides a practical roadmap for migrating **Open Meteo MCP** from Py
 
 ### Timeline: 9 Weeks (6 Phases)
 
-| Phase | Duration | Focus | Status |
-|-------|----------|-------|--------|
+| Phase   | Duration  | Focus                                         | Status         |
+| ------- | --------- | --------------------------------------------- | -------------- |
 | Phase 1 | Weeks 1-2 | Foundation: Project setup, API client, models | 🔄 In Progress |
-| Phase 2 | Weeks 3-4 | Core Tools: 4 MCP tools with @McpTool | ⏳ Pending |
-| Phase 3 | Week 5 | Resources & Prompts: @McpResource, @McpPrompt | ⏳ Pending |
-| Phase 4 | Week 6 | AI Enhancement: Spring AI ChatClient | ⏳ Pending |
-| Phase 5 | Weeks 7-8 | Testing & Documentation | ⏳ Pending |
-| Phase 6 | Week 9 | Deployment & Release | ⏳ Pending |
+| Phase 2 | Weeks 3-4 | Core Tools: 4 MCP tools with @McpTool         | ⏳ Pending     |
+| Phase 3 | Week 5    | Resources & Prompts: @McpResource, @McpPrompt | ⏳ Pending     |
+| Phase 4 | Week 6    | AI Enhancement: Spring AI ChatClient          | ⏳ Pending     |
+| Phase 5 | Weeks 7-8 | Testing & Documentation                       | ⏳ Pending     |
+| Phase 6 | Week 9    | Deployment & Release                          | ⏳ Pending     |
 
 ---
 
 ## Technology Mapping
 
-| Python (v3.2.0) | Java (v1.0.0) | Migration Notes |
-|-----------------|---------------|-----------------|
-| **FastMCP** | **Spring AI 2.0 MCP annotations** | Use `@McpTool`, `@McpResource`, `@McpPrompt` - no custom protocol needed |
-| **httpx** | Spring WebClient + gzip | Async HTTP with compression (70-80% reduction) |
-| **Pydantic** | Java Records | Immutable, type-safe DTOs with validation |
-| **structlog** | SLF4J + Logback | Structured JSON logging |
-| **pytest** | JUnit 5 + AssertJ | Comprehensive test suite with Mockito |
-| **uv** | Maven/Gradle | Dependency management |
-| **async/await** | CompletableFuture + Virtual Threads | Java 21 for efficient concurrency |
+| Python (v3.2.0) | Java (v1.0.0)                       | Migration Notes                                                          |
+| --------------- | ----------------------------------- | ------------------------------------------------------------------------ |
+| **FastMCP**     | **Spring AI 2.0 MCP annotations**   | Use `@McpTool`, `@McpResource`, `@McpPrompt` - no custom protocol needed |
+| **httpx**       | Spring WebClient + gzip             | Async HTTP with compression (70-80% reduction)                           |
+| **Pydantic**    | Java Records                        | Immutable, type-safe DTOs with validation                                |
+| **structlog**   | SLF4J + Logback                     | Structured JSON logging                                                  |
+| **pytest**      | JUnit 5 + AssertJ                   | Comprehensive test suite with Mockito                                    |
+| **uv**          | Maven/Gradle                        | Dependency management                                                    |
+| **async/await** | CompletableFuture + Virtual Threads | Java 25 for efficient concurrency                                        |
 
 ### MCP Annotation Mapping
 
@@ -71,16 +72,19 @@ Python                  →  Java
 **Goal**: Set up project structure and core infrastructure
 
 **Checklist**:
+
 - [x] Create Maven project with Spring Boot 3.5
 - [x] Add dependencies: Spring Boot, Spring AI 2.0, WebFlux, Jackson
 - [x] Implement `OpenMeteoClient.java` with gzip compression
-- [x] Create Java Records 
+- [x] Create Java Records
 - [x] Set up JUnit 5 + Mockito + AssertJ test infrastructure
 - [x] Copy `data/*.json` files to `src/main/resources/data/`
 
-**Key ADRs**: [ADR-001](./ADR_COMPENDIUM.md#adr-001), [ADR-002](./ADR_COMPENDIUM.md#adr-002), [ADR-003](./ADR_COMPENDIUM.md#adr-003)
+**Key ADRs**: [ADR-001](./ADR_COMPENDIUM.md#adr-001),
+[ADR-002](./ADR_COMPENDIUM.md#adr-002), [ADR-003](./ADR_COMPENDIUM.md#adr-003)
 
 **Example**: OpenMeteoClient.java
+
 ```java
 @Component
 public class OpenMeteoClient {
@@ -103,6 +107,7 @@ public class OpenMeteoClient {
 **Goal**: Implement all 4 MCP tools using Spring AI annotations
 
 **Checklist**:
+
 - [ ] Create `LocationToolService` with `@McpTool` for `search_location`
 - [ ] Create `WeatherToolService` with `@McpTool` for `get_weather`
 - [ ] Create `SnowToolService` with `@McpTool` for `get_snow_conditions`
@@ -112,9 +117,11 @@ public class OpenMeteoClient {
 - [ ] Add `@McpParam` annotations with descriptions
 - [ ] Write unit tests for each tool (≥80% coverage)
 
-**Key ADRs**: [ADR-004](./ADR_COMPENDIUM.md#adr-004), [ADR-007](./ADR_COMPENDIUM.md#adr-007), [ADR-011](./ADR_COMPENDIUM.md#adr-011)
+**Key ADRs**: [ADR-004](./ADR_COMPENDIUM.md#adr-004),
+[ADR-007](./ADR_COMPENDIUM.md#adr-007), [ADR-011](./ADR_COMPENDIUM.md#adr-011)
 
 **Example**: WeatherToolService.java
+
 ```java
 @Service
 public class WeatherToolService {
@@ -146,16 +153,21 @@ public class WeatherToolService {
 **Goal**: Implement MCP resources and workflow prompts
 
 **Checklist**:
+
 - [ ] Create `WeatherResourceService` with `@McpResource` methods
-- [ ] Implement 5 resources: codes, ski-resorts, swiss-locations, aqi-reference, parameters
+- [ ] Implement 5 resources: codes, ski-resorts, swiss-locations, aqi-reference,
+      parameters
 - [ ] Create `WeatherPromptService` with `@McpPrompt` methods
-- [ ] Implement 3 prompts: ski-trip-weather, plan-outdoor-activity, weather-aware-travel
+- [ ] Implement 3 prompts: ski-trip-weather, plan-outdoor-activity,
+      weather-aware-travel
 - [ ] Test with MCP Inspector
 - [ ] Write tests for resources and prompts
 
-**Key ADRs**: [ADR-004](./ADR_COMPENDIUM.md#adr-004), [ADR-012](./ADR_COMPENDIUM.md#adr-012)
+**Key ADRs**: [ADR-004](./ADR_COMPENDIUM.md#adr-004),
+[ADR-012](./ADR_COMPENDIUM.md#adr-012)
 
 **Example**: WeatherResourceService.java
+
 ```java
 @Service
 public class WeatherResourceService {
@@ -178,6 +190,7 @@ public class WeatherResourceService {
 **Goal**: Add Spring AI 2.0 ChatClient for LLM-powered features
 
 **Checklist**:
+
 - [ ] Configure Spring AI 2.0 with Anthropic/OpenAI
 - [ ] Create `InterpretationService` with ChatClient
 - [ ] Implement weather condition interpretation
@@ -189,6 +202,7 @@ public class WeatherResourceService {
 **Key ADRs**: [ADR-004](./ADR_COMPENDIUM.md#adr-004)
 
 **Configuration**: application.yml
+
 ```yaml
 spring:
   ai:
@@ -210,6 +224,7 @@ spring:
 **Goal**: Complete testing and comprehensive documentation
 
 **Checklist**:
+
 - [ ] Achieve ≥80% test coverage across all layers
 - [ ] Write API documentation with examples
 - [ ] Create detailed migration notes
@@ -227,6 +242,7 @@ spring:
 **Goal**: Production release and deployment
 
 **Checklist**:
+
 - [ ] Set up CI/CD pipeline (GitHub Actions)
 - [ ] Configure cloud deployment (cloud-agnostic)
 - [ ] Integration test with swiss-mobility-mcp
@@ -292,6 +308,7 @@ com.openmeteo.mcp/
 ### 1. Python Tool → Java @McpTool
 
 **Python (server.py)**:
+
 ```python
 @mcp.tool()
 async def search_location(name: str, count: int = 10):
@@ -300,6 +317,7 @@ async def search_location(name: str, count: int = 10):
 ```
 
 **Java (LocationToolService.java)**:
+
 ```java
 @Service
 public class LocationToolService {
@@ -324,6 +342,7 @@ public class LocationToolService {
 ### 2. Pydantic Model → Java Record
 
 **Python (models.py)**:
+
 ```python
 class WeatherResponse(JsonSerializableMixin):
     temperature: float
@@ -333,6 +352,7 @@ class WeatherResponse(JsonSerializableMixin):
 ```
 
 **Java (WeatherResponse.java)**:
+
 ```java
 public record WeatherResponse(
     double temperature,
@@ -352,6 +372,7 @@ public record WeatherResponse(
 ### 3. Async HTTP Client
 
 **Python (client.py)**:
+
 ```python
 async def get_weather(self, lat: float, lon: float):
     async with self.client.get(url, params=params) as response:
@@ -359,6 +380,7 @@ async def get_weather(self, lat: float, lon: float):
 ```
 
 **Java (OpenMeteoClient.java)**:
+
 ```java
 public CompletableFuture<WeatherResponse> getWeather(double lat, double lon) {
     return webClient.get()
@@ -379,7 +401,8 @@ public CompletableFuture<WeatherResponse> getWeather(double lat, double lon) {
 
 ### Core ADRs (Must Implement)
 
-1. **[ADR-004: Spring AI 2.0 MCP Annotations](./ADR_COMPENDIUM.md#adr-004)** ⚡ **CRITICAL**
+1. **[ADR-004: Spring AI 2.0 MCP Annotations](./ADR_COMPENDIUM.md#adr-004)** ⚡
+   **CRITICAL**
    - Use `@McpTool`, `@McpResource`, `@McpPrompt` - no custom MCP protocol
    - Spring AI handles all MCP JSON-RPC communication
 
@@ -404,6 +427,7 @@ public CompletableFuture<WeatherResponse> getWeather(double lat, double lon) {
 ## Success Criteria
 
 ### Feature Parity
+
 - ✅ All 4 tools match Python functionality
 - ✅ All 5 resources available
 - ✅ All 3 prompts working
@@ -411,17 +435,20 @@ public CompletableFuture<WeatherResponse> getWeather(double lat, double lon) {
 - ✅ JSON optimization equivalent or better
 
 ### Performance
+
 - 📊 Response time ≤ Python version (target: <500ms p95)
 - 📊 Memory usage <512MB
 - 📊 Throughput ≥ 100 req/s
 
 ### Quality
+
 - 🧪 Test coverage ≥80%
 - 📝 Complete API documentation
 - 🔍 Zero critical bugs
 - ✅ All 15 ADRs reviewed and compliant
 
 ### AI Enhancement
+
 - 🤖 Spring AI ChatClient functional
 - 🤖 Weather interpretation working
 - 🤖 Natural language queries supported
@@ -457,14 +484,14 @@ public CompletableFuture<WeatherResponse> getWeather(double lat, double lon) {
 
 ## Risk Mitigation
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| Feature drift from Python | High | Daily comparison tests against Python v3.2.0 |
-| Performance regression | Medium | Benchmark every commit, target <500ms p95 |
-| MCP protocol incompatibility | High | Contract tests + MCP Inspector validation |
-| Spring AI complexity | Medium | Start simple, iterate gradually |
-| JVM memory overhead | Low | Profile regularly, optimize if needed |
-| Test coverage gaps | Medium | Require tests with every PR |
+| Risk                         | Impact | Mitigation                                   |
+| ---------------------------- | ------ | -------------------------------------------- |
+| Feature drift from Python    | High   | Daily comparison tests against Python v3.2.0 |
+| Performance regression       | Medium | Benchmark every commit, target <500ms p95    |
+| MCP protocol incompatibility | High   | Contract tests + MCP Inspector validation    |
+| Spring AI complexity         | Medium | Start simple, iterate gradually              |
+| JVM memory overhead          | Low    | Profile regularly, optimize if needed        |
+| Test coverage gaps           | Medium | Require tests with every PR                  |
 
 ---
 
@@ -514,6 +541,7 @@ public CompletableFuture<WeatherResponse> getWeather(double lat, double lon) {
 ## Tools & Commands
 
 ### Build & Test
+
 ```bash
 # Build project
 mvn clean install
@@ -532,6 +560,7 @@ mvn package
 ```
 
 ### MCP Inspector
+
 ```bash
 # Test MCP server locally
 npx @modelcontextprotocol/inspector java -jar target/open-meteo-mcp-1.0.0.jar
@@ -542,11 +571,15 @@ npx @modelcontextprotocol/inspector java -jar target/open-meteo-mcp-1.0.0.jar
 ## Resources
 
 ### Documentation
-- **[CONSTITUTION.md](./CONSTITUTION.md)** - Full migration strategy (Section 15)
+
+- **[CONSTITUTION.md](./CONSTITUTION.md)** - Full migration strategy
+  (Section 15)
 - **[ADR_COMPENDIUM.md](./ADR_COMPENDIUM.md)** - 15 architecture decisions
-- **[Python Reference](c:\Users\schlp\code\open-meteo-mcp)** - Python v3.2.0 source code
+- **[Python Reference](c:\Users\schlp\code\open-meteo-mcp)** - Python v3.2.0
+  source code
 
 ### External References
+
 - **Spring Boot**: https://spring.io/projects/spring-boot
 - **Spring AI**: https://spring.io/projects/spring-ai
 - **MCP Protocol**: https://modelcontextprotocol.io/
@@ -557,12 +590,14 @@ npx @modelcontextprotocol/inspector java -jar target/open-meteo-mcp-1.0.0.jar
 ## Quick Reference
 
 ### MCP Tools to Implement
+
 1. `search_location` - Geocoding and location search
 2. `get_weather` - Weather forecasts
 3. `get_snow_conditions` - Snow depth and mountain weather
 4. `get_air_quality` - AQI, pollutants, pollen
 
 ### MCP Resources to Implement
+
 1. `weather://codes` - WMO weather codes
 2. `weather://ski-resorts` - Ski resort coordinates
 3. `weather://swiss-locations` - Swiss locations
@@ -570,13 +605,13 @@ npx @modelcontextprotocol/inspector java -jar target/open-meteo-mcp-1.0.0.jar
 5. `weather://parameters` - Weather parameters
 
 ### MCP Prompts to Implement
+
 1. `ski-trip-weather` - Ski trip planning
 2. `plan-outdoor-activity` - Outdoor activity planning
 3. `weather-aware-travel` - Travel planning
 
 ---
 
-**Last Updated**: January 30, 2026
-**Migration Status**: Phase 1 - Foundation (In Progress)
-**Target Release**: Q2 2026 (v1.0.0)
-**Questions?** See [CONSTITUTION.md](./CONSTITUTION.md) or open an issue
+**Last Updated**: January 30, 2026 **Migration Status**: Phase 1 - Foundation
+(In Progress) **Target Release**: Q2 2026 (v1.0.0) **Questions?** See
+[CONSTITUTION.md](./CONSTITUTION.md) or open an issue

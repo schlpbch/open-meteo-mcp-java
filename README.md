@@ -1,17 +1,20 @@
 # Open Meteo MCP Server (Java)
 
-A Model Context Protocol (MCP) server providing weather, snow conditions, and air quality tools via the [Open-Meteo API](https://open-meteo.com/).
+A Model Context Protocol (MCP) server providing weather, snow conditions, and
+air quality tools via the [Open-Meteo API](https://open-meteo.com/).
 
-**Version**: 1.0.0 (Production Ready)
-**Status**: ✅ MCP Server Complete - Enhanced Descriptions with Examples & Health Guidelines
-**Release Date**: January 30, 2026
-**License**: Apache 2.0
+**Version**: 1.0.0 (Production Ready) **Status**: ✅ MCP Server Complete -
+Enhanced Descriptions with Examples & Health Guidelines **Release Date**:
+January 30, 2026 **License**: Apache 2.0
 
 ## 🎉 Project Milestone
 
-This is a **strategic migration** of the proven [open-meteo-mcp](https://github.com/schlpbch/open-meteo-mcp) Python v3.2.0 to Java with Spring Boot 3.5 and Spring AI 2.0.
+This is a **strategic migration** of the proven
+[open-meteo-mcp](https://github.com/schlpbch/open-meteo-mcp) Python v3.2.0 to
+Java with Spring Boot 3.5 and Spring AI 2.0.
 
 **Why Java?**
+
 - ✅ Enterprise-grade architecture with Spring Boot ecosystem
 - ✅ Spring AI 2.0 integration for enhanced weather intelligence
 - ✅ Type safety with Java Records
@@ -20,16 +23,23 @@ This is a **strategic migration** of the proven [open-meteo-mcp](https://github.
 
 **Current Implementation Status**:
 
-- ✅ **4 MCP Tools**: search_location, get_weather, get_snow_conditions, get_air_quality
-- ✅ **4 MCP Resources**: weather://codes, weather://parameters, weather://aqi-reference, weather://swiss-locations
-- ✅ **3 MCP Prompts**: ski-trip-weather, plan-outdoor-activity, weather-aware-travel
-- ✅ **Enhanced Descriptions**: All components include comprehensive examples, features, use cases, and health guidelines
-- ✅ **MCP Server Configuration**: Spring Boot with @McpTool/@McpPrompt/@McpResource annotations
-- ✅ **SSE Transport**: Full MCP protocol support via HTTP/SSE at `/sse` endpoint
+- ✅ **4 MCP Tools**: search_location, get_weather, get_snow_conditions,
+  get_air_quality
+- ✅ **4 MCP Resources**: weather://codes, weather://parameters,
+  weather://aqi-reference, weather://swiss-locations
+- ✅ **3 MCP Prompts**: ski-trip-weather, plan-outdoor-activity,
+  weather-aware-travel
+- ✅ **Enhanced Descriptions**: All components include comprehensive examples,
+  features, use cases, and health guidelines
+- ✅ **MCP Server Configuration**: Spring Boot with
+  @McpTool/@McpPrompt/@McpResource annotations
+- ✅ **SSE Transport**: Full MCP protocol support via HTTP/SSE at `/sse`
+  endpoint
 - ✅ **MCP Inspector Integration**: Tested with MCP Inspector web UI
 - ✅ **Server Running**: Spring Boot 3.5.0 on port 8888
 
 **v1.0.0 Release Highlights**:
+
 - ✅ Spring AI 2.0 MCP annotations with comprehensive multiline descriptions
 - ✅ All tools include examples, features, use cases, and health guidelines
 - ✅ All resources include detailed documentation and use cases
@@ -45,12 +55,17 @@ This is a **strategic migration** of the proven [open-meteo-mcp](https://github.
 
 ### 🌦️ MCP Tools (Implemented ✅)
 
-- **`search_location`**: Geocoding and location search via Open-Meteo Geocoding API
-- **`get_weather`**: Weather forecasts with temperature, precipitation, wind, UV index
-- **`get_snow_conditions`**: Snow depth, snowfall, mountain weather for ski planning
-- **`get_air_quality`**: AQI, pollutants, UV index, pollen data (European coverage)
+- **`search_location`**: Geocoding and location search via Open-Meteo Geocoding
+  API
+- **`get_weather`**: Weather forecasts with temperature, precipitation, wind, UV
+  index
+- **`get_snow_conditions`**: Snow depth, snowfall, mountain weather for ski
+  planning
+- **`get_air_quality`**: AQI, pollutants, UV index, pollen data (European
+  coverage)
 
 All tools are:
+
 - ✅ Annotated with `@McpTool` (Spring AI 2.0)
 - ✅ Exposed via REST API endpoints at `/api/tools/*`
 - ✅ Returning CompletableFuture for async operations
@@ -59,11 +74,15 @@ All tools are:
 ### 📚 MCP Resources (Implemented ✅)
 
 - **`weather://codes`**: WMO weather code interpretations with descriptions
-- **`weather://parameters`**: Available weather and snow parameters from Open-Meteo API
-- **`weather://aqi-reference`**: AQI scales with health implications and recommendations
-- **`weather://swiss-locations`**: Swiss cities, mountains, and mountain passes with coordinates
+- **`weather://parameters`**: Available weather and snow parameters from
+  Open-Meteo API
+- **`weather://aqi-reference`**: AQI scales with health implications and
+  recommendations
+- **`weather://swiss-locations`**: Swiss cities, mountains, and mountain passes
+  with coordinates
 
 All resources are:
+
 - ✅ Annotated with `@McpResource` (Spring AI 2.0)
 - ✅ Served from JSON files in classpath
 - ✅ Loaded via ResourceService component
@@ -71,11 +90,15 @@ All resources are:
 
 ### 🎯 MCP Prompts (Implemented ✅)
 
-- **`ski-trip-weather`**: Ski trip planning workflow using snow conditions and weather data
-- **`plan-outdoor-activity`**: Weather-aware outdoor activity planning with AQI awareness
-- **`weather-aware-travel`**: Travel planning with weather integration and packing recommendations
+- **`ski-trip-weather`**: Ski trip planning workflow using snow conditions and
+  weather data
+- **`plan-outdoor-activity`**: Weather-aware outdoor activity planning with AQI
+  awareness
+- **`weather-aware-travel`**: Travel planning with weather integration and
+  packing recommendations
 
 All prompts are:
+
 - ✅ Annotated with `@McpPrompt` (Spring AI 2.0)
 - ✅ Provided by PromptService component
 - ✅ Return workflow instructions for AI assistants
@@ -85,7 +108,7 @@ All prompts are:
 
 ### Core Dependencies
 
-- **Java 21** - LTS with virtual threads
+- **Java 25** - LTS with enhanced virtual threads
 - **Spring Boot 3.5** - Latest stable
 - **Spring AI 2.0** - AI integration + native MCP annotations
 - **Maven 3.9+** - Build tool
@@ -95,17 +118,19 @@ All prompts are:
 
 ### Key Architectural Decisions
 
-- **CompletableFuture + Virtual Threads** for async operations (no reactive Mono/Flux)
+- **CompletableFuture + Virtual Threads** for async operations (no reactive
+  Mono/Flux)
 - **Java Records** for all data models
 - **Spring AI 2.0 MCP annotations** (`@McpTool`, `@McpResource`, `@McpPrompt`)
 - **SLF4J + Logback** for structured JSON logging
 - **Specification-Driven Development** - Document before coding
 
-See [ADR_COMPENDIUM.md](spec/ADR_COMPENDIUM.md) for all 15 architectural decisions.
+See [ADR_COMPENDIUM.md](spec/ADR_COMPENDIUM.md) for all 15 architectural
+decisions.
 
 ## Prerequisites
 
-- Java 21 or higher
+- Java 25 or higher
 - Maven 3.9+ or Gradle 8+
 - (Optional) Docker for containerized deployment
 
@@ -121,11 +146,13 @@ cd open-meteo-mcp-java
 ### Build the Project
 
 **Maven:**
+
 ```bash
 ./mvnw clean install
 ```
 
 **Gradle:**
+
 ```bash
 ./gradlew build
 ```
@@ -135,6 +162,7 @@ cd open-meteo-mcp-java
 ### Quick Start
 
 **Maven:**
+
 ```bash
 ./mvnw spring-boot:run
 ```
@@ -142,6 +170,7 @@ cd open-meteo-mcp-java
 Server will start on `http://localhost:8888`
 
 **Gradle:**
+
 ```bash
 ./gradlew bootRun
 ```
@@ -246,8 +275,10 @@ Check the startup logs for MCP component initialization:
 ```
 
 **MCP Protocol Support**:
+
 - ✅ SSE Endpoint: `http://localhost:8888/sse`
-- ✅ MCP Inspector Web UI: `http://localhost:6274` (when running `npx @modelcontextprotocol/inspector`)
+- ✅ MCP Inspector Web UI: `http://localhost:6274` (when running
+  `npx @modelcontextprotocol/inspector`)
 - ✅ Protocol: HTTP/SSE (Server-Sent Events)
 - ✅ Auto-discovered components: 4 tools, 3 prompts, 4 resources
 
@@ -258,6 +289,7 @@ curl http://localhost:8080/actuator/health
 ```
 
 Expected response:
+
 ```json
 {
   "status": "UP",
@@ -290,14 +322,18 @@ Expected response:
 
 ### Project Documentation
 
-- **[CONSTITUTION.md](spec/CONSTITUTION.md)** - Project governance and migration strategy
-- **[ADR_COMPENDIUM.md](spec/ADR_COMPENDIUM.md)** - 15 Architecture Decision Records
-- **[MIGRATION_GUIDE.md](spec/MIGRATION_GUIDE.md)** - Python to Java migration guide
+- **[CONSTITUTION.md](spec/CONSTITUTION.md)** - Project governance and migration
+  strategy
+- **[ADR_COMPENDIUM.md](spec/ADR_COMPENDIUM.md)** - 15 Architecture Decision
+  Records
+- **[MIGRATION_GUIDE.md](spec/MIGRATION_GUIDE.md)** - Python to Java migration
+  guide
 - **[CLAUDE.md](CLAUDE.md)** - AI-friendly development guide
 
 ### Python Reference Implementation
 
-- **Repository**: [open-meteo-mcp (Python)](https://github.com/schlpbch/open-meteo-mcp)
+- **Repository**:
+  [open-meteo-mcp (Python)](https://github.com/schlpbch/open-meteo-mcp)
 - **Version**: v3.2.0 (production reference)
 - **Status**: Production-ready with 4 tools, 5 resources, 3 prompts
 
@@ -344,7 +380,8 @@ open-meteo-mcp-java/
    - 4 service classes, 4 utility classes, 87 unit tests (78-100% coverage)
 
 3. **Phase 3: Resources & Prompts** (Week 5) - ✅ Complete
-   - ResourceService with 4 resources, PromptService with 3 prompts, 112 tests (67% coverage)
+   - ResourceService with 4 resources, PromptService with 3 prompts, 112 tests
+     (67% coverage)
 
 4. **Phase 4: AI Enhancement** (Week 6)
    - Spring AI ChatClient integration, @McpTool annotations
@@ -362,8 +399,10 @@ We welcome contributions during the migration phase!
 ### How to Contribute
 
 1. Check the [CONSTITUTION.md](spec/CONSTITUTION.md) for governance principles
-2. Review [ADR_COMPENDIUM.md](spec/ADR_COMPENDIUM.md) for architectural decisions
-3. Follow [MIGRATION_GUIDE.md](spec/MIGRATION_GUIDE.md) for implementation patterns
+2. Review [ADR_COMPENDIUM.md](spec/ADR_COMPENDIUM.md) for architectural
+   decisions
+3. Follow [MIGRATION_GUIDE.md](spec/MIGRATION_GUIDE.md) for implementation
+   patterns
 4. Open an issue or pull request
 
 ### Code Standards
@@ -405,6 +444,7 @@ Once v1.0.0 is released, add to Claude Desktop configuration:
 - **Air Quality**: `https://air-quality-api.open-meteo.com/v1/air-quality`
 
 **Features**:
+
 - No API key required (free tier)
 - Rate limiting: ~10,000 requests/day
 - Gzip compression supported
@@ -437,9 +477,12 @@ Once v1.0.0 is released, add to Claude Desktop configuration:
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/schlpbch/open-meteo-mcp-java/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/schlpbch/open-meteo-mcp-java/discussions)
-- **Python Version**: [open-meteo-mcp](https://github.com/schlpbch/open-meteo-mcp)
+- **Issues**:
+  [GitHub Issues](https://github.com/schlpbch/open-meteo-mcp-java/issues)
+- **Discussions**:
+  [GitHub Discussions](https://github.com/schlpbch/open-meteo-mcp-java/discussions)
+- **Python Version**:
+  [open-meteo-mcp](https://github.com/schlpbch/open-meteo-mcp)
 
 ## License
 
@@ -447,13 +490,16 @@ Apache License 2.0 - See [LICENSE](LICENSE) for details.
 
 ## Credits
 
-- Weather data provided by [Open-Meteo](https://open-meteo.com/) - Free Open-Source Weather API
-- Based on [open-meteo-mcp (Python)](https://github.com/schlpbch/open-meteo-mcp) v3.2.0
+- Weather data provided by [Open-Meteo](https://open-meteo.com/) - Free
+  Open-Source Weather API
+- Based on [open-meteo-mcp (Python)](https://github.com/schlpbch/open-meteo-mcp)
+  v3.2.0
 - Part of the Swiss AI MCP ecosystem
 
 ## Acknowledgments
 
 Special thanks to:
+
 - Open-Meteo team for their excellent free weather API
 - Spring AI team for native MCP protocol support
 - Anthropic for the Model Context Protocol specification
@@ -461,4 +507,7 @@ Special thanks to:
 
 ---
 
-**🔄 Migration in Progress** - Follow along on [GitHub](https://github.com/schlpbch/open-meteo-mcp-java) or check the [Python version](https://github.com/schlpbch/open-meteo-mcp) for a production-ready implementation.
+**🔄 Migration in Progress** - Follow along on
+[GitHub](https://github.com/schlpbch/open-meteo-mcp-java) or check the
+[Python version](https://github.com/schlpbch/open-meteo-mcp) for a
+production-ready implementation.

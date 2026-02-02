@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.0</version>
-        <relativePath/>
+        <version>3.5.0</version> <!-- FIXME: Update to 4.0.0 -->
+        <relativePath />
     </parent>
 
     <groupId>com.openmeteo</groupId>
@@ -19,9 +18,9 @@
     <description>Model Context Protocol server providing weather, snow conditions, and air quality tools via Open-Meteo API</description>
 
     <properties>
-        <java.version>21</java.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <java.version>25</java.version>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring-ai.version>2.0.0-M2</spring-ai.version>
         <swiss-ai-mcp-commons.version>1.1.0</swiss-ai-mcp-commons.version>
@@ -62,7 +61,8 @@
         </dependency>
 
         <!-- Spring AI MCP Server Boot Starter for WebFlux -->
-        <!-- Auto-configures MCP server with SSE transport, auto-discovers @McpTool/@McpPrompt/@McpResource -->
+        <!-- Auto-configures MCP server with SSE transport, auto-discovers
+        @McpTool/@McpPrompt/@McpResource -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-mcp-server-webflux</artifactId>
@@ -182,10 +182,11 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <source>21</source>
-                    <target>21</target>
+                    <source>25</source>
+                    <target>25</target>
                     <compilerArgs>
                         <arg>-parameters</arg>
+                        <arg>--enable-preview</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>

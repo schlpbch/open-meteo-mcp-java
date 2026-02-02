@@ -1,17 +1,24 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with
+code in this repository.
 
 ## Project Overview
 
-Open Meteo MCP (Java) is a **Model Context Protocol (MCP) server** providing weather, snow conditions, and air quality data via the [Open-Meteo API](https://open-meteo.com/). This is a **strategic migration** of the proven open-meteo-mcp (Python/FastMCP v3.2.0) to Java/Spring Boot for enterprise-grade architecture and Spring AI 2.0 integration.
+Open Meteo MCP (Java) is a **Model Context Protocol (MCP) server** providing
+weather, snow conditions, and air quality data via the
+[Open-Meteo API](https://open-meteo.com/). This is a **strategic migration** of
+the proven open-meteo-mcp (Python/FastMCP v3.2.0) to Java/Spring Boot for
+enterprise-grade architecture and Spring AI 2.0 integration.
 
-**Current Status**: ✅ v1.0.0 - Production Ready - Enhanced MCP Descriptions Complete
-**Latest Update**: January 30, 2026 - Enhanced MCP descriptions with examples, features, use cases, and health guidelines. HTTP/SSE transport configured and tested. MCP Inspector integration complete.
+**Current Status**: ✅ v1.0.0 - Production Ready - Enhanced MCP Descriptions
+Complete **Latest Update**: January 30, 2026 - Enhanced MCP descriptions with
+examples, features, use cases, and health guidelines. HTTP/SSE transport
+configured and tested. MCP Inspector integration complete.
 
 **Key Technologies:**
 
-- Java 21 with Virtual Threads
+- Java 25 with Virtual Threads
 - Spring Boot 3.5 with WebFlux (async/non-blocking)
 - Spring AI 2.0 (native MCP annotations + ChatClient)
 - Maven 3.9+ for build management
@@ -66,7 +73,8 @@ curl http://localhost:8888/actuator/health
 curl http://localhost:8888/sse
 ```
 
-**Current Server**: Running on port 8888 with MCP components initialized. SSE endpoint at `/sse` for MCP protocol support.
+**Current Server**: Running on port 8888 with MCP components initialized. SSE
+endpoint at `/sse` for MCP protocol support.
 
 ### Code Quality
 
@@ -155,37 +163,40 @@ src/main/java/com/openmeteo/mcp/
 
 ### MCP Tools (4 tools implemented)
 
-| Tool                 | Description                                             | Status | File Reference |
-| -------------------- | ------------------------------------------------------- | ------ | --------------- |
-| `search_location`    | Geocoding - search locations by name                    | ✅ Implemented | tool/McpToolsHandler.java:65 |
-| `get_weather`        | Get weather forecast with temperature, precipitation    | ✅ Implemented | tool/McpToolsHandler.java:100 |
-| `get_snow_conditions`| Get snow depth, snowfall, mountain weather              | ✅ Implemented | tool/McpToolsHandler.java:140 |
-| `get_air_quality`    | Get AQI, pollutants, UV index, pollen                   | ✅ Implemented | tool/McpToolsHandler.java:180 |
+| Tool                  | Description                                          | Status         | File Reference                |
+| --------------------- | ---------------------------------------------------- | -------------- | ----------------------------- |
+| `search_location`     | Geocoding - search locations by name                 | ✅ Implemented | tool/McpToolsHandler.java:65  |
+| `get_weather`         | Get weather forecast with temperature, precipitation | ✅ Implemented | tool/McpToolsHandler.java:100 |
+| `get_snow_conditions` | Get snow depth, snowfall, mountain weather           | ✅ Implemented | tool/McpToolsHandler.java:140 |
+| `get_air_quality`     | Get AQI, pollutants, UV index, pollen                | ✅ Implemented | tool/McpToolsHandler.java:180 |
 
 ### MCP Resources (4 resources implemented)
 
-| Resource URI                | Description                          | Status | File Reference |
-| --------------------------- | ------------------------------------ | ------ | --------------- |
-| `weather://codes`           | WMO weather code reference           | ✅ Implemented | resource/ResourceService.java |
-| `weather://aqi-reference`   | AQI scales and health recommendations| ✅ Implemented | resource/ResourceService.java |
-| `weather://swiss-locations` | Swiss cities, mountains, passes      | ✅ Implemented | resource/ResourceService.java |
-| `weather://parameters`      | Available weather parameters         | ✅ Implemented | resource/ResourceService.java |
+| Resource URI                | Description                           | Status         | File Reference                |
+| --------------------------- | ------------------------------------- | -------------- | ----------------------------- |
+| `weather://codes`           | WMO weather code reference            | ✅ Implemented | resource/ResourceService.java |
+| `weather://aqi-reference`   | AQI scales and health recommendations | ✅ Implemented | resource/ResourceService.java |
+| `weather://swiss-locations` | Swiss cities, mountains, passes       | ✅ Implemented | resource/ResourceService.java |
+| `weather://parameters`      | Available weather parameters          | ✅ Implemented | resource/ResourceService.java |
 
 ### MCP Prompts (3 prompts implemented)
 
-| Prompt                   | Description                              | Status | File Reference |
-| ------------------------ | ---------------------------------------- | ------ | --------------- |
-| `ski-trip-weather`       | Ski trip planning with snow conditions   | ✅ Implemented | prompt/PromptService.java |
-| `plan-outdoor-activity`  | Weather-aware activity planning          | ✅ Implemented | prompt/PromptService.java |
-| `weather-aware-travel`   | Travel planning with weather integration | ✅ Implemented | prompt/PromptService.java |
+| Prompt                  | Description                              | Status         | File Reference            |
+| ----------------------- | ---------------------------------------- | -------------- | ------------------------- |
+| `ski-trip-weather`      | Ski trip planning with snow conditions   | ✅ Implemented | prompt/PromptService.java |
+| `plan-outdoor-activity` | Weather-aware activity planning          | ✅ Implemented | prompt/PromptService.java |
+| `weather-aware-travel`  | Travel planning with weather integration | ✅ Implemented | prompt/PromptService.java |
 
 ## MCP Server Configuration
 
 ### Overview
 
-The Spring Boot application is configured to expose MCP-annotated components via REST API endpoints. The `McpServerConfig` class manages component initialization and logging.
+The Spring Boot application is configured to expose MCP-annotated components via
+REST API endpoints. The `McpServerConfig` class manages component initialization
+and logging.
 
 **Current Implementation:**
+
 - ✅ `@McpTool` annotations on 4 weather/snow/air-quality/location methods
 - ✅ `@McpPrompt` annotations on 3 workflow prompts
 - ✅ `@McpResource` annotations on 4 reference data resources
@@ -203,6 +214,7 @@ public class McpServerConfig {
 ```
 
 **Server Status**:
+
 ```
 ✅ MCP Tools: search_location, get_weather, get_snow_conditions, get_air_quality
 ✅ MCP Prompts: ski-trip-weather, plan-outdoor-activity, weather-aware-travel
@@ -217,6 +229,7 @@ public class McpServerConfig {
 ### MCP Protocol Implementation (v1.0.0 Complete)
 
 ✅ **Full MCP Protocol Support**:
+
 - HTTP/SSE transport implemented and tested
 - Auto-discovered @McpTool, @McpPrompt, @McpResource annotations
 - Enhanced multiline descriptions with comprehensive information
@@ -224,12 +237,14 @@ public class McpServerConfig {
 - Server-Sent Events streaming protocol
 
 **Enhanced Description Features**:
+
 - **Tools**: Examples, features, use cases, return types
 - **Prompts**: Multi-step workflows, parameters, expected outcomes
 - **Resources**: Data categories, use cases, content descriptions
 - **Health Guidelines**: EU/US AQI scales, UV index levels, pollen information
 
 **MCP Inspector Integration**:
+
 ```bash
 # Start the MCP Inspector
 npx @modelcontextprotocol/inspector http://localhost:8888/sse
@@ -242,9 +257,11 @@ npx @modelcontextprotocol/inspector http://localhost:8888/sse
 
 ### Spring AI 2.0 MCP Annotations
 
-**Key Innovation**: Spring AI 2.0 provides native MCP protocol support via annotations, eliminating the need for custom protocol implementation.
+**Key Innovation**: Spring AI 2.0 provides native MCP protocol support via
+annotations, eliminating the need for custom protocol implementation.
 
 **MCP Tool Example** (from `tool/McpToolsHandler.java`):
+
 ```java
 @Component
 public class McpToolsHandler {
@@ -266,6 +283,7 @@ public class McpToolsHandler {
 ```
 
 **REST API Access** (from `tool/McpToolsController.java`):
+
 ```
 POST http://localhost:9090/api/tools/weather
 Content-Type: application/json
@@ -279,6 +297,7 @@ Content-Type: application/json
 ```
 
 **MCP Resource Example** (from `resource/ResourceService.java`):
+
 ```java
 @Component
 public class ResourceService {
@@ -297,6 +316,7 @@ public class ResourceService {
 ```
 
 **MCP Prompt Example** (from `prompt/PromptService.java`):
+
 ```java
 @Component
 public class PromptService {
@@ -476,12 +496,14 @@ class MyServiceTest {
 **Target: ≥80% test coverage**
 
 **Test Layers**:
+
 1. **Unit Tests** (JUnit 5 + Mockito) - Fast, isolated
 2. **Integration Tests** (@SpringBootTest) - Full application context
 3. **Contract Tests** - MCP protocol compliance
 4. **Performance Tests** - Benchmark vs Python version
 
 **Example Unit Test**:
+
 ```java
 @ExtendWith(MockitoExtension.class)
 class WeatherServiceTest {
@@ -506,6 +528,7 @@ class WeatherServiceTest {
 ```
 
 **Example Integration Test**:
+
 ```java
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class WeatherIntegrationTest {
@@ -576,7 +599,8 @@ public class GlobalExceptionHandler {
 ### Core Files
 
 - `pom.xml` - Maven dependencies and build configuration
-- `src/main/java/com/openmeteo/mcp/OpenMeteoMcpApplication.java` - Main application
+- `src/main/java/com/openmeteo/mcp/OpenMeteoMcpApplication.java` - Main
+  application
 - `src/main/resources/application.yml` - Spring Boot configuration
 - `src/main/resources/logback-spring.xml` - Logging configuration
 
@@ -688,6 +712,7 @@ management:
 ### Common Issues
 
 **Build Failures:**
+
 ```bash
 # Clean and rebuild
 ./mvnw clean install -U
@@ -697,6 +722,7 @@ management:
 ```
 
 **Test Failures:**
+
 ```bash
 # Run specific test with verbose output
 ./mvnw test -Dtest=WeatherServiceTest -X
@@ -706,6 +732,7 @@ cat target/surefire-reports/*.txt
 ```
 
 **Spring AI Configuration:**
+
 ```bash
 # Verify API key is set
 echo $ANTHROPIC_API_KEY
@@ -715,6 +742,7 @@ echo $ANTHROPIC_API_KEY
 ```
 
 **WebClient Gzip Issues:**
+
 - Ensure `reactor-netty` is on classpath
 - Check `Accept-Encoding: gzip` header in logs
 - Verify Open-Meteo API supports gzip (it does)
@@ -724,15 +752,17 @@ echo $ANTHROPIC_API_KEY
 ### Phase 1: Foundation (Weeks 1-2) - ✅ Complete
 
 **Tasks**:
+
 - [x] Create Maven project structure
 - [x] Set up Spring Boot 3.5 with WebFlux
 - [x] Implement OpenMeteoClient with gzip compression
 - [x] Migrate 18 Pydantic models to Java Records
 - [x] Set up test infrastructure (JUnit 5, Mockito, AssertJ)
 - [x] Implement comprehensive unit tests for client and models
-- [x] Copy data/*.json resource files
+- [x] Copy data/\*.json resource files
 
-**Results**: 18 Java Records, OpenMeteoClient with 4 API methods, 26 unit tests passing
+**Results**: 18 Java Records, OpenMeteoClient with 4 API methods, 26 unit tests
+passing
 
 ### Phase 2: Services & Utilities (Weeks 3-4) - ✅ Complete
 
@@ -748,9 +778,11 @@ echo $ANTHROPIC_API_KEY
 - [x] Create ValidationUtil utility (input validation)
 - [x] Write comprehensive unit tests (87 tests total)
 
-**Results**: 4 service classes, 4 utility classes, 87 tests passing, 78-100% coverage for service/util layers
+**Results**: 4 service classes, 4 utility classes, 87 tests passing, 78-100%
+coverage for service/util layers
 
-**Note**: @McpTool annotations will be added in Phase 4 when Spring AI 2.0 becomes available
+**Note**: @McpTool annotations will be added in Phase 4 when Spring AI 2.0
+becomes available
 
 ### Phase 3: Resources & Prompts (Week 5) - ✅ Complete
 
@@ -763,19 +795,23 @@ echo $ANTHROPIC_API_KEY
 - [x] Write comprehensive unit tests (25 tests for Phase 3)
 
 **Results**:
-- ResourceService with 4 resources (weather codes, parameters, AQI reference, Swiss locations)
+
+- ResourceService with 4 resources (weather codes, parameters, AQI reference,
+  Swiss locations)
 - PromptService with 3 prompts (ski trip, outdoor activity, travel planning)
 - 112 tests passing total (87 from Phase 2 + 25 from Phase 3)
 - Phase 3 coverage: 75-100% for resource/prompt layers
 - Overall project coverage: 67%
 
 **Resources Implemented**:
+
 - `weather://codes` - WMO weather code reference
 - `weather://parameters` - Available weather parameters
 - `weather://aqi-reference` - AQI scales and health guidance
 - `weather://swiss-locations` - Swiss cities, mountains, passes
 
 **Prompts Implemented**:
+
 - `meteo__ski-trip-weather` - Ski trip planning with snow conditions
 - `meteo__plan-outdoor-activity` - Weather-aware outdoor activity planning
 - `meteo__weather-aware-travel` - Travel planning with weather integration
@@ -785,17 +821,23 @@ echo $ANTHROPIC_API_KEY
 **Spring AI v2.0.0 Integration Progress**:
 
 ✅ **Completed**:
+
 - Updated pom.xml with Spring AI v2.0.0 configuration
 - Added Spring milestones repository for milestone/RC releases
 - Configured Maven to support future Spring AI MCP artifacts
 - Documented MCP integration approach using Spring AI annotations
 
 ⏳ **Pending (Spring AI SDK availability)**:
-- Spring AI MCP modules (spring-ai-core, spring-ai-mcp) not yet available in standard repositories
-- Swiss AI MCP Commons (internal dependency) - requires company Maven repository configuration
-- Will implement `@McpTool`, `@McpResource`, `@McpPrompt` annotations once Spring AI SDK is available
+
+- Spring AI MCP modules (spring-ai-core, spring-ai-mcp) not yet available in
+  standard repositories
+- Swiss AI MCP Commons (internal dependency) - requires company Maven repository
+  configuration
+- Will implement `@McpTool`, `@McpResource`, `@McpPrompt` annotations once
+  Spring AI SDK is available
 
 **Next Steps for Phase 4**:
+
 1. Monitor Spring AI releases for MCP module availability
 2. When available, uncomment Spring AI dependencies in pom.xml:
    - `spring-ai-core` (2.0.0+)
@@ -828,28 +870,34 @@ public class WeatherToolService {
 ```
 
 **Repository Configuration for Phase 4**:
+
 - Already configured: Spring Milestones repository
 - Needed: Internal company Maven repository for swiss-ai-mcp-commons
-- Deployment: MCP endpoints will be auto-configured via @SpringAiApplication annotation
+- Deployment: MCP endpoints will be auto-configured via @SpringAiApplication
+  annotation
 
 ### Phase 5: Testing & Documentation (Weeks 7-8) - ✅ Complete
 
 **Tasks Completed**:
 
 - [x] Add comprehensive tests for model.request package (134 tests added)
-- [x] Add tests for remaining DTO classes (HourlyWeather, DailyWeather, HourlyAirQuality - 33 tests)
+- [x] Add tests for remaining DTO classes (HourlyWeather, DailyWeather,
+      HourlyAirQuality - 33 tests)
 - [x] Reach ≥80% test coverage goal - **ACHIEVED: 81%!** ✅
 - [x] Write comprehensive API documentation (API_REFERENCE.md)
 - [x] Update CLAUDE.md with Phase 5 results
 - [x] Create detailed test coverage reports
 
 **Final Results - Phase 5 Achievement**:
-- **279 total tests passing** (was 112 at Phase 1 start, +167 new tests in Phase 5)
+
+- **279 total tests passing** (was 112 at Phase 1 start, +167 new tests in
+  Phase 5)
 - **81% overall coverage** (target: 80% - EXCEEDED by 1%! ✅)
 - **model.request package: 100% coverage** (was 0%)
 - **model.dto package: 94% coverage** (was 65% - 29-point improvement!)
 
 **New Test Classes Created in Phase 5**:
+
 - WeatherRequestTest (32 tests)
 - LocationSearchRequestTest (28 tests)
 - SnowRequestTest (36 tests)
@@ -859,6 +907,7 @@ public class WeatherToolService {
 - HourlyAirQualityTest (13 tests)
 
 **Final Coverage Breakdown**:
+
 - ✅ **model.request**: 100% (was 0%) - Perfect!
 - ✅ **service**: 100% - Excellent
 - ✅ **prompt**: 100% - Excellent
@@ -871,7 +920,9 @@ public class WeatherToolService {
 - ℹ️ **config**: 0% - Spring Boot config (not critical)
 
 **Documentation Delivered**:
-- ✅ [docs/API_REFERENCE.md](docs/API_REFERENCE.md) - Complete API documentation with 4 tools, 4 resources, 3 prompts
+
+- ✅ [docs/API_REFERENCE.md](docs/API_REFERENCE.md) - Complete API documentation
+  with 4 tools, 4 resources, 3 prompts
 - ✅ CLAUDE.md updated with comprehensive Phase 5 results
 - ✅ Test Coverage Report: target/site/jacoco/index.html
 
@@ -881,21 +932,20 @@ See CONSTITUTION.md Section 15 for full details.
 
 ## Project Status
 
-**Current Version**: 1.0.0 (Phase 6 Complete - ✅ RELEASED WITH ENHANCED DESCRIPTIONS)
-**Release Date**: January 30, 2026
-**Status**: Production Ready ✅
-**MCP Protocol**: HTTP/SSE implemented and tested ✅
-**Descriptions**: Enhanced with examples, features, use cases, health guidelines ✅
-**Test Coverage**: 81% overall (target: ≥80%) - **GOAL EXCEEDED!** ✅
-**Tests Passing**: 279/279 (100%)
-**Git Tag**: `v1.0.0`
-**Python Reference**: v3.2.0 (production)
+**Current Version**: 1.0.0 (Phase 6 Complete - ✅ RELEASED WITH ENHANCED
+DESCRIPTIONS) **Release Date**: January 30, 2026 **Status**: Production Ready ✅
+**MCP Protocol**: HTTP/SSE implemented and tested ✅ **Descriptions**: Enhanced
+with examples, features, use cases, health guidelines ✅ **Test Coverage**: 81%
+overall (target: ≥80%) - **GOAL EXCEEDED!** ✅ **Tests Passing**: 279/279 (100%)
+**Git Tag**: `v1.0.0` **Python Reference**: v3.2.0 (production)
 
 ## Phase 5 Summary - ✅ COMPLETE
 
-Phase 5 successfully completed all testing and documentation objectives and has been released as **v1.0.0**.
+Phase 5 successfully completed all testing and documentation objectives and has
+been released as **v1.0.0**.
 
 **Achievement Metrics**:
+
 - Added **167 new tests** (from 112 to 279 total)
 - Improved coverage **14 percentage points** (from 67% to 81%)
 - Achieved **81% coverage** (exceeding 80% target by 1% ✅)
@@ -903,6 +953,7 @@ Phase 5 successfully completed all testing and documentation objectives and has 
 - Generated comprehensive **API documentation** (docs/API_REFERENCE.md)
 
 **Quality Indicators**:
+
 - All 279 tests pass ✅
 - model.request package: 100% coverage ✅
 - model.dto package: 94% coverage (up from 65%) ✅
@@ -911,29 +962,34 @@ Phase 5 successfully completed all testing and documentation objectives and has 
 - Production ready: YES ✅
 
 **v1.0.0 Release Details**:
+
 - **Release Date**: January 30, 2026
 - **Git Tag**: `v1.0.0`
 - **Status**: Production Ready ✅
 - **Build Status**: Passing ✅
 - **Documentation**: Complete ✅
 
-**Next Phase (Phase 6)**:
-The project is now moving into Phase 6 (Deployment & Release). See CONSTITUTION.md Section 15 for deployment strategy.
-Timeline: Target Q2 2026 for v1.0.0 production deployment.
+**Next Phase (Phase 6)**: The project is now moving into Phase 6 (Deployment &
+Release). See CONSTITUTION.md Section 15 for deployment strategy. Timeline:
+Target Q2 2026 for v1.0.0 production deployment.
 
 ## Important Reminders
 
 1. **ALWAYS use Java Records** for all DTOs and response models (ADR-002)
-2. **ALWAYS use CompletableFuture** (not Mono/Flux) for async operations (ADR-001)
+2. **ALWAYS use CompletableFuture** (not Mono/Flux) for async operations
+   (ADR-001)
 3. **ALWAYS use snake_case** for MCP tool names (ADR-007)
-4. **ALWAYS document before coding** - Specification-Driven Development (ADR-005)
-5. **ALWAYS use @McpTool/@McpResource/@McpPrompt** annotations from Spring AI 2.0 (ADR-004)
+4. **ALWAYS document before coding** - Specification-Driven Development
+   (ADR-005)
+5. **ALWAYS use @McpTool/@McpResource/@McpPrompt** annotations from Spring AI
+   2.0 (ADR-004)
 6. **ALWAYS write tests** - target ≥80% coverage (ADR-010)
 7. **ALWAYS use structured JSON logging** with SLF4J (ADR-008)
 
 ## v1.0.0 Release Information
 
 **Release Highlights**:
+
 - ✅ 81% code coverage (exceeding 80% goal by 1%)
 - ✅ 279 tests passing (100% pass rate)
 - ✅ 4 fully-functional MCP tools
@@ -944,14 +1000,19 @@ Timeline: Target Q2 2026 for v1.0.0 production deployment.
 - ✅ Production ready
 
 **Key Files**:
+
 - [README.md](README.md) - Project overview with Phase 5 status
 - [RELEASE_NOTES.md](RELEASE_NOTES.md) - Comprehensive release notes for v1.0.0
 - [docs/API_REFERENCE.md](docs/API_REFERENCE.md) - Complete API documentation
-- [spec/CONSTITUTION.md](spec/CONSTITUTION.md) - Project governance & migration strategy
-- [spec/ADR_COMPENDIUM.md](spec/ADR_COMPENDIUM.md) - 15 Architecture Decision Records
-- [spec/MIGRATION_GUIDE.md](spec/MIGRATION_GUIDE.md) - Python to Java migration patterns
+- [spec/CONSTITUTION.md](spec/CONSTITUTION.md) - Project governance & migration
+  strategy
+- [spec/ADR_COMPENDIUM.md](spec/ADR_COMPENDIUM.md) - 15 Architecture Decision
+  Records
+- [spec/MIGRATION_GUIDE.md](spec/MIGRATION_GUIDE.md) - Python to Java migration
+  patterns
 
 **Build & Run**:
+
 ```bash
 # Build
 ./mvnw clean install
@@ -974,6 +1035,7 @@ java -jar target/open-meteo-mcp-1.0.0.jar
 
 ---
 
-**For detailed migration strategy, see [CONSTITUTION.md Section 15](spec/CONSTITUTION.md#15-migration-strategy-python-to-java)**
+**For detailed migration strategy, see
+[CONSTITUTION.md Section 15](spec/CONSTITUTION.md#15-migration-strategy-python-to-java)**
 
 **v1.0.0 Status**: ✅ RELEASED & PRODUCTION READY
