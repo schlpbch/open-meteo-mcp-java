@@ -1,7 +1,7 @@
 # Open Meteo MCP - Architecture Decision Records (ADR) Compendium
 
-**Document Version**: 3.2.0 **Last Updated**: 2026-02-02 **Total ADRs**: 17 (10
-Accepted, 7 Proposed)
+**Document Version**: 3.3.0 **Last Updated**: 2026-02-02 **Total ADRs**: 18 (10
+Accepted, 8 Proposed)
 
 **Related Documents**:
 
@@ -32,6 +32,8 @@ Accepted, 7 Proposed)
   🔄
 - [ADR-016: Adopt Java 25 LTS](#adr-016-adopt-java-25-lts) 🔄
 - [ADR-017: Adopt Spring Boot 5](#adr-017-adopt-spring-boot-5) 🔄
+- [ADR-018: ChatHandler with Spring AI ChatClient](#adr-018-chathandler-with-spring-ai-chatclient)
+  🔄
 
 ### Development Standards
 
@@ -880,18 +882,238 @@ spring:
 
 ---
 
+## ADR-018: ChatHandler with Spring AI ChatClient
+
+**Status**: 🔄 Proposed **Date**: 2026-02-02 **Deciders**: Architecture Team
+**Context**: Core Architecture **Related Issue**: #4
+
+### [ADR-018] Decision
+
+Implement **ChatHandler with Spring AI ChatClient** to transform the MCP server
+into an intelligent weather assistant with conversational AI capabilities.
+
+**Primary LLM Provider**: Azure OpenAI GPT-4
+
+**Rationale**:
+
+- **Conversational Interface**: Enable natural language weather queries beyond
+  simple tool calls
+- **Multi-Provider Support**: Azure OpenAI (primary) with OpenAI and Anthropic
+  fallbacks
+- **Function Calling Integration**: Leverage all 11 MCP tools as AI functions
+- **Conversation Memory**: Maintain context across multi-turn conversations
+- **RAG Enhancement**: Enrich responses with historical weather patterns and
+  location-specific knowledge
+- **Enterprise Ready**: Azure OpenAI provides enterprise SLA, compliance, and
+  data residency
+
+### [ADR-018] Architecture
+
+```
+ChatHandler
+    ├── Spring AI ChatClient (Azure OpenAI Primary)
+    │   ├── Azure OpenAI GPT-4 (Primary)
+    │   ├── OpenAI GPT-4 (Fallback)
+    │   └── Anthropic Claude (Fallback)
+    ├── Conversation Memory
+    │   ├── InMemoryConversationMemory (dev)
+    │   └── RedisConversationMemory (prod)
+    ├── RAG (Retrieval Augmented Generation)
+    │   ├── Vector Store (Pinecone/Weaviate/SimpleVectorStore)
+    │   ├── Weather Document Service
+    │   └── Context Enrichment
+    ├── Function Calling → All 11 MCP Tools
+    │   ├── Core Tools (4): search_location, get_weather, get_snow_conditions, get_air_quality
+    │   └── Advanced Tools (7): weather_alerts, comfort_index, astronomy, search_location_swiss,
+    │                            compare_locations, historical_weather, marine_conditions
+    └── Observability
+        ├── Token usage tracking
+        ├── Response time metrics
+        └── Provider health monitoring
+```
+
+### [ADR-018] Key Components
+
+**1. ChatHandler Service**
+
+```java
+@Service
+public class ChatHandler {
+    private final ChatClient chatClient;
+    private final ConversationMemoryService memoryService;
+    private final RagService ragService;
+
+    public CompletableFuture<AiResponse> chat(String sessionId, String message) {
+        // Load conversation context
+        var context = memoryService.loadContext(sessionId);
+        
+        // Enrich with RAG
+        var enrichedPrompt = ragService.enrichContext(message, context);
+        
+        // Process with ChatClient (function calling enabled)
+        var response = chatClient.prompt()
+            .user(enrichedPrompt)
+            .call()
+            .content();
+        
+        // Store conversation state
+        memoryService.saveMessage(sessionId, message, response);
+        
+        return CompletableFuture.completedFuture(response);
+    }
+}
+```
+
+**2. Azure OpenAI Configuration**
+
+```yaml
+spring:
+  ai:
+    azure:
+      openai:
+        api-key: ${AZURE_OPENAI_KEY}
+        endpoint: ${AZURE_OPENAI_ENDPOINT}
+        deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4}
+        model: gpt-4
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      model: gpt-4-turbo
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY:}
+    chat:
+      default-provider: azure-openai
+      fallback-providers: [openai, anthropic]
+      timeout: 30s
+      max-tokens: 2000
+```
+
+**3. Function Calling Integration**
+
+```java
+@Configuration
+public class ChatClientConfig {
+    @Bean
+    public ChatClient chatClient(AzureOpenAiChatModel azureChatModel) {
+        return ChatClient.builder(azureChatModel)
+            .defaultFunctions(
+                // All 11 MCP tools with meteo__ prefix
+                "meteo__search_location",
+                "meteo__get_weather",
+                "meteo__get_snow_conditions",
+                "meteo__get_air_quality",
+                "meteo__get_weather_alerts",
+                "meteo__get_comfort_index",
+                "meteo__get_astronomy",
+                "meteo__search_location_swiss",
+                "meteo__compare_locations",
+                "meteo__get_historical_weather",
+                "meteo__get_marine_conditions"
+            )
+            .build();
+    }
+}
+```
+
+### [ADR-018] Benefits
+
+**Conversational Intelligence**:
+- Natural language queries: "What's the weather like in Zurich this weekend?"
+- Multi-step reasoning: "Plan a ski trip to Zermatt next week"
+- Context awareness: "How does that compare to last year?"
+
+**Enterprise Features**:
+- **Azure OpenAI**: Enterprise SLA, compliance (SOC 2, ISO 27001), data
+  residency
+- **Fallback Strategy**: Automatic failover to OpenAI or Anthropic
+- **Cost Control**: Token usage monitoring and per-user quotas
+- **Observability**: Full metrics, logging, and distributed tracing
+
+**Enhanced Capabilities**:
+- **RAG**: Historical weather patterns, location-specific knowledge
+- **Memory**: Multi-turn conversations with context
+- **Streaming**: Real-time response streaming for better UX
+- **Agent Patterns**: Complex multi-step weather analysis
+
+### [ADR-018] Implementation Phases
+
+**Phase 4.1** (Week 1-2): Foundation & Core ChatHandler
+- Azure OpenAI configuration
+- Basic ChatHandler with session management
+- Function calling integration with all 11 tools
+
+**Phase 4.2** (Week 2-3): RAG & Context Enrichment
+- Vector store setup (SimpleVectorStore for dev, Pinecone for prod)
+- Weather document indexing
+- Context enrichment pipeline
+
+**Phase 4.3** (Week 3-4): Advanced Features & Production
+- Streaming responses
+- Agent patterns for complex queries
+- Comprehensive observability
+- Production deployment
+
+### [ADR-018] Success Criteria
+
+**Functional**:
+- [ ] Multi-provider LLM support with fallback
+- [ ] Function calling integration with all 11 MCP tools
+- [ ] Conversation memory and context management
+- [ ] RAG implementation with 40%+ accuracy improvement
+
+**Performance**:
+- [ ] Response time: <2s for 95% of queries
+- [ ] Throughput: 100+ concurrent conversations
+- [ ] Availability: 99.5% uptime SLA
+
+**Quality**:
+- [ ] Test coverage: 85%+
+- [ ] Complete API documentation
+- [ ] Full observability (metrics, logging, tracing)
+
+### [ADR-018] Related ADRs
+
+- [ADR-001](#adr-001-use-standard-java-with-completablefuture-for-async-operations) -
+  Async operations
+- [ADR-002](#adr-002-use-java-records-for-all-data-models) - Data models for
+  chat sessions
+- [ADR-004](#adr-004-use-spring-ai-20-for-weather-interpretation) - Spring AI
+  foundation
+- [ADR-008](#adr-008-structured-json-logging-with-slf4j) - Logging for chat
+  interactions
+- [ADR-009](#adr-009-micrometer-for-observability) - Metrics for token usage
+  and latency
+- [ADR-011](#adr-011-mcp-protocol-implementation) - MCP tools as AI functions
+
+### [ADR-018] Risks & Mitigation
+
+**Risks**:
+1. **Azure OpenAI Rate Limits**: Mitigate with fallback providers and request
+   queuing
+2. **Token Costs**: Implement per-user quotas and response caching
+3. **Latency**: Use streaming responses and optimize RAG retrieval (<500ms)
+4. **Context Window**: Implement conversation summarization for long sessions
+
+**Monitoring**:
+- Token usage per session/user
+- Provider health and failover events
+- Response latency (p50, p95, p99)
+- Function calling success rate
+
+---
+
 ## Summary
 
-This streamlined ADR compendium focuses on **17 core architectural decisions**
+This streamlined ADR compendium focuses on **18 core architectural decisions**
 relevant to the Open Meteo MCP Java project:
 
-**Core Architecture** (6 ADRs):
+**Core Architecture** (7 ADRs):
 
 - Standard Java with CompletableFuture
 - Java Records for data models
 - Spring Boot 5 framework (supersedes previous Spring Boot practices)
 - Spring AI 2.0 for interpretation
 - Java 25 LTS adoption
+- ChatHandler with Spring AI ChatClient
 
 **Development Standards** (3 ADRs):
 
