@@ -4,7 +4,9 @@ import com.openmeteo.mcp.helper.AstronomyCalculator;
 import com.openmeteo.mcp.helper.ComfortIndexCalculator;
 import com.openmeteo.mcp.helper.WeatherAlertGenerator;
 import com.openmeteo.mcp.service.AirQualityService;
+import com.openmeteo.mcp.service.HistoricalWeatherService;
 import com.openmeteo.mcp.service.LocationService;
+import com.openmeteo.mcp.service.MarineConditionsService;
 import com.openmeteo.mcp.service.WeatherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,12 +21,14 @@ import java.util.concurrent.CompletableFuture;
 /**
  * Advanced MCP Tools Handler providing weather alerts, comfort index, astronomy, and comparison tools.
  *
- * Exposes 5 advanced Open-Meteo MCP tools for AI assistants:
+ * Exposes 7 advanced Open-Meteo MCP tools for AI assistants:
  * 1. meteo__get_weather_alerts - Weather alerts based on thresholds
  * 2. meteo__get_comfort_index - Outdoor activity comfort score (0-100)
  * 3. meteo__get_astronomy - Sunrise, sunset, golden hour, moon phase
  * 4. meteo__search_location_swiss - Swiss-specific location search
  * 5. meteo__compare_locations - Multi-location weather comparison
+ * 6. meteo__get_historical_weather - Historical weather data (1940-present)
+ * 7. meteo__get_marine_conditions - Wave/swell data for lakes and coasts
  */
 @Component
 public class AdvancedToolsHandler {
@@ -34,14 +38,20 @@ public class AdvancedToolsHandler {
     private final WeatherService weatherService;
     private final AirQualityService airQualityService;
     private final LocationService locationService;
+    private final HistoricalWeatherService historicalWeatherService;
+    private final MarineConditionsService marineConditionsService;
 
     public AdvancedToolsHandler(
             WeatherService weatherService,
             AirQualityService airQualityService,
-            LocationService locationService) {
+            LocationService locationService,
+            HistoricalWeatherService historicalWeatherService,
+            MarineConditionsService marineConditionsService) {
         this.weatherService = weatherService;
         this.airQualityService = airQualityService;
         this.locationService = locationService;
+        this.historicalWeatherService = historicalWeatherService;
+        this.marineConditionsService = marineConditionsService;
     }
 
     /**
@@ -421,5 +431,105 @@ public class AdvancedToolsHandler {
                             "comparison_timestamp", java.time.Instant.now().toString()
                     );
                 });
+    }
+
+    /**
+     * MCP Tool: meteo__get_historical_weather
+     *
+     * Retrieves historical weather data from 1940 to present.
+     */
+    @McpTool(name = "meteo__get_historical_weather", description = """
+            Retrieves historical weather data from 1940 to present day.
+
+            Access 80+ years of historical weather records for any location worldwide.
+
+            DATA PROVIDED:
+            - Daily temperature (max, min, mean)
+            - Precipitation and snowfall
+            - Weather codes
+            - Wind speed and gusts
+            - Statistical summaries (averages, extremes)
+
+            USE CASES:
+            - Climate analysis and trends
+            - Historical event weather verification
+            - Seasonal pattern analysis
+            - Year-over-year comparisons
+
+            EXAMPLES:
+            - "What was the weather like in Zurich on Christmas 2020?"
+            - "Compare this summer's temperatures to last year"
+            - "Show me the wettest month in Bern in 2019"
+
+            DATE RANGE:
+            - Earliest: 1940-01-01
+            - Latest: Yesterday
+            - Recommended: Max 1 year range for optimal performance
+            """)
+    public CompletableFuture<Map<String, Object>> getHistoricalWeather(
+            @McpToolParam(description = "Latitude in decimal degrees", required = true) double latitude,
+            @McpToolParam(description = "Longitude in decimal degrees", required = true) double longitude,
+            @McpToolParam(description = "Start date in YYYY-MM-DD format", required = true) String startDate,
+            @McpToolParam(description = "End date in YYYY-MM-DD format", required = true) String endDate,
+            @McpToolParam(description = "Timezone for timestamps (default: 'auto')") String timezone) {
+        log.info("Tool invoked: meteo__get_historical_weather(lat={}, lon={}, start={}, end={}, timezone={})",
+                latitude, longitude, startDate, endDate, timezone);
+
+        if (timezone == null || timezone.isEmpty()) timezone = "auto";
+
+        return historicalWeatherService.getHistoricalWeather(latitude, longitude, startDate, endDate, timezone);
+    }
+
+    /**
+     * MCP Tool: meteo__get_marine_conditions
+     *
+     * Retrieves wave/swell data for coastal areas and large lakes.
+     */
+    @McpTool(name = "meteo__get_marine_conditions", description = """
+            Retrieves marine/wave forecast data for coastal areas and large lakes.
+
+            Essential for water sports, sailing, and lake activities in Switzerland.
+
+            DATA PROVIDED:
+            - Wave height, direction, and period
+            - Wind wave vs swell wave breakdown
+            - Water activity suitability assessment
+            - Safety recommendations
+
+            SUITABILITY LEVELS:
+            - Excellent: < 0.3m waves - All water activities
+            - Good: 0.3-0.6m - Most water activities
+            - Moderate: 0.6-1.0m - Experienced enthusiasts only
+            - Challenging: 1.0-1.5m - Expert sailors only
+            - Dangerous: > 1.5m - Not recommended
+
+            USE CASES:
+            - Swiss lake sailing and water sports
+            - Coastal activity planning
+            - Safety assessment for water activities
+            - Wind surfing and kitesurfing conditions
+
+            EXAMPLES:
+            - "What are the wave conditions on Lake Geneva?"
+            - "Is it safe for sailing on Lake Zurich this weekend?"
+            - "Show me the marine forecast for Lake Lucerne"
+
+            COVERAGE:
+            - All major Swiss lakes (Geneva, Zurich, Lucerne, etc.)
+            - Coastal areas worldwide
+            - 7-day forecast
+            """)
+    public CompletableFuture<Map<String, Object>> getMarineConditions(
+            @McpToolParam(description = "Latitude in decimal degrees", required = true) double latitude,
+            @McpToolParam(description = "Longitude in decimal degrees", required = true) double longitude,
+            @McpToolParam(description = "Forecast days (1-7, default: 7)") int forecastDays,
+            @McpToolParam(description = "Timezone for timestamps (default: 'auto')") String timezone) {
+        log.info("Tool invoked: meteo__get_marine_conditions(lat={}, lon={}, days={}, timezone={})",
+                latitude, longitude, forecastDays, timezone);
+
+        if (forecastDays <= 0) forecastDays = 7;
+        if (timezone == null || timezone.isEmpty()) timezone = "auto";
+
+        return marineConditionsService.getMarineConditions(latitude, longitude, forecastDays, timezone);
     }
 }
