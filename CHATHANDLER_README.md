@@ -1,12 +1,14 @@
 # ChatHandler Feature (v1.2.0)
 
-Conversational AI interface for the Open-Meteo MCP server, enabling natural language weather queries with context awareness and function calling.
+Conversational AI interface for the Open-Meteo MCP server, enabling natural
+language weather queries with context awareness and function calling.
 
 ## Quick Start
 
 ### 1. Configuration
 
 Set environment variables:
+
 ```bash
 export AZURE_OPENAI_API_KEY=your-api-key
 export AZURE_OPENAI_ENDPOINT=https://your-endpoint.openai.azure.com
@@ -16,11 +18,13 @@ export OPENMETEO_CHAT_ENABLED=true
 ### 2. Run Locally
 
 **With in-memory storage:**
+
 ```bash
 mvn spring-boot:run -Dspring-boot.run.profiles=chat
 ```
 
 **With Redis:**
+
 ```bash
 # Start Redis
 docker run -d -p 6379:6379 redis:alpine
@@ -31,6 +35,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=chat \
 ```
 
 **With Docker Compose:**
+
 ```bash
 docker-compose -f docker-compose-chat.yml up
 ```
@@ -55,6 +60,7 @@ curl -N http://localhost:8080/api/chat/stream/sessions/user-123/messages \
 ## Features
 
 ### ✅ Core Capabilities
+
 - **Async Conversation Memory**: InMemory or Redis-backed
 - **Context Awareness**: Location tracking, user preferences
 - **RAG Foundation**: Knowledge document integration
@@ -63,11 +69,13 @@ curl -N http://localhost:8080/api/chat/stream/sessions/user-123/messages \
 - **Production Observability**: Metrics via Micrometer
 
 ### 🔧 Supported LLM Providers
+
 - Azure OpenAI (default)
 - OpenAI
 - Anthropic Claude
 
 ### 📊 Available Tools
+
 1. `meteo__search_location` - Geocoding
 2. `meteo__get_weather` - Weather forecast
 3. `meteo__get_snow_conditions` - Snow conditions
@@ -82,7 +90,9 @@ curl -N http://localhost:8080/api/chat/stream/sessions/user-123/messages \
 
 ## Configuration
 
-See [`application-chat.properties`](src/main/resources/application-chat.properties) for all options.
+See
+[`application-chat.properties`](src/main/resources/application-chat.properties)
+for all options.
 
 ### Key Settings
 
@@ -106,24 +116,29 @@ spring.ai.azure.openai.chat.options.temperature=0.7
 ### Chat Operations
 
 **POST** `/api/chat/sessions/{sessionId}/messages`
+
 - Send a message and get AI response
 - Request: `{"message": "string"}`
 - Response: `{"content": "string", "metadata": {...}}`
 
 **GET** `/api/chat/sessions/{sessionId}`
+
 - Get session information
 - Response: Session with context and timestamps
 
 **DELETE** `/api/chat/sessions/{sessionId}`
+
 - Delete a session and its messages
 
 ### Streaming (SSE)
 
 **POST** `/api/chat/stream/sessions/{sessionId}/messages`
+
 - Stream AI response in real-time
 - Events: `start`, `chunk`, `complete`, `error`
 
 **GET** `/api/chat/stream/health`
+
 - Health check for streaming endpoint
 
 ## Metrics
@@ -138,7 +153,9 @@ Available via `/actuator/metrics`:
 
 ## Examples
 
-See [`ChatHandlerExample.java`](src/main/java/com/openmeteo/mcp/chat/example/ChatHandlerExample.java) for integration examples:
+See
+[`ChatHandlerExample.java`](src/main/java/com/openmeteo/mcp/chat/example/ChatHandlerExample.java)
+for integration examples:
 
 ```bash
 mvn spring-boot:run -Dopenmeteo.chat.example.enabled=true
@@ -199,19 +216,23 @@ docker run -p 8080:8080 \
 ### Common Issues
 
 **Build fails with Spring AI errors**
+
 - Ensure Spring AI 2.0.0-M2 is in dependencies
 - Check that `ChatModel` bean is available
 
 **Redis connection fails**
+
 - Verify Redis is running: `redis-cli ping`
 - Check `spring.data.redis.host` and `port`
 
 **LLM API errors**
+
 - Verify API key is set correctly
 - Check endpoint URL format
 - Review deployment name matches your Azure resource
 
 **Function calling not working**
+
 - Ensure `openmeteo.chat.enabled=true`
 - Check that MCP tools are registered as beans
 - Verify LLM supports function calling
@@ -225,6 +246,7 @@ docker run -p 8080:8080 \
 ## Version History
 
 **v1.2.0** (2026-02-02)
+
 - Initial ChatHandler implementation
 - 11 MCP tools integration
 - Redis conversation memory

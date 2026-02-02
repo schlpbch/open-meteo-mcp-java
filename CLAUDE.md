@@ -7,12 +7,17 @@ code in this repository.
 
 Open Meteo MCP (Java) is a **Model Context Protocol (MCP) server** providing
 weather, snow conditions, and air quality data via the
-[Open-Meteo API](https://open-meteo.com/), with **conversational AI capabilities**. This is a **strategic migration** of
-the proven open-meteo-mcp (Python/FastMCP v3.2.0) to Java/Spring Boot for
-enterprise-grade architecture and Spring AI 2.0 integration.
+[Open-Meteo API](https://open-meteo.com/), with **conversational AI
+capabilities**. This is a **strategic migration** of the proven open-meteo-mcp
+(Python/FastMCP v3.2.0) to Java/Spring Boot for enterprise-grade architecture
+and Spring AI 2.0 integration.
 
-**Current Status**: ✅ v1.2.0 - 100% Migration Complete - 11 Tools + ChatHandler with Spring AI  
-**Latest Update**: February 2, 2026 - Completed ChatHandler v1.2.0 with conversational AI, function calling, RAG foundation, Redis memory, SSE streaming, and 360 comprehensive tests (100% pass rate). Full SBB MCP Ecosystem v2.0.0 compliance with meteo__ namespace prefix.
+**Current Status**: ✅ v1.2.0 - 100% Migration Complete - 11 Tools + ChatHandler
+with Spring AI  
+**Latest Update**: February 2, 2026 - Completed ChatHandler v1.2.0 with
+conversational AI, function calling, RAG foundation, Redis memory, SSE
+streaming, and 360 comprehensive tests (100% pass rate). Full SBB MCP Ecosystem
+v2.0.0 compliance with meteo\_\_ namespace prefix.
 
 **Key Technologies:**
 
@@ -187,19 +192,19 @@ src/main/java/com/openmeteo/mcp/
 
 ### MCP Tools (11 tools - 100% Complete)
 
-| Tool                              | Description                                          | Status         | File Reference                 |
-| --------------------------------- | ---------------------------------------------------- | -------------- | ------------------------------ |
-| `meteo__search_location`          | Geocoding - search locations by name                 | ✅ Implemented | tool/McpToolsHandler.java:65   |
-| `meteo__get_weather`              | Get weather forecast with temperature, precipitation | ✅ Implemented | tool/McpToolsHandler.java:100  |
-| `meteo__get_snow_conditions`      | Get snow depth, snowfall, mountain weather           | ✅ Implemented | tool/McpToolsHandler.java:140  |
-| `meteo__get_air_quality`          | Get AQI, pollutants, UV index, pollen                | ✅ Implemented | tool/McpToolsHandler.java:180  |
-| `meteo__get_weather_alerts`       | Weather alerts based on thresholds                   | ✅ Implemented | tool/AdvancedToolsHandler.java |
-| `meteo__get_comfort_index`        | Outdoor activity comfort score (0-100)               | ✅ Implemented | tool/AdvancedToolsHandler.java |
-| `meteo__get_astronomy`            | Sunrise, sunset, golden hour, moon phase             | ✅ Implemented | tool/AdvancedToolsHandler.java |
-| `meteo__search_location_swiss`    | Swiss-specific location search                       | ✅ Implemented | tool/AdvancedToolsHandler.java |
-| `meteo__compare_locations`        | Multi-location weather comparison                    | ✅ Implemented | tool/AdvancedToolsHandler.java |
-| `meteo__get_historical_weather`   | Historical weather data (1940-present)               | ✅ Implemented | tool/AdvancedToolsHandler.java |
-| `meteo__get_marine_conditions`    | Wave/swell data for lakes and coasts                 | ✅ Implemented | tool/AdvancedToolsHandler.java |
+| Tool                            | Description                                          | Status         | File Reference                 |
+| ------------------------------- | ---------------------------------------------------- | -------------- | ------------------------------ |
+| `meteo__search_location`        | Geocoding - search locations by name                 | ✅ Implemented | tool/McpToolsHandler.java:65   |
+| `meteo__get_weather`            | Get weather forecast with temperature, precipitation | ✅ Implemented | tool/McpToolsHandler.java:100  |
+| `meteo__get_snow_conditions`    | Get snow depth, snowfall, mountain weather           | ✅ Implemented | tool/McpToolsHandler.java:140  |
+| `meteo__get_air_quality`        | Get AQI, pollutants, UV index, pollen                | ✅ Implemented | tool/McpToolsHandler.java:180  |
+| `meteo__get_weather_alerts`     | Weather alerts based on thresholds                   | ✅ Implemented | tool/AdvancedToolsHandler.java |
+| `meteo__get_comfort_index`      | Outdoor activity comfort score (0-100)               | ✅ Implemented | tool/AdvancedToolsHandler.java |
+| `meteo__get_astronomy`          | Sunrise, sunset, golden hour, moon phase             | ✅ Implemented | tool/AdvancedToolsHandler.java |
+| `meteo__search_location_swiss`  | Swiss-specific location search                       | ✅ Implemented | tool/AdvancedToolsHandler.java |
+| `meteo__compare_locations`      | Multi-location weather comparison                    | ✅ Implemented | tool/AdvancedToolsHandler.java |
+| `meteo__get_historical_weather` | Historical weather data (1940-present)               | ✅ Implemented | tool/AdvancedToolsHandler.java |
+| `meteo__get_marine_conditions`  | Wave/swell data for lakes and coasts                 | ✅ Implemented | tool/AdvancedToolsHandler.java |
 
 ### MCP Resources (4 resources implemented)
 

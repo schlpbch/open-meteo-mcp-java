@@ -1,0 +1,41 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# IDE
+.idea
+.vscode
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+target/
+!target/open-meteo-mcp-*.jar
+*.log
+
+# Environment files
+.env
+.env.local
+.env.example
+
+# Documentation
+*.md
+docs/
+spec/
+
+# Test coverage
+jacoco.exec
+
+# Maven wrapper (we copy it explicitly)
+# Remove these lines if you want to include the wrapper
+# .mvn
+# mvnw
+# mvnw.cmd
