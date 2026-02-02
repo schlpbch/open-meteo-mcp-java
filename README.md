@@ -1,11 +1,12 @@
 # Open Meteo MCP Server (Java)
 
 A Model Context Protocol (MCP) server providing weather, snow conditions, and
-air quality tools via the [Open-Meteo API](https://open-meteo.com/).
+air quality tools via the [Open-Meteo API](https://open-meteo.com/), with **conversational AI capabilities**.
 
-**Version**: 1.1.0 (Production Ready) **Status**: ✅ 100% Migration Complete -
-11 Tools with Comprehensive Test Coverage **Release Date**:
-February 2, 2026 **License**: Apache 2.0
+**Version**: 1.2.0 (Production Ready)  
+**Status**: ✅ 100% Migration Complete - 11 Tools + ChatHandler with Spring AI  
+**Release Date**: February 2, 2026  
+**License**: Apache 2.0
 
 ## 🎉 Project Milestone
 
@@ -26,17 +27,39 @@ Java with Spring Boot 4.0 and Spring AI 2.0.
 - ✅ **11 MCP Tools**: 4 core + 7 advanced (100% migration complete)
   - Core: meteo__search_location, meteo__get_weather, meteo__get_snow_conditions, meteo__get_air_quality
   - Advanced: meteo__get_weather_alerts, meteo__get_comfort_index, meteo__get_astronomy, meteo__search_location_swiss, meteo__compare_locations, meteo__get_historical_weather, meteo__get_marine_conditions
+- ✅ **ChatHandler**: Conversational AI interface with Spring AI 2.0
+  - Natural language weather queries
+  - Multi-turn conversations with context awareness
+  - Function calling integration (11 MCP tools)
+  - Redis conversation memory
+  - SSE streaming responses
 - ✅ **4 MCP Resources**: weather://codes, weather://parameters,
   weather://aqi-reference, weather://swiss-locations
 - ✅ **3 MCP Prompts**: meteo__ski-trip-weather, meteo__plan-outdoor-activity,
   meteo__weather-aware-travel
 - ✅ **SBB MCP Ecosystem v2.0.0**: All tools/prompts use meteo__ namespace prefix
-- ✅ **Comprehensive Test Coverage**: 19 unit tests with 100% pass rate
+- ✅ **Comprehensive Test Coverage**: 360 unit tests with 100% pass rate (47% overall coverage)
 - ✅ **Helper Classes**: WeatherAlertGenerator, ComfortIndexCalculator, AstronomyCalculator
 - ✅ **Enhanced Services**: HistoricalWeatherService, MarineConditionsService
 - ✅ **MCP Server Configuration**: Spring Boot with @McpTool/@McpPrompt/@McpResource annotations
 - ✅ **SSE Transport**: Full MCP protocol support via HTTP/SSE at `/sse` endpoint
 - ✅ **Server Running**: Spring Boot 4.0.0 on port 8888
+
+**v1.2.0 Release Highlights** (NEW):
+
+- 🎉 **ChatHandler**: Conversational AI interface with Spring AI 2.0
+  - Natural language weather queries with context awareness
+  - Multi-turn conversations with session management
+  - Function calling integration (all 11 MCP tools accessible)
+  - RAG foundation with weather knowledge documents
+  - Redis conversation memory for production
+  - SSE streaming for real-time responses
+  - Production observability with Micrometer metrics
+- ✅ **LLM Provider Support**: Azure OpenAI (primary), OpenAI, Anthropic Claude
+- ✅ **30 New Tests**: ChatHandler comprehensive test suite
+- ✅ **360 Total Tests**: 100% pass rate, 47% overall coverage
+- ✅ **Docker Compose**: Multi-container setup with Redis
+- ✅ **Complete Documentation**: README, examples, release notes
 
 **v1.1.0 Release Highlights**:
 
@@ -107,6 +130,54 @@ All prompts are:
 - ✅ Provided by PromptService component
 - ✅ Return workflow instructions for AI assistants
 - ✅ Integrated with all available tools and resources
+
+### 💬 ChatHandler (v1.2.0 - NEW ✅)
+
+**Conversational AI interface** powered by Spring AI 2.0 for natural language weather queries.
+
+**Key Features**:
+- 🤖 **Natural Language Processing**: Ask weather questions in plain English
+- 💭 **Multi-turn Conversations**: Context-aware session management
+- 🔧 **Function Calling**: Automatic tool selection from 11 MCP tools
+- 📚 **RAG Foundation**: Weather knowledge documents for enhanced responses
+- 💾 **Conversation Memory**: In-memory (dev) or Redis (production)
+- 🌊 **SSE Streaming**: Real-time response streaming
+- 📊 **Observability**: Micrometer metrics for production monitoring
+
+**LLM Provider Support**:
+- ✅ **Azure OpenAI** (Primary, recommended)
+- ✅ **OpenAI** (GPT-4, GPT-3.5)
+- ✅ **Anthropic Claude** (Claude 3)
+
+**REST API Endpoints**:
+- `POST /api/chat/sessions/{sessionId}/messages` - Send chat message
+- `GET /api/chat/sessions/{sessionId}` - Get session details
+- `GET /api/chat/sessions/{sessionId}/messages` - Get conversation history
+- `DELETE /api/chat/sessions/{sessionId}` - Delete session
+- `GET /api/chat/health` - Health check
+
+**Example Usage**:
+```bash
+# Send a weather query
+curl -X POST http://localhost:8888/api/chat/sessions/my-session/messages \
+  -H "Content-Type: application/json" \
+  -d '{"message": "What's the weather in Zurich?"}'
+
+# Get conversation history
+curl http://localhost:8888/api/chat/sessions/my-session/messages
+```
+
+**Configuration**:
+```yaml
+openmeteo:
+  chat:
+    enabled: true
+    memory:
+      type: redis  # or inmemory
+      session-ttl: 60  # minutes
+```
+
+See [CHATHANDLER_README.md](CHATHANDLER_README.md) for complete documentation.
 
 ## Technology Stack
 

@@ -1,15 +1,16 @@
-# Business Capabilities: Open-Meteo MCP TypeScript
+# Business Capabilities: Open-Meteo MCP Java
 
 ## Executive Summary
 
-The Open-Meteo MCP TypeScript server enables AI assistants like Claude to access real-time weather data, providing intelligent, context-aware weather information for decision-making, planning, and automation across various business domains.
+The Open-Meteo MCP Java server enables AI assistants like Claude to access real-time weather data through both **MCP tools** and **conversational AI**, providing intelligent, context-aware weather information for decision-making, planning, and automation across various business domains.
 
 **Key Value Propositions:**
 - **Zero API Costs**: Uses Open-Meteo's free weather API (no API keys required)
-- **Enterprise-Ready**: Production-grade TypeScript implementation with 168 tests and 84.8% code coverage
+- **Enterprise-Ready**: Production-grade Java/Spring Boot implementation with 360 tests and 47% code coverage
 - **AI-Native**: Designed specifically for Claude and other AI assistants via Model Context Protocol
+- **Conversational AI**: Natural language weather queries with ChatHandler (v1.2.0)
 - **Swiss-Optimized**: Pre-configured data for 100+ Swiss locations, mountains, and ski resorts
-- **Low Latency**: 50% faster than Python predecessor, ideal for real-time applications
+- **High Performance**: Spring Boot 4.0 with virtual threads for optimal throughput
 
 ---
 
@@ -181,6 +182,35 @@ The Open-Meteo MCP TypeScript server enables AI assistants like Claude to access
 
 ---
 
+### 9. **Conversational Weather Intelligence (v1.2.0 - NEW)**
+
+**Capability**: Natural language weather queries through ChatHandler with Spring AI.
+
+**Business Applications:**
+- **Customer Service**: AI chatbots answering weather questions in natural language
+- **Internal Tools**: Employees querying weather data conversationally
+- **Multi-Turn Planning**: Context-aware conversations for complex weather analysis
+- **Automated Insights**: AI-generated weather summaries and recommendations
+
+**Value Delivered:**
+- Reduced training time for staff (natural language vs. API knowledge)
+- Improved user experience with conversational interface
+- Faster decision-making through instant weather insights
+- Lower development costs (no custom UI needed)
+
+**Example Use Case:**
+> *"A travel agency integrates ChatHandler into their booking system. Agents ask 'What's the snow forecast for Verbier next week?' and receive instant, context-aware responses with automatic tool selection from 11 MCP weather tools. Multi-turn conversations allow follow-up questions like 'How does that compare to Zermatt?'"*
+
+**Technical Features:**
+- **LLM Providers**: Azure OpenAI (primary), OpenAI, Anthropic Claude
+- **Function Calling**: Automatic selection from 11 MCP tools
+- **RAG Foundation**: Weather knowledge documents for enhanced responses
+- **Conversation Memory**: Redis-based session management
+- **SSE Streaming**: Real-time response streaming
+- **Production Metrics**: Micrometer observability
+
+---
+
 ## Technical Capabilities Supporting Business Value
 
 ### Weather Data Services
@@ -195,6 +225,7 @@ The Open-Meteo MCP TypeScript server enables AI assistants like Claude to access
 | **Marine Weather** | Shipping and waterfront activities |
 | **UV Index** | Health and safety applications |
 | **Comfort Index** | Lifestyle and wellness services |
+| **Conversational AI** | Natural language weather queries (v1.2.0) |
 
 ### Geographic Coverage
 
@@ -206,9 +237,11 @@ The Open-Meteo MCP TypeScript server enables AI assistants like Claude to access
 ### Integration & Deployment
 
 - **Model Context Protocol**: Seamless AI assistant integration
-- **Cloud-Native**: Deno Deploy for global scalability
-- **Zero Infrastructure**: No servers to manage
-- **High Performance**: Sub-125ms response times (P95)
+- **Spring Boot 4.0**: Enterprise-grade Java framework
+- **Virtual Threads**: High-performance async operations
+- **ChatHandler API**: RESTful endpoints for conversational AI
+- **Redis Support**: Production-ready conversation memory
+- **Docker Compose**: Multi-container deployment
 
 ---
 
@@ -222,9 +255,10 @@ The Open-Meteo MCP TypeScript server enables AI assistants like Claude to access
 
 ### 2. **AI-First Design**
 - **Native Claude Integration**: Built for MCP protocol
-- **Conversational Interface**: Natural language queries
-- **Context-Aware**: AI understands business intent
+- **Conversational Interface**: Natural language queries via ChatHandler
+- **Context-Aware**: AI understands business intent with conversation memory
 - **Automated Workflows**: Chain multiple weather operations
+- **Function Calling**: Automatic tool selection from 11 MCP tools
 
 ### 3. **Swiss Market Leadership**
 - **Local Expertise**: Optimized for Swiss geography
@@ -233,10 +267,11 @@ The Open-Meteo MCP TypeScript server enables AI assistants like Claude to access
 - **Pass Conditions**: Real-time data for major mountain passes
 
 ### 4. **Enterprise Quality**
-- **Production-Ready**: 168 comprehensive tests
-- **Type-Safe**: Full TypeScript implementation
-- **High Performance**: 50% faster than alternatives
+- **Production-Ready**: 360 comprehensive tests (100% pass rate)
+- **Type-Safe**: Full Java 25 with Records
+- **High Performance**: Spring Boot 4.0 with virtual threads
 - **Well-Documented**: Extensive documentation and examples
+- **Observability**: Micrometer metrics for production monitoring
 
 ---
 
@@ -455,11 +490,12 @@ The Open-Meteo MCP TypeScript server transforms how businesses leverage weather 
 
 **Key Takeaways:**
 - ✅ **Zero Cost**: Free weather API with no usage limits
-- ✅ **AI-Ready**: Native integration with Claude via MCP
-- ✅ **Production-Quality**: 168 tests, 84.8% code coverage
+- ✅ **AI-Ready**: Native integration with Claude via MCP + ChatHandler
+- ✅ **Production-Quality**: 360 tests, 100% pass rate, 47% coverage
+- ✅ **Conversational AI**: Natural language weather queries (v1.2.0)
 - ✅ **Swiss-Optimized**: 100+ pre-configured locations
 - ✅ **Fast ROI**: Typical payback period <3 months
-- ✅ **Low Risk**: Open-source, no vendor lock-in
+- ✅ **Low Risk**: Open-source Apache 2.0, no vendor lock-in
 
 Whether you're optimizing logistics routes, planning ski trips, or managing agricultural operations, weather intelligence powered by AI assistants can deliver measurable business value with minimal investment.
 
@@ -467,10 +503,10 @@ Whether you're optimizing logistics routes, planning ski trips, or managing agri
 
 **Ready to Get Started?**
 
-Visit [github.com/schlp/open-meteo-mcp-ts](https://github.com/schlp/open-meteo-mcp-ts) to deploy your own weather-intelligent AI assistant today.
+Visit [github.com/schlpbch/open-meteo-mcp-java](https://github.com/schlpbch/open-meteo-mcp-java) to deploy your own weather-intelligent AI assistant today.
 
 ---
 
-*Last Updated: 2026-01-29*
-*Version: 4.0.0*
-*License: MIT*
+*Last Updated: 2026-02-02*
+*Version: 1.2.0*
+*License: Apache 2.0*

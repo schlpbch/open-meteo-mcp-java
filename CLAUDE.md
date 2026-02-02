@@ -7,25 +7,25 @@ code in this repository.
 
 Open Meteo MCP (Java) is a **Model Context Protocol (MCP) server** providing
 weather, snow conditions, and air quality data via the
-[Open-Meteo API](https://open-meteo.com/). This is a **strategic migration** of
+[Open-Meteo API](https://open-meteo.com/), with **conversational AI capabilities**. This is a **strategic migration** of
 the proven open-meteo-mcp (Python/FastMCP v3.2.0) to Java/Spring Boot for
 enterprise-grade architecture and Spring AI 2.0 integration.
 
-**Current Status**: ✅ v1.1.0 - 100% Migration Complete - 11 Tools with
-Comprehensive Test Coverage **Latest Update**: February 2, 2026 - Completed
-migration of all 7 advanced tools with helper classes, services, and 19 unit
-tests. Full SBB MCP Ecosystem v2.0.0 compliance with meteo__ namespace prefix.
+**Current Status**: ✅ v1.2.0 - 100% Migration Complete - 11 Tools + ChatHandler with Spring AI  
+**Latest Update**: February 2, 2026 - Completed ChatHandler v1.2.0 with conversational AI, function calling, RAG foundation, Redis memory, SSE streaming, and 360 comprehensive tests (100% pass rate). Full SBB MCP Ecosystem v2.0.0 compliance with meteo__ namespace prefix.
 
 **Key Technologies:**
 
 - Java 25 with Virtual Threads
 - Spring Boot 4.0 with WebFlux (async/non-blocking)
-- Spring AI 2.0 (native MCP annotations + ChatClient)
+- Spring AI 2.0 (native MCP annotations + ChatClient + Function Calling)
+- Azure OpenAI / OpenAI / Anthropic Claude (LLM providers)
+- Redis for conversation memory (production)
 - Maven 3.9+ for build management
 - Jackson for JSON serialization with gzip compression
 - SLF4J + Logback for structured JSON logging
 - Micrometer for observability
-- JUnit 5 + Mockito + AssertJ for testing
+- JUnit 5 + Mockito + AssertJ for testing (360 tests, 100% pass rate)
 
 ## Essential Commands
 
@@ -130,6 +130,30 @@ src/main/java/com/openmeteo/mcp/
 ├── prompt/                         # MCP Prompt layer ✅
 │   └── PromptService.java         # Generates MCP workflow prompts ✅
 │
+├── chat/                           # ChatHandler layer (v1.2.0) ✅
+│   ├── controller/                 # REST API endpoints ✅
+│   │   └── ChatController.java    # Chat session management endpoints ✅
+│   ├── service/                    # Chat services ✅
+│   │   ├── ChatHandler.java       # Main chat orchestration ✅
+│   │   ├── ConversationMemoryService.java # Memory interface ✅
+│   │   ├── InMemoryConversationMemoryService.java # Dev memory ✅
+│   │   └── RedisConversationMemoryService.java # Prod memory ✅
+│   ├── rag/                        # RAG components ✅
+│   │   ├── ContextEnrichmentService.java # Prompt enrichment ✅
+│   │   └── WeatherKnowledgeDocuments.java # Knowledge base ✅
+│   ├── model/                      # Chat models ✅
+│   │   ├── ChatSession.java       # Session record ✅
+│   │   ├── Message.java           # Message record ✅
+│   │   ├── AiResponse.java        # Response record ✅
+│   │   ├── ConversationContext.java # Context record ✅
+│   │   └── WeatherPreferences.java # Preferences record ✅
+│   ├── observability/              # Metrics and monitoring ✅
+│   │   └── ChatMetrics.java       # Micrometer metrics ✅
+│   ├── config/                     # Chat configuration ✅
+│   │   └── ChatConfig.java        # Bean configuration ✅
+│   └── exception/                  # Chat exceptions ✅
+│       └── ChatException.java     # Custom exception ✅
+│
 ├── client/                         # Client layer (external APIs)
 │   ├── OpenMeteoClient.java       # Open-Meteo API client
 │   └── OpenMeteoClientConfig.java # Client configuration
@@ -220,16 +244,18 @@ public class McpServerConfig {
 }
 ```
 
-**Server Status**:
+**Server Status** (v1.2.0):
 
 ```
 ✅ MCP Tools (11): meteo__search_location, meteo__get_weather, meteo__get_snow_conditions, meteo__get_air_quality, meteo__get_weather_alerts, meteo__get_comfort_index, meteo__get_astronomy, meteo__search_location_swiss, meteo__compare_locations, meteo__get_historical_weather, meteo__get_marine_conditions
 ✅ MCP Prompts (3): meteo__ski-trip-weather, meteo__plan-outdoor-activity, meteo__weather-aware-travel
 ✅ MCP Resources (4): weather://codes, weather://parameters, weather://aqi-reference, weather://swiss-locations
+✅ ChatHandler: Conversational AI with Spring AI 2.0, function calling, RAG, Redis memory, SSE streaming
 ✅ Helper Classes (3): WeatherAlertGenerator, ComfortIndexCalculator, AstronomyCalculator
 ✅ Services (6): WeatherService, LocationService, SnowConditionsService, AirQualityService, HistoricalWeatherService, MarineConditionsService
-✅ Test Coverage: 19 unit tests with 100% pass rate
+✅ Test Coverage: 360 unit tests with 100% pass rate (47% overall coverage)
 ✅ Available via MCP protocol (HTTP/SSE) at `/sse` endpoint
+✅ ChatHandler REST API at `/api/chat/*` endpoints
 ✅ Spring Boot server running on port 8888
 ✅ SBB MCP Ecosystem v2.0.0 compliant (meteo__ namespace)
 ✅ MCP Inspector integration tested and verified
