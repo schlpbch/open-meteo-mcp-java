@@ -282,7 +282,7 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    participant Client as Chat Client
+    participant Client as ChatClient
     participant ChatAPI as Chat API Controller
     participant Chat as Chat Handler
     participant Memory as Conversation Memory
