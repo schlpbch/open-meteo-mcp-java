@@ -2,6 +2,7 @@ package com.openmeteo.mcp.chat.service;
 
 import com.openmeteo.mcp.chat.exception.ChatException;
 import com.openmeteo.mcp.chat.model.*;
+import com.openmeteo.mcp.chat.rag.ContextEnrichmentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.model.ChatModel;
@@ -15,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * Core ChatHandler service that processes chat messages using Spring AI ChatModel.
- * Integrates conversation memory and function calling with MCP tools.
+ * Integrates conversation memory, context enrichment, and function calling with MCP tools.
  * 
  * @since 1.2.0
  */
@@ -27,13 +28,16 @@ public class ChatHandler {
     
     private final ChatModel chatModel;
     private final ConversationMemoryService memoryService;
+    private final ContextEnrichmentService contextEnrichment;
     
     public ChatHandler(
         ChatModel chatModel,
-        ConversationMemoryService memoryService
+        ConversationMemoryService memoryService,
+        ContextEnrichmentService contextEnrichment
     ) {
         this.chatModel = chatModel;
         this.memoryService = memoryService;
+        this.contextEnrichment = contextEnrichment;
     }
     
     /**
@@ -62,15 +66,25 @@ public class ChatHandler {
                 var userMsg = Message.user(sessionId, userMessage);
                 memoryService.saveMessage(userMsg).join();
                 
+                // Extract location from message and update context if found
+                var extractedLocation = contextEnrichment.extractLocation(userMessage).join();
+                if (extractedLocation != null) {
+                    var updatedContext = session.context().withLocation(extractedLocation);
+                    session = session.withContext(updatedContext);
+                    memoryService.saveSession(session).join();
+                    log.debug("Updated session context with location: {}", extractedLocation);
+                }
+                
                 // Get conversation history
                 var history = memoryService.getRecentMessages(sessionId, 10).join();
                 
-                // Build conversation context
-                var conversationContext = buildConversationContext(history);
+                // Enrich prompt with conversation context
+                var enrichedPrompt = contextEnrichment.enrichPrompt(userMessage, session.context()).join();
+                log.debug("Enriched prompt: {} chars", enrichedPrompt.length());
                 
-                // Call LLM with function calling enabled
+                // Call LLM with enriched prompt
                 var startTime = Instant.now();
-                var prompt = new Prompt(userMessage);
+                var prompt = new Prompt(enrichedPrompt);
                 var chatResponse = chatModel.call(prompt);
                 var response = chatResponse.getResult().getOutput().getText();
                 var endTime = Instant.now();
