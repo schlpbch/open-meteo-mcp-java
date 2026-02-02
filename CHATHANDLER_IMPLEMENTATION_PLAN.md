@@ -2,10 +2,12 @@
 
 **Project**: Open Meteo MCP Java  
 **Issue**: #4 - Phase 4: ChatHandler with Spring AI  
-**Document Version**: 1.0  
+**Document Version**: 1.1 (Updated for v1.1.0)  
 **Created**: 2026-02-02  
+**Updated**: 2026-02-02 (Post v1.1.0 release)  
 **Estimated Duration**: 4 weeks  
-**Priority**: High
+**Priority**: High  
+**Primary LLM Provider**: Azure OpenAI
 
 ---
 
@@ -19,19 +21,31 @@ memory, RAG capabilities, and enterprise-grade observability.
 
 ## Current State Analysis
 
-### ✅ Existing Infrastructure (Strong Foundation)
+### ✅ Existing Infrastructure (Strong Foundation - v1.1.0)
 
-- **Spring Boot 5.0** + **Java 25** modern stack (per ADR-017)
-- **4 MCP Tools** fully implemented with `@McpTool` annotations:
-  - `search_location` - Geocoding via `LocationService`
-  - `get_weather` - Weather forecasts via `WeatherService`
-  - `get_snow_conditions` - Ski conditions via `SnowConditionsService`
-  - `get_air_quality` - AQI data via `AirQualityService`
-- **3 MCP Resources** via `@McpResource` in `ResourceService`
-- **3 MCP Prompts** via `@McpPrompt` in `PromptService`
+- **Spring Boot 4.0.0** + **Java 25** modern stack
+- **11 MCP Tools** fully implemented with `@McpTool` annotations:
+  - **Core Tools (4)**:
+    - `meteo__search_location` - Geocoding via `LocationService`
+    - `meteo__get_weather` - Weather forecasts via `WeatherService`
+    - `meteo__get_snow_conditions` - Ski conditions via `SnowConditionsService`
+    - `meteo__get_air_quality` - AQI data via `AirQualityService`
+  - **Advanced Tools (7)**:
+    - `meteo__get_weather_alerts` - Weather alerts via `WeatherAlertGenerator`
+    - `meteo__get_comfort_index` - Comfort scoring via `ComfortIndexCalculator`
+    - `meteo__get_astronomy` - Astronomy data via `AstronomyCalculator`
+    - `meteo__search_location_swiss` - Swiss location search
+    - `meteo__compare_locations` - Multi-location comparison
+    - `meteo__get_historical_weather` - Historical data (1940-present) via `HistoricalWeatherService`
+    - `meteo__get_marine_conditions` - Wave/swell data via `MarineConditionsService`
+- **3 Helper Classes**: `WeatherAlertGenerator`, `ComfortIndexCalculator`, `AstronomyCalculator`
+- **6 Services**: Weather, Location, SnowConditions, AirQuality, HistoricalWeather, MarineConditions
+- **4 MCP Resources** via `@McpResource` in `ResourceService`
+- **3 MCP Prompts** via `@McpPrompt` in `PromptService` (all with `meteo__` prefix)
 - **REST API** endpoints via `McpToolsController`
-- **Comprehensive testing** with 279+ passing tests
-- **Spring AI 2.0.0-M2** dependency ready (per ADR-004)
+- **Comprehensive testing** with 19 unit tests (100% pass rate)
+- **Spring AI 2.0.0-M2** dependency ready
+- **SBB MCP Ecosystem v2.0.0** compliant (meteo__ namespace)
 
 ### Package Structure
 
@@ -60,10 +74,10 @@ com.openmeteo.mcp/
 
 ```
 ChatHandler
-    ├── Spring AI ChatClient (Multi-provider)
-    │   ├── OpenAI GPT-4
-    │   ├── Azure OpenAI
-    │   └── Anthropic Claude
+    ├── Spring AI ChatClient (Azure OpenAI Primary)
+    │   ├── Azure OpenAI GPT-4 (Primary)
+    │   ├── OpenAI GPT-4 (Fallback)
+    │   └── Anthropic Claude (Fallback)
     ├── Conversation Memory
     │   ├── InMemoryConversationMemory (dev)
     │   └── RedisConversationMemory (prod)
@@ -71,11 +85,20 @@ ChatHandler
     │   ├── Vector Store (Pinecone/Weaviate/SimpleVectorStore)
     │   ├── Weather Document Service
     │   └── Context Enrichment
-    ├── Function Calling → Existing MCP Tools
-    │   ├── get_weather()
-    │   ├── get_snow_conditions()
-    │   ├── get_air_quality()
-    │   └── search_location()
+    ├── Function Calling → All 11 MCP Tools
+    │   ├── Core Tools (4):
+    │   │   ├── meteo__search_location()
+    │   │   ├── meteo__get_weather()
+    │   │   ├── meteo__get_snow_conditions()
+    │   │   └── meteo__get_air_quality()
+    │   └── Advanced Tools (7):
+    │       ├── meteo__get_weather_alerts()
+    │       ├── meteo__get_comfort_index()
+    │       ├── meteo__get_astronomy()
+    │       ├── meteo__search_location_swiss()
+    │       ├── meteo__compare_locations()
+    │       ├── meteo__get_historical_weather()
+    │       └── meteo__get_marine_conditions()
     └── Observability
         ├── Spring Boot Actuator
         ├── Micrometer metrics
@@ -123,22 +146,29 @@ com.openmeteo.mcp/
 
 **Tasks**:
 
-1. **Update `pom.xml` with Spring AI LLM providers** (per ADR-004)
+1. **Update `pom.xml` with Spring AI LLM providers** (Azure OpenAI Primary)
 
    ```xml
    <!-- Add to existing dependencies -->
-   <dependency>
-       <groupId>org.springframework.ai</groupId>
-       <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
-   </dependency>
+   <!-- Azure OpenAI (Primary Provider) -->
    <dependency>
        <groupId>org.springframework.ai</groupId>
        <artifactId>spring-ai-azure-openai-spring-boot-starter</artifactId>
    </dependency>
+   
+   <!-- OpenAI (Fallback) -->
+   <dependency>
+       <groupId>org.springframework.ai</groupId>
+       <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
+   </dependency>
+   
+   <!-- Anthropic Claude (Fallback) -->
    <dependency>
        <groupId>org.springframework.ai</groupId>
        <artifactId>spring-ai-anthropic-spring-boot-starter</artifactId>
    </dependency>
+   
+   <!-- Redis for conversation memory -->
    <dependency>
        <groupId>org.springframework.boot</groupId>
        <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -146,32 +176,43 @@ com.openmeteo.mcp/
    ```
 
 2. **Create `AiConfig.java`**
-   - Multi-provider ChatClient configuration
-   - Fallback strategy: OpenAI → Azure → Anthropic
+   - Azure OpenAI as primary ChatClient
+   - Fallback strategy: Azure OpenAI → OpenAI → Anthropic
    - Environment-based provider selection
    - Timeout and retry configuration
+   - Azure-specific deployment configuration
 
 3. **Update `application.yml`**
    ```yaml
    spring:
      ai:
-       openai:
-         api-key: ${OPENAI_API_KEY}
-         model: gpt-4-turbo
        azure:
          openai:
            api-key: ${AZURE_OPENAI_KEY}
-           deployment-name: weather-chat
+           endpoint: ${AZURE_OPENAI_ENDPOINT}
+           deployment-name: ${AZURE_OPENAI_DEPLOYMENT:gpt-4}
+           model: gpt-4
+       openai:
+         api-key: ${OPENAI_API_KEY:}
+         model: gpt-4-turbo
        anthropic:
-         api-key: ${ANTHROPIC_API_KEY}
+         api-key: ${ANTHROPIC_API_KEY:}
        chat:
-         default-provider: openai
-         fallback-providers: [azure, anthropic]
+         default-provider: azure-openai
+         fallback-providers: [openai, anthropic]
          timeout: 30s
          max-tokens: 2000
      data:
        redis:
          url: ${REDIS_URL:redis://localhost:6379}
+   
+   # Azure OpenAI specific settings
+   openmeteo:
+     chat:
+       azure:
+         enabled: true
+         retry-attempts: 3
+         retry-delay-ms: 1000
    ```
 
 **Acceptance Criteria**:
@@ -284,10 +325,23 @@ com.openmeteo.mcp/
    @Configuration
    public class ChatClientConfig {
        @Bean
-       public ChatClient chatClient() {
-           return ChatClient.builder(chatModel)
-               .defaultFunctions("search_location", "get_weather",
-                               "get_snow_conditions", "get_air_quality")
+       public ChatClient chatClient(AzureOpenAiChatModel azureChatModel) {
+           return ChatClient.builder(azureChatModel)
+               .defaultFunctions(
+                   // Core tools
+                   "meteo__search_location",
+                   "meteo__get_weather",
+                   "meteo__get_snow_conditions",
+                   "meteo__get_air_quality",
+                   // Advanced tools
+                   "meteo__get_weather_alerts",
+                   "meteo__get_comfort_index",
+                   "meteo__get_astronomy",
+                   "meteo__search_location_swiss",
+                   "meteo__compare_locations",
+                   "meteo__get_historical_weather",
+                   "meteo__get_marine_conditions"
+               )
                .build();
        }
    }
@@ -485,12 +539,14 @@ com.openmeteo.mcp/
 
 ### Internal Integration
 
-- **Existing MCP Tools** (per CONSTITUTION.md): Zero changes required - reuse
-  via function calling
-  - 4 production tools: search_location, get_weather, get_snow_conditions,
-    get_air_quality
-  - 5 MCP resources: weather codes, ski resorts, locations, AQI, parameters
-  - 3 MCP prompts: ski trip, outdoor activity, travel planning
+- **Existing MCP Tools** (v1.1.0): Zero changes required - reuse via function calling
+  - 11 production tools (all with meteo__ prefix):
+    - 4 core: search_location, get_weather, get_snow_conditions, get_air_quality
+    - 7 advanced: weather_alerts, comfort_index, astronomy, search_location_swiss, compare_locations, historical_weather, marine_conditions
+  - 4 MCP resources: weather://codes, weather://parameters, weather://aqi-reference, weather://swiss-locations
+  - 3 MCP prompts: meteo__ski-trip-weather, meteo__plan-outdoor-activity, meteo__weather-aware-travel
+  - 3 helper classes: WeatherAlertGenerator, ComfortIndexCalculator, AstronomyCalculator
+  - 6 services: Weather, Location, SnowConditions, AirQuality, HistoricalWeather, MarineConditions
 - **Service Layer**: Weather/Location/Snow/AirQuality services unchanged
 - **Configuration**: Additive changes to existing config
 
@@ -618,9 +674,9 @@ and ADR documentation.
 
 ---
 
-**Note**: This plan assumes **Spring Boot 5.0** per ADR-017. If Constitution.md
-references Spring Boot 4.0, ADR-017 supersedes as the latest architectural
-decision.
+**Note**: This plan is based on **Spring Boot 4.0.0** and **Java 25** as currently
+implemented in v1.1.0. Azure OpenAI is the primary LLM provider with OpenAI and
+Anthropic as fallback options.
 
 ---
 
