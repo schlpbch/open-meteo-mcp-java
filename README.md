@@ -1,10 +1,12 @@
 # Open Meteo MCP Server (Java)
 
 A Model Context Protocol (MCP) server providing weather, snow conditions, and
-air quality tools via the [Open-Meteo API](https://open-meteo.com/), with **conversational AI capabilities**.
+air quality tools via the [Open-Meteo API](https://open-meteo.com/), with
+**conversational AI capabilities**.
 
 **Version**: 1.2.0 (Production Ready)  
-**Status**: ✅ 100% Migration Complete - 11 Tools + ChatHandler with Spring AI  
+**Status**: ✅ 100% Migration Complete - 11 Tools + ChatHandler with Spring AI +
+Comprehensive API Documentation  
 **Release Date**: February 2, 2026  
 **License**: Apache 2.0
 
@@ -25,8 +27,12 @@ Java with Spring Boot 4.0 and Spring AI 2.0.
 **Current Implementation Status**:
 
 - ✅ **11 MCP Tools**: 4 core + 7 advanced (100% migration complete)
-  - Core: meteo__search_location, meteo__get_weather, meteo__get_snow_conditions, meteo__get_air_quality
-  - Advanced: meteo__get_weather_alerts, meteo__get_comfort_index, meteo__get_astronomy, meteo__search_location_swiss, meteo__compare_locations, meteo__get_historical_weather, meteo__get_marine_conditions
+  - Core: meteo**search_location, meteo**get_weather,
+    meteo**get_snow_conditions, meteo**get_air_quality
+  - Advanced: meteo**get_weather_alerts, meteo**get_comfort_index,
+    meteo**get_astronomy, meteo**search_location_swiss,
+    meteo**compare_locations, meteo**get_historical_weather,
+    meteo\_\_get_marine_conditions
 - ✅ **ChatHandler**: Conversational AI interface with Spring AI 2.0
   - Natural language weather queries
   - Multi-turn conversations with context awareness
@@ -35,17 +41,36 @@ Java with Spring Boot 4.0 and Spring AI 2.0.
   - SSE streaming responses
 - ✅ **4 MCP Resources**: weather://codes, weather://parameters,
   weather://aqi-reference, weather://swiss-locations
-- ✅ **3 MCP Prompts**: meteo__ski-trip-weather, meteo__plan-outdoor-activity,
-  meteo__weather-aware-travel
-- ✅ **SBB MCP Ecosystem v2.0.0**: All tools/prompts use meteo__ namespace prefix
-- ✅ **Comprehensive Test Coverage**: 360 unit tests with 100% pass rate (47% overall coverage)
-- ✅ **Helper Classes**: WeatherAlertGenerator, ComfortIndexCalculator, AstronomyCalculator
+- ✅ **3 MCP Prompts**: meteo**ski-trip-weather, meteo**plan-outdoor-activity,
+  meteo\_\_weather-aware-travel
+- ✅ **SBB MCP Ecosystem v2.0.0**: All tools/prompts use meteo\_\_ namespace
+  prefix
+- ✅ **Comprehensive Test Coverage**: 360 unit tests with 100% pass rate (47%
+  overall coverage)
+- ✅ **Helper Classes**: WeatherAlertGenerator, ComfortIndexCalculator,
+  AstronomyCalculator
 - ✅ **Enhanced Services**: HistoricalWeatherService, MarineConditionsService
-- ✅ **MCP Server Configuration**: Spring Boot with @McpTool/@McpPrompt/@McpResource annotations
-- ✅ **SSE Transport**: Full MCP protocol support via HTTP/SSE at `/sse` endpoint
+- ✅ **MCP Server Configuration**: Spring Boot with
+  @McpTool/@McpPrompt/@McpResource annotations
+- ✅ **SSE Transport**: Full MCP protocol support via HTTP/SSE at `/sse`
+  endpoint
 - ✅ **Server Running**: Spring Boot 4.0.0 on port 8888
 
-**v1.2.0 Release Highlights** (NEW):
+- 📚 **Comprehensive API Documentation**: Professional-grade specification suite
+  - Complete MCP protocol documentation with 4 tools, 4 resources, 3 prompts
+  - OpenAPI 3.0.3 specifications for REST tools API and Chat API
+  - Client integration examples for Claude Desktop and JavaScript
+  - Health and safety interpretations for weather and air quality data
+- 🐳 **Docker Infrastructure**: Production-ready containerization
+  - Multi-stage Dockerfile with Java 25 and Eclipse Temurin
+  - Docker Compose with Redis integration and health checks
+  - Environment configuration templates (.env.example)
+- 🏗️ **Enhanced Architecture**: Clear API separation and documentation
+  - Three distinct APIs: REST tools, MCP protocol, conversational chat
+  - Architecture diagrams with component and sequence flows
+  - Best practices for tool combinations and resource usage
+
+**v1.2.0 Release Highlights**:
 
 - 🎉 **ChatHandler**: Conversational AI interface with Spring AI 2.0
   - Natural language weather queries with context awareness
@@ -64,11 +89,12 @@ Java with Spring Boot 4.0 and Spring AI 2.0.
 **v1.1.0 Release Highlights**:
 
 - ✅ **100% Migration Complete**: All 11 tools migrated from Python to Java
-- ✅ **7 Advanced Tools**: Weather alerts, comfort index, astronomy, Swiss search, location comparison, historical weather, marine conditions
-- ✅ **3 Helper Classes**: Specialized calculation utilities for alerts, comfort, and astronomy
+- ✅ **7 Advanced Tools**: Weather alerts, comfort index, astronomy, Swiss
+  search, location comparison, historical weather, marine conditions
+- ✅ **3 Helper Classes**: Specialized calculation utilities for alerts,
+  comfort, and astronomy
 - ✅ **2 New Services**: Historical weather (1940-present) and marine conditions
 - ✅ **19 Unit Tests**: Comprehensive test coverage with 100% pass rate
-- ✅ **SBB MCP Ecosystem v2.0.0 Compliance**: All tools/prompts use meteo__ namespace prefix
 - ✅ **Spring AI 2.0 MCP annotations** with comprehensive multiline descriptions
 - ✅ **HTTP/SSE transport** configured and tested
 - ✅ **Production-ready** Spring Boot configuration with gzip compression
@@ -79,18 +105,29 @@ Java with Spring Boot 4.0 and Spring AI 2.0.
 ### 🌦️ MCP Tools (11 tools - 100% Complete ✅)
 
 #### Core Tools (4)
-- **`meteo__search_location`**: Geocoding and location search via Open-Meteo Geocoding API
-- **`meteo__get_weather`**: Weather forecasts with temperature, precipitation, wind, UV index
-- **`meteo__get_snow_conditions`**: Snow depth, snowfall, mountain weather for ski planning
-- **`meteo__get_air_quality`**: AQI, pollutants, UV index, pollen data (European coverage)
+
+- **`meteo__search_location`**: Geocoding and location search via Open-Meteo
+  Geocoding API
+- **`meteo__get_weather`**: Weather forecasts with temperature, precipitation,
+  wind, UV index
+- **`meteo__get_snow_conditions`**: Snow depth, snowfall, mountain weather for
+  ski planning
+- **`meteo__get_air_quality`**: AQI, pollutants, UV index, pollen data (European
+  coverage)
 
 #### Advanced Tools (7)
-- **`meteo__get_weather_alerts`**: Weather alerts based on thresholds (heat, cold, storm, wind)
-- **`meteo__get_comfort_index`**: Outdoor activity comfort score (0-100) combining weather and air quality
-- **`meteo__get_astronomy`**: Sunrise, sunset, golden hour, blue hour, moon phase
-- **`meteo__search_location_swiss`**: Swiss-specific location search with feature filtering
+
+- **`meteo__get_weather_alerts`**: Weather alerts based on thresholds (heat,
+  cold, storm, wind)
+- **`meteo__get_comfort_index`**: Outdoor activity comfort score (0-100)
+  combining weather and air quality
+- **`meteo__get_astronomy`**: Sunrise, sunset, golden hour, blue hour, moon
+  phase
+- **`meteo__search_location_swiss`**: Swiss-specific location search with
+  feature filtering
 - **`meteo__compare_locations`**: Multi-location weather comparison with ranking
-- **`meteo__get_historical_weather`**: Historical weather data from 1940 to present
+- **`meteo__get_historical_weather`**: Historical weather data from 1940 to
+  present
 - **`meteo__get_marine_conditions`**: Wave/swell data for lakes and coasts
 
 All tools are:
@@ -120,9 +157,12 @@ All resources are:
 
 ### 🎯 MCP Prompts (3 prompts - Implemented ✅)
 
-- **`meteo__ski-trip-weather`**: Ski trip planning workflow using snow conditions and weather data
-- **`meteo__plan-outdoor-activity`**: Weather-aware outdoor activity planning with AQI awareness
-- **`meteo__weather-aware-travel`**: Travel planning with weather integration and packing recommendations
+- **`meteo__ski-trip-weather`**: Ski trip planning workflow using snow
+  conditions and weather data
+- **`meteo__plan-outdoor-activity`**: Weather-aware outdoor activity planning
+  with AQI awareness
+- **`meteo__weather-aware-travel`**: Travel planning with weather integration
+  and packing recommendations
 
 All prompts are:
 
@@ -133,9 +173,11 @@ All prompts are:
 
 ### 💬 ChatHandler (v1.2.0 - NEW ✅)
 
-**Conversational AI interface** powered by Spring AI 2.0 for natural language weather queries.
+**Conversational AI interface** powered by Spring AI 2.0 for natural language
+weather queries.
 
 **Key Features**:
+
 - 🤖 **Natural Language Processing**: Ask weather questions in plain English
 - 💭 **Multi-turn Conversations**: Context-aware session management
 - 🔧 **Function Calling**: Automatic tool selection from 11 MCP tools
@@ -145,11 +187,13 @@ All prompts are:
 - 📊 **Observability**: Micrometer metrics for production monitoring
 
 **LLM Provider Support**:
+
 - ✅ **Azure OpenAI** (Primary, recommended)
 - ✅ **OpenAI** (GPT-4, GPT-3.5)
 - ✅ **Anthropic Claude** (Claude 3)
 
 **REST API Endpoints**:
+
 - `POST /api/chat/sessions/{sessionId}/messages` - Send chat message
 - `GET /api/chat/sessions/{sessionId}` - Get session details
 - `GET /api/chat/sessions/{sessionId}/messages` - Get conversation history
@@ -157,6 +201,7 @@ All prompts are:
 - `GET /api/chat/health` - Health check
 
 **Example Usage**:
+
 ```bash
 # Send a weather query
 curl -X POST http://localhost:8888/api/chat/sessions/my-session/messages \
@@ -168,13 +213,14 @@ curl http://localhost:8888/api/chat/sessions/my-session/messages
 ```
 
 **Configuration**:
+
 ```yaml
 openmeteo:
   chat:
     enabled: true
     memory:
-      type: redis  # or inmemory
-      session-ttl: 60  # minutes
+      type: redis # or inmemory
+      session-ttl: 60 # minutes
 ```
 
 See [CHATHANDLER_README.md](CHATHANDLER_README.md) for complete documentation.
@@ -395,6 +441,32 @@ Expected response:
 
 ## Documentation
 
+### API Documentation
+
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Complete system architecture with
+  three API endpoints
+  - System overview with REST, MCP, and Chat API separation
+  - Component diagrams and sequence flows
+  - Container orchestration and deployment architecture
+- **[docs/MCP_DOCUMENTATION.md](docs/MCP_DOCUMENTATION.md)** - Complete MCP
+  protocol documentation
+  - 4 MCP Tools (search_location, get_weather, get_snow_conditions,
+    get_air_quality)
+  - 4 MCP Resources (weather codes, parameters, AQI reference, Swiss locations)
+  - 3 MCP Prompts (ski-trip-weather, outdoor activity, travel planning)
+  - Client integration examples and error handling
+- **[docs/openapi-tools.yaml](docs/openapi-tools.yaml)** - OpenAPI 3.0.3
+  specification for REST tools API
+  - `/api/geocoding/search` - Location search endpoint
+  - `/api/weather` - Weather forecast endpoint
+  - `/api/snow` - Snow conditions endpoint
+  - `/api/air-quality` - Air quality endpoint
+- **[docs/openapi-chat.yaml](docs/openapi-chat.yaml)** - OpenAPI 3.0.3
+  specification for Chat API
+  - `/api/chat/message` - Conversational weather interface
+  - `/api/chat/sessions` - Session management endpoints
+  - Complete schemas and examples for AI integration
+
 ### Project Documentation
 
 - **[CONSTITUTION.md](spec/CONSTITUTION.md)** - Project governance and migration
@@ -444,29 +516,6 @@ open-meteo-mcp-java/
 └── CLAUDE.md                        # AI development guide
 ```
 
-## Migration Timeline
-
-**9-Week Migration** (Q1-Q2 2026):
-
-1. **Phase 1: Foundation** (Weeks 1-2) - ✅ Complete
-   - Project setup, API client, 18 Java Records, comprehensive testing
-
-2. **Phase 2: Services & Utilities** (Weeks 3-4) - ✅ Complete
-   - 4 service classes, 4 utility classes, 87 unit tests (78-100% coverage)
-
-3. **Phase 3: Resources & Prompts** (Week 5) - ✅ Complete
-   - ResourceService with 4 resources, PromptService with 3 prompts, 112 tests
-     (67% coverage)
-
-4. **Phase 4: AI Enhancement** (Week 6)
-   - Spring AI ChatClient integration, @McpTool annotations
-
-5. **Phase 5: Testing & Documentation** (Weeks 7-8)
-   - 80%+ test coverage, complete docs
-
-6. **Phase 6: Deployment** (Week 9)
-   - CI/CD, cloud deployment, v1.0.0 release
-
 ## Contributing
 
 We welcome contributions during the migration phase!
@@ -489,9 +538,21 @@ We welcome contributions during the migration phase!
 
 ## MCP Integration
 
-### Claude Desktop Configuration (Future)
+### Documentation
 
-Once v1.0.0 is released, add to Claude Desktop configuration:
+For complete MCP protocol documentation with tool specifications, resource
+schemas, and client integration examples, see:
+
+- **[MCP Documentation](docs/MCP_DOCUMENTATION.md)** - Comprehensive MCP
+  reference
+- **[REST API Specification](docs/openapi-tools.yaml)** - OpenAPI 3.0.3 tools
+  API
+- **[Chat API Specification](docs/openapi-chat.yaml)** - OpenAPI 3.0.3 chat
+  interface
+
+### Claude Desktop Configuration
+
+A to Claude Desktop configuration:
 
 **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
@@ -526,27 +587,6 @@ Once v1.0.0 is released, add to Claude Desktop configuration:
 - JSON responses with extensive parameters
 
 ## Roadmap
-
-### v1.0.0 (Q2 2026) - Feature Parity
-
-- ✅ All 4 tools match Python functionality
-- ✅ All 5 resources available
-- ✅ All 3 prompts working
-- ✅ Gzip compression
-- ✅ 80%+ test coverage
-- ✅ Spring AI integration
-
-### v1.1.0 (Released - February 2, 2026) ✅
-
-- ✅ Historical weather data access (1940-present)
-- ✅ Weather alerts and notifications
-- ✅ Comfort index calculation for outdoor activities
-- ✅ Astronomy calculations (sunrise, sunset, golden hour, moon phase)
-- ✅ Swiss-specific location search
-- ✅ Multi-location comparison
-- ✅ Marine/wave conditions for Swiss lakes
-- ✅ 19 comprehensive unit tests
-- ✅ SBB MCP Ecosystem v2.0.0 compliance
 
 ### v2.0.0 - Advanced AI (Future)
 

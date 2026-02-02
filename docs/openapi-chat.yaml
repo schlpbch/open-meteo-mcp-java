@@ -1,0 +1,441 @@
+openapi: 3.0.3
+info:
+  title: Open-Meteo MCP Chat API
+  description: |
+    Conversational AI interface for weather-aware planning and assistance.
+
+    This API provides an intelligent chat interface that combines weather data
+    with AI-powered responses to help users plan activities, trips, and make
+    weather-informed decisions.
+
+    ## Features
+    - **Weather Expertise**: AI assistant with deep weather knowledge
+    - **Conversation Memory**: Persistent session-based conversations
+    - **Context Enrichment**: Automatic weather data integration
+    - **Multi-Provider AI**: Azure OpenAI, OpenAI, and Anthropic support
+
+    ## Use Cases
+    - Travel planning with weather considerations
+    - Outdoor activity recommendations
+    - Ski trip and mountain weather planning
+    - Air quality and health-aware suggestions
+
+  version: 2.0.0
+  contact:
+    name: Open-Meteo MCP Java
+    url: https://github.com/schlpbch/open-meteo-mcp-java
+  license:
+    name: MIT
+    url: https://github.com/schlpbch/open-meteo-mcp-java/blob/main/LICENSE
+
+servers:
+  - url: http://localhost:8080/api/chat
+    description: Local development server
+  - url: https://your-domain.com/api/chat
+    description: Production server
+
+paths:
+  /sessions/{sessionId}/messages:
+    post:
+      summary: Send a message to a chat session
+      description: |
+        Send a message to an AI chat session. The AI assistant has access to
+        weather tools and can provide weather-aware recommendations and planning advice.
+
+        **Conversation Features:**
+        - Session-based memory (persists across requests)
+        - Automatic weather context enrichment
+        - Multiple AI provider fallbacks
+        - Structured response formatting
+
+        **Example Messages:**
+        - "What's the weather like in Zurich this weekend?"
+        - "Plan a ski trip to Zermatt for next week"
+        - "Is it a good day for hiking in the Alps?"
+        - "Check air quality for cycling in Berlin"
+
+      operationId: sendMessage
+      tags:
+        - Chat
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          description: Unique session identifier for conversation continuity
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9_-]+$'
+            minLength: 1
+            maxLength: 100
+            example: 'user-123-session'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: AI response with weather-aware assistance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '400':
+          description: Invalid request format or empty message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error or AI provider unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description:
+            Chat service unavailable (disabled or no AI providers configured)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /sessions/{sessionId}:
+    get:
+      summary: Get chat session information
+      description: |
+        Retrieve information about a chat session including conversation history
+        and session metadata.
+
+      operationId: getChatSession
+      tags:
+        - Chat
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          description: Session identifier
+          schema:
+            type: string
+            example: 'user-123-session'
+      responses:
+        '200':
+          description: Chat session information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatSession'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete a chat session
+      description: |
+        Delete a chat session and clear its conversation history.
+        This action is irreversible.
+
+      operationId: deleteChatSession
+      tags:
+        - Chat
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          description: Session identifier to delete
+          schema:
+            type: string
+            example: 'user-123-session'
+      responses:
+        '200':
+          description: Session successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Session deleted successfully'
+                  sessionId:
+                    type: string
+                    example: 'user-123-session'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    ChatRequest:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: User message or question
+          minLength: 1
+          maxLength: 2000
+          example:
+            "What's the weather like in Zurich this weekend? Should I plan
+            outdoor activities?"
+        context:
+          type: object
+          description: Optional additional context for the conversation
+          properties:
+            location:
+              type: string
+              description: User's current or preferred location
+              example: 'Zurich, Switzerland'
+            preferences:
+              type: object
+              description: User preferences for responses
+              properties:
+                temperature_unit:
+                  type: string
+                  enum: [celsius, fahrenheit]
+                  default: celsius
+                language:
+                  type: string
+                  description: Preferred response language
+                  example: 'en'
+                include_details:
+                  type: boolean
+                  description: Whether to include detailed weather information
+                  default: true
+      example:
+        message: 'Plan a ski trip to Zermatt for next weekend'
+        context:
+          location: 'Zurich, Switzerland'
+          preferences:
+            temperature_unit: 'celsius'
+            include_details: true
+
+    ChatResponse:
+      type: object
+      properties:
+        response:
+          type: string
+          description: AI-generated response with weather-aware recommendations
+          example:
+            "Based on the weather forecast for Zermatt next weekend, conditions
+            look excellent for skiing! ❄️ Here's what I found..."
+        sessionId:
+          type: string
+          description: Session identifier for conversation continuity
+          example: 'user-123-session'
+        timestamp:
+          type: string
+          format: date-time
+          description: Response timestamp
+          example: '2026-02-02T14:30:00Z'
+        metadata:
+          $ref: '#/components/schemas/ResponseMetadata'
+        weather_data:
+          type: object
+          description:
+            Weather data that informed the AI response (if applicable)
+          properties:
+            locations_checked:
+              type: array
+              items:
+                type: string
+              example: ['Zermatt, Switzerland']
+            data_sources:
+              type: array
+              items:
+                type: string
+              example: ['weather', 'snow_conditions']
+
+    ChatSession:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          description: Unique session identifier
+        createdAt:
+          type: string
+          format: date-time
+          description: Session creation timestamp
+        lastActivity:
+          type: string
+          format: date-time
+          description: Last message timestamp
+        messageCount:
+          type: integer
+          description: Total number of messages in the session
+        isActive:
+          type: boolean
+          description: Whether the session is currently active
+        metadata:
+          type: object
+          description: Session metadata
+          properties:
+            user_location:
+              type: string
+              description: User's preferred location context
+            conversation_topics:
+              type: array
+              items:
+                type: string
+              description: Main topics discussed in the session
+        conversation_history:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConversationMessage'
+          description: Recent conversation messages (last 10)
+
+    ConversationMessage:
+      type: object
+      properties:
+        role:
+          type: string
+          enum: [user, assistant]
+          description: Message sender role
+        content:
+          type: string
+          description: Message content
+        timestamp:
+          type: string
+          format: date-time
+          description: Message timestamp
+        metadata:
+          type: object
+          description: Message metadata (e.g., weather data used)
+
+    ResponseMetadata:
+      type: object
+      properties:
+        ai_provider:
+          type: string
+          description: AI provider used for the response
+          enum: [azure-openai, openai, anthropic]
+          example: 'azure-openai'
+        model:
+          type: string
+          description: AI model used
+          example: 'gpt-4'
+        processing_time_ms:
+          type: integer
+          description: Response processing time in milliseconds
+          example: 1250
+        token_usage:
+          type: object
+          properties:
+            prompt_tokens:
+              type: integer
+              description: Number of tokens in the prompt
+            completion_tokens:
+              type: integer
+              description: Number of tokens in the response
+            total_tokens:
+              type: integer
+              description: Total tokens used
+        confidence_score:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+          description: AI confidence in the response (when available)
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error type or category
+          example: 'VALIDATION_ERROR'
+        message:
+          type: string
+          description: Human-readable error message
+          example: 'Message cannot be empty'
+        details:
+          type: string
+          description: Additional technical details
+          example: "Request body must contain a non-empty 'message' field"
+        timestamp:
+          type: string
+          format: date-time
+          description: Error occurrence timestamp
+          example: '2026-02-02T14:30:00Z'
+        sessionId:
+          type: string
+          description: Session ID (when applicable)
+          example: 'user-123-session'
+        supportCode:
+          type: string
+          description: Support reference code for debugging
+          example: 'ERR-CH-001'
+
+  examples:
+    WeatherInquiry:
+      summary: Basic weather inquiry
+      value:
+        message: "What's the weather like in Zurich today?"
+
+    SkiTripPlanning:
+      summary: Ski trip planning with context
+      value:
+        message:
+          "I'm planning a ski trip to Verbier next weekend. What are the snow
+          conditions and weather forecast?"
+        context:
+          location: 'Geneva, Switzerland'
+          preferences:
+            temperature_unit: 'celsius'
+            include_details: true
+
+    AirQualityCheck:
+      summary: Air quality for health-aware planning
+      value:
+        message:
+          'I have asthma and want to go cycling in Berlin tomorrow. Is the air
+          quality suitable?'
+        context:
+          location: 'Berlin, Germany'
+          preferences:
+            include_details: true
+
+    TravelPlanning:
+      summary: Multi-day travel weather planning
+      value:
+        message:
+          "I'm visiting Switzerland from March 15-20. Which regions have the
+          best weather for sightseeing and hiking?"
+
+tags:
+  - name: Chat
+    description: |
+      Conversational AI interface with weather expertise and memory.
+
+      The chat API provides an intelligent assistant that can:
+      - Answer weather-related questions with current data
+      - Plan activities based on weather conditions  
+      - Provide health recommendations for air quality
+      - Remember conversation context across messages
+      - Access real-time weather, snow, and air quality data

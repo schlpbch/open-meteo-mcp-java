@@ -1,0 +1,705 @@
+openapi: 3.0.3
+info:
+  title: Open-Meteo MCP Tools API
+  description: |
+    REST API providing weather, air quality, geocoding, and snow condition tools.
+    
+    This API exposes the same tools available through the MCP (Model Context Protocol) 
+    interface as standard REST endpoints for easy integration with web applications,
+    mobile apps, and other HTTP clients.
+    
+    ## Features
+    - **Weather Forecasts**: Current conditions, hourly & daily forecasts
+    - **Air Quality**: AQI, pollutants, UV index, pollen data (Europe)
+    - **Geocoding**: Location search with coordinates and metadata
+    - **Snow Conditions**: Snow depth, snowfall, and mountain weather
+    
+    ## Data Sources
+    All data is sourced from the [Open-Meteo API](https://open-meteo.com/), a free
+    and open-source weather API providing high-quality meteorological data.
+    
+  version: 2.0.0
+  contact:
+    name: Open-Meteo MCP Java
+    url: https://github.com/schlpbch/open-meteo-mcp-java
+  license:
+    name: MIT
+    url: https://github.com/schlpbch/open-meteo-mcp-java/blob/main/LICENSE
+
+servers:
+  - url: http://localhost:8080/api/tools
+    description: Local development server
+  - url: https://your-domain.com/api/tools
+    description: Production server
+
+paths:
+  /search-location:
+    get:
+      summary: Search for locations by name (geocoding)
+      description: |
+        Search for geographic locations by name using the Open-Meteo geocoding API.
+        Returns coordinates, elevation, country information, and other metadata.
+        
+        **Examples:**
+        - Search for "Zurich" → Swiss city with coordinates
+        - Search for "Matterhorn" → Mountain peak with elevation
+        - Search for "Lake Geneva" → Geographic landmark
+        
+      operationId: searchLocation
+      tags:
+        - Location
+      parameters:
+        - name: name
+          in: query
+          required: true
+          description: Location name to search for
+          schema:
+            type: string
+            example: "Zurich"
+        - name: count
+          in: query
+          required: false
+          description: Maximum number of results to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: language
+          in: query
+          required: false
+          description: Language code for results (ISO 639-1)
+          schema:
+            type: string
+            enum: [en, de, fr, it, es, pl, ru, zh, ja]
+            default: en
+        - name: country
+          in: query
+          required: false
+          description: ISO 3166-1 alpha-2 country code filter
+          schema:
+            type: string
+            pattern: '^[A-Z]{2}$'
+            example: "CH"
+      responses:
+        '200':
+          description: Location search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeocodingResponse'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /weather:
+    get:
+      summary: Get weather forecast
+      description: |
+        Retrieve weather forecast including current conditions, hourly and daily forecasts.
+        Provides temperature, precipitation, wind, humidity, and weather codes.
+        
+        **Use Cases:**
+        - Current weather conditions for trip planning
+        - 7-day weather outlook for events
+        - Hourly forecasts for outdoor activities
+        - Weather code interpretation for travel safety
+        
+      operationId: getWeather
+      tags:
+        - Weather
+      parameters:
+        - name: latitude
+          in: query
+          required: true
+          description: Latitude in decimal degrees
+          schema:
+            type: number
+            format: double
+            minimum: -90
+            maximum: 90
+            example: 47.3769
+        - name: longitude
+          in: query
+          required: true
+          description: Longitude in decimal degrees
+          schema:
+            type: number
+            format: double
+            minimum: -180
+            maximum: 180
+            example: 8.5417
+        - name: forecastDays
+          in: query
+          required: false
+          description: Number of forecast days
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 16
+            default: 7
+        - name: timezone
+          in: query
+          required: false
+          description: Timezone identifier for timestamps
+          schema:
+            type: string
+            default: UTC
+            example: "Europe/Zurich"
+      responses:
+        '200':
+          description: Weather forecast data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeatherResponse'
+        '400':
+          description: Invalid coordinates or parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /snow-conditions:
+    get:
+      summary: Get snow conditions and mountain weather
+      description: |
+        Retrieve snow conditions including snow depth, snowfall, and mountain-specific 
+        weather data. Ideal for ski resort planning and winter sports.
+        
+        **Use Cases:**
+        - Ski resort condition assessment
+        - Avalanche risk evaluation (snow depth trends)
+        - Winter hiking and mountaineering planning
+        - Ski touring route conditions
+        
+      operationId: getSnowConditions
+      tags:
+        - Snow & Mountains
+      parameters:
+        - name: latitude
+          in: query
+          required: true
+          description: Latitude in decimal degrees (preferably mountains >1000m)
+          schema:
+            type: number
+            format: double
+            minimum: -90
+            maximum: 90
+            example: 46.0207
+        - name: longitude
+          in: query
+          required: true
+          description: Longitude in decimal degrees
+          schema:
+            type: number
+            format: double
+            minimum: -180
+            maximum: 180
+            example: 7.7491
+        - name: forecastDays
+          in: query
+          required: false
+          description: Number of forecast days for snow conditions
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 16
+            default: 7
+        - name: timezone
+          in: query
+          required: false
+          description: Timezone identifier for timestamps
+          schema:
+            type: string
+            default: UTC
+            example: "Europe/Zurich"
+      responses:
+        '200':
+          description: Snow conditions and mountain weather data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnowConditionsResponse'
+        '400':
+          description: Invalid coordinates or parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /air-quality:
+    get:
+      summary: Get air quality forecast
+      description: |
+        Retrieve air quality data including AQI (European & US scales), pollutants,
+        UV index, and pollen information (Europe only).
+        
+        **Health Applications:**
+        - Exercise and outdoor activity planning
+        - Respiratory health management
+        - Allergy and pollen sensitivity planning
+        - UV exposure risk assessment
+        
+      operationId: getAirQuality
+      tags:
+        - Air Quality
+      parameters:
+        - name: latitude
+          in: query
+          required: true
+          description: Latitude in decimal degrees
+          schema:
+            type: number
+            format: double
+            minimum: -90
+            maximum: 90
+            example: 52.52
+        - name: longitude
+          in: query
+          required: true
+          description: Longitude in decimal degrees
+          schema:
+            type: number
+            format: double
+            minimum: -180
+            maximum: 180
+            example: 13.405
+        - name: forecastDays
+          in: query
+          required: false
+          description: Number of forecast days for air quality
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 5
+            default: 3
+        - name: includePollen
+          in: query
+          required: false
+          description: Include pollen data (Europe only)
+          schema:
+            type: boolean
+            default: true
+        - name: timezone
+          in: query
+          required: false
+          description: Timezone identifier for timestamps
+          schema:
+            type: string
+            default: UTC
+            example: "Europe/Berlin"
+      responses:
+        '200':
+          description: Air quality forecast data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirQualityResponse'
+        '400':
+          description: Invalid coordinates or parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Simple health check to verify the API service is running
+      operationId: healthCheck
+      tags:
+        - System
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "OK"
+                  service:
+                    type: string
+                    example: "Open-Meteo MCP Tools"
+
+components:
+  schemas:
+    GeocodingResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/LocationResult'
+        generationtime_ms:
+          type: number
+          format: double
+          description: API generation time in milliseconds
+      example:
+        results:
+          - id: 2657896
+            name: "Zurich"
+            latitude: 47.36667
+            longitude: 8.55
+            elevation: 408
+            timezone: "Europe/Zurich"
+            country_code: "CH"
+            country: "Switzerland"
+            population: 341730
+
+    LocationResult:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique location identifier
+        name:
+          type: string
+          description: Location name
+        latitude:
+          type: number
+          format: double
+          description: Latitude in decimal degrees
+        longitude:
+          type: number
+          format: double
+          description: Longitude in decimal degrees
+        elevation:
+          type: number
+          format: double
+          description: Elevation in meters above sea level
+        timezone:
+          type: string
+          description: Timezone identifier
+        country_code:
+          type: string
+          description: ISO 3166-1 alpha-2 country code
+        country:
+          type: string
+          description: Country name
+        population:
+          type: integer
+          format: int64
+          description: Population count
+        admin1:
+          type: string
+          description: Administrative division level 1 (state/province)
+        admin2:
+          type: string
+          description: Administrative division level 2 (county/region)
+
+    WeatherResponse:
+      type: object
+      properties:
+        forecast:
+          $ref: '#/components/schemas/WeatherForecast'
+        current_interpretation:
+          $ref: '#/components/schemas/WeatherInterpretation'
+        location_metadata:
+          $ref: '#/components/schemas/LocationMetadata'
+
+    WeatherForecast:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        elevation:
+          type: number
+          format: double
+        timezone:
+          type: string
+        current:
+          $ref: '#/components/schemas/CurrentWeather'
+        hourly:
+          $ref: '#/components/schemas/HourlyWeather'
+        daily:
+          $ref: '#/components/schemas/DailyWeather'
+
+    CurrentWeather:
+      type: object
+      properties:
+        time:
+          type: string
+          format: date-time
+        temperature_2m:
+          type: number
+          description: Temperature at 2 meters in °C
+        weather_code:
+          type: integer
+          description: WMO weather code
+        wind_speed_10m:
+          type: number
+          description: Wind speed at 10 meters in km/h
+        wind_direction_10m:
+          type: number
+          description: Wind direction in degrees
+        relative_humidity_2m:
+          type: number
+          description: Relative humidity as percentage
+
+    WeatherInterpretation:
+      type: object
+      properties:
+        condition:
+          type: string
+          description: Human-readable weather condition
+        comfort_level:
+          type: string
+          enum: [comfortable, mild, uncomfortable, extreme]
+        travel_impact:
+          type: string
+          enum: [none, minimal, moderate, significant, severe]
+
+    SnowConditionsResponse:
+      type: object
+      properties:
+        forecast:
+          $ref: '#/components/schemas/SnowForecast'
+        snow_analysis:
+          $ref: '#/components/schemas/SnowAnalysis'
+
+    SnowForecast:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        elevation:
+          type: number
+          format: double
+        daily:
+          $ref: '#/components/schemas/DailySnow'
+        hourly:
+          $ref: '#/components/schemas/HourlySnow'
+
+    SnowAnalysis:
+      type: object
+      properties:
+        ski_conditions:
+          type: string
+          enum: [excellent, good, fair, poor]
+        snow_depth_trend:
+          type: string
+          enum: [increasing, stable, decreasing]
+        recent_snowfall:
+          type: string
+          description: Snow received in last 24-48 hours
+
+    AirQualityResponse:
+      type: object
+      properties:
+        forecast:
+          $ref: '#/components/schemas/AirQualityForecast'
+        interpretation:
+          $ref: '#/components/schemas/AirQualityInterpretation'
+
+    AirQualityForecast:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        current:
+          $ref: '#/components/schemas/CurrentAirQuality'
+        hourly:
+          $ref: '#/components/schemas/HourlyAirQuality'
+
+    CurrentAirQuality:
+      type: object
+      properties:
+        time:
+          type: string
+          format: date-time
+        european_aqi:
+          type: number
+          description: European Air Quality Index (0-100+)
+        us_aqi:
+          type: number
+          description: US Air Quality Index (0-500)
+        pm10:
+          type: number
+          description: PM10 particles (μg/m³)
+        pm2_5:
+          type: number
+          description: PM2.5 particles (μg/m³)
+        ozone:
+          type: number
+          description: Ozone concentration (μg/m³)
+        uv_index:
+          type: number
+          description: UV index
+
+    AirQualityInterpretation:
+      type: object
+      properties:
+        european_aqi_level:
+          type: string
+          enum: [Good, Fair, Moderate, Poor, Very Poor, Extremely Poor]
+        us_aqi_level:
+          type: string
+          enum: [Good, Moderate, Unhealthy for Sensitive Groups, Unhealthy, Very Unhealthy, Hazardous]
+        uv_level:
+          type: string
+          enum: [Low, Moderate, High, Very High, Extreme]
+        health_recommendations:
+          type: array
+          items:
+            type: string
+
+    HourlyWeather:
+      type: object
+      properties:
+        time:
+          type: array
+          items:
+            type: string
+            format: date-time
+        temperature_2m:
+          type: array
+          items:
+            type: number
+
+    DailyWeather:
+      type: object
+      properties:
+        time:
+          type: array
+          items:
+            type: string
+            format: date
+        temperature_2m_max:
+          type: array
+          items:
+            type: number
+        temperature_2m_min:
+          type: array
+          items:
+            type: number
+
+    DailySnow:
+      type: object
+      properties:
+        time:
+          type: array
+          items:
+            type: string
+            format: date
+        snow_depth:
+          type: array
+          items:
+            type: number
+            description: Snow depth in meters
+        snowfall_sum:
+          type: array
+          items:
+            type: number
+            description: Snowfall sum in cm
+
+    HourlySnow:
+      type: object
+      properties:
+        time:
+          type: array
+          items:
+            type: string
+            format: date-time
+        snow_depth:
+          type: array
+          items:
+            type: number
+
+    HourlyAirQuality:
+      type: object
+      properties:
+        time:
+          type: array
+          items:
+            type: string
+            format: date-time
+        european_aqi:
+          type: array
+          items:
+            type: number
+
+    LocationMetadata:
+      type: object
+      properties:
+        coordinates:
+          type: string
+          example: "47.3769, 8.5417"
+        elevation_info:
+          type: string
+          example: "408m above sea level"
+        timezone:
+          type: string
+          example: "Europe/Zurich"
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        details:
+          type: string
+          description: Additional error details
+        timestamp:
+          type: string
+          format: date-time
+      example:
+        error: "Invalid coordinates"
+        details: "Latitude must be between -90 and 90"
+        timestamp: "2026-02-02T14:30:00Z"
+
+tags:
+  - name: Location
+    description: Geocoding and location search operations
+  - name: Weather
+    description: Weather forecasts and current conditions
+  - name: Snow & Mountains
+    description: Snow conditions and mountain weather
+  - name: Air Quality
+    description: Air quality, AQI, and pollen information
+  - name: System
+    description: System health and status endpoints
