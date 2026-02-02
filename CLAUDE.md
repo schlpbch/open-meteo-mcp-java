@@ -4,10 +4,13 @@ AI development guide for the Open-Meteo MCP Java project.
 
 ## Project Overview
 
-**Open Meteo MCP (Java)** - Model Context Protocol server providing weather, snow conditions, and air quality data via [Open-Meteo API](https://open-meteo.com/) with conversational AI capabilities.
+**Open Meteo MCP (Java)** - Model Context Protocol server providing weather,
+snow conditions, and air quality data via
+[Open-Meteo API](https://open-meteo.com/) with conversational AI capabilities.
 
 **Status**: v2.0.0 - Enterprise Ready ✅  
-**Updated**: February 2, 2026 - Complete API documentation suite, Docker infrastructure, MCP protocol implementation  
+**Updated**: February 2, 2026 - Complete API documentation suite, Docker
+infrastructure, MCP protocol implementation
 
 ## Key Technologies
 
@@ -23,7 +26,7 @@ AI development guide for the Open-Meteo MCP Java project.
 ./mvnw clean install
 ./mvnw test jacoco:report
 
-# Run Application  
+# Run Application
 ./mvnw spring-boot:run
 java -jar target/open-meteo-mcp-2.0.0.jar
 
@@ -35,13 +38,15 @@ docker compose down
 ## Architecture
 
 **Three API Endpoints:**
+
 - 🌐 **REST API** - `/api/*` - Direct HTTP endpoints
 - 🔗 **MCP API** - `/sse` - Model Context Protocol (Claude Desktop)
 - 💬 **Chat API** - `/api/chat/*` - Conversational interface
 
-**11 MCP Tools**: `meteo__*` (weather, snow, air quality, location, alerts, etc.)  
+**11 MCP Tools**: `meteo__*` (weather, snow, air quality, location, alerts,
+etc.)  
 **4 Resources**: weather codes, parameters, AQI reference, Swiss locations  
-**3 Prompts**: ski-trip, outdoor-activity, travel planning  
+**3 Prompts**: ski-trip, outdoor-activity, travel planning
 
 ## Package Structure
 
@@ -60,12 +65,15 @@ com.openmeteo.mcp/
 ## Documentation
 
 **API Specs:**
+
 - [ARCHITECTURE.md](ARCHITECTURE.md) - System design
-- [docs/MCP_DOCUMENTATION.md](docs/MCP_DOCUMENTATION.md) - MCP protocol reference
+- [docs/MCP_DOCUMENTATION.md](docs/MCP_DOCUMENTATION.md) - MCP protocol
+  reference
 - [docs/openapi-open-meteo.yaml](docs/openapi-open-meteo.yaml) - REST API spec
 - [docs/openapi-chat.yaml](docs/openapi-chat.yaml) - Chat API spec
 
 **Project Docs:**
+
 - [README.md](README.md) - User guide
 - [CHATHANDLER_README.md](CHATHANDLER_README.md) - ChatHandler details
 - [spec/CONSTITUTION.md](spec/CONSTITUTION.md) - Governance
@@ -74,6 +82,7 @@ com.openmeteo.mcp/
 ## Development Guidelines
 
 ### Core Patterns
+
 - **Java Records** for all DTOs (immutable, type-safe)
 - **CompletableFuture** for async (no reactive Mono/Flux)
 - **@McpTool/@McpResource/@McpPrompt** annotations
@@ -81,6 +90,7 @@ com.openmeteo.mcp/
 - **≥80% test coverage** target
 
 ### New MCP Tool Example
+
 ```java
 @Service
 public class MyToolService {
@@ -95,6 +105,7 @@ public class MyToolService {
 ```
 
 ### Testing
+
 ```java
 @ExtendWith(MockitoExtension.class)
 class MyServiceTest {
@@ -111,30 +122,34 @@ class MyServiceTest {
 ## Configuration
 
 **Environment** (.env.example):
+
 ```bash
 AZURE_OPENAI_KEY=your_key
-OPENAI_API_KEY=your_key  
+OPENAI_API_KEY=your_key
 ANTHROPIC_API_KEY=your_key
 ```
 
 **Spring Profile**:
+
 ```yaml
 openmeteo:
   chat:
     enabled: true
     memory:
-      type: redis  # or inmemory
+      type: redis # or inmemory
 ```
 
 ## Troubleshooting
 
 **Build Issues:**
+
 ```bash
 ./mvnw clean install -U
 ./mvnw clean install -DskipTests
 ```
 
 **Test Issues:**
+
 ```bash
 ./mvnw test -Dtest=SpecificTest -X
 cat target/surefire-reports/*.txt
@@ -143,6 +158,7 @@ cat target/surefire-reports/*.txt
 ## Current Status
 
 **v2.0.0 Achievements:**
+
 - ✅ Complete API documentation suite
 - ✅ Docker infrastructure with Redis
 - ✅ 11 MCP tools, 4 resources, 3 prompts
@@ -151,8 +167,9 @@ cat target/surefire-reports/*.txt
 - ✅ Enterprise-ready containerization
 
 **Endpoints:**
+
 - App: http://localhost:8888
-- MCP: http://localhost:8888/sse  
+- MCP: http://localhost:8888/sse
 - Chat: http://localhost:8888/api/chat
 - Health: http://localhost:8888/actuator/health
 
@@ -165,7 +182,9 @@ cat target/surefire-reports/*.txt
 - **Open-Meteo**: https://open-meteo.com/en/docs
 
 ---
-**v2.0.0**: ✅ ENTERPRISE READY - Complete documentation, Docker infrastructure, production deployment ready
+
+**v2.0.0**: ✅ ENTERPRISE READY - Complete documentation, Docker infrastructure,
+production deployment ready
 
 ## Quick Commands
 
