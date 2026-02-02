@@ -315,7 +315,7 @@ CompletableFuture<GeocodingResponse> results =
 ### Version
 
 - Java 25
-- Spring Boot 3.5.0
+- Spring Boot 4.0.0
 - Spring AI 2.0.0-M2 BOM
 
 ---

@@ -9,7 +9,7 @@
 
 We are proud to announce the production release of **Open Meteo MCP Server
 (Java)**, a complete strategic migration of the proven Python v3.2.0 to
-Java/Spring Boot 3.5 with Spring AI 2.0 integration.
+Java/Spring Boot 4.0 with Spring AI 2.0 integration.
 
 **This is a milestone release** featuring:
 
@@ -113,7 +113,7 @@ All prompts are fully implemented with `@McpPrompt` annotations:
 
 - **Java 25 LTS** - Latest long-term support version with enhanced virtual
   threads
-- **Spring Boot 3.5** - Latest stable with WebFlux for async operations
+- **Spring Boot 4.0** - Latest stable with WebFlux for async operations
 - **Spring AI 2.0** - Native MCP protocol annotations and ChatClient integration
 - **Maven 3.9+** - Dependency management and build orchestration
 - **Jackson** - JSON serialization with gzip compression support
@@ -444,7 +444,7 @@ All documentation is comprehensive and up-to-date:
 ✅ **Modern Tech Stack**
 
 - Java 25 with virtual threads
-- Spring Boot 3.5 latest
+- Spring Boot 4.0 latest
 - Spring AI 2.0 integration
 - Best practices throughout
 
@@ -495,7 +495,7 @@ Apache License 2.0 - See [LICENSE](LICENSE) for details.
 
 - **Weather Data**: [Open-Meteo](https://open-meteo.com/) - Free Open-Source
   Weather API
-- **Framework**: [Spring Boot 3.5](https://spring.io/projects/spring-boot) &
+- **Framework**: [Spring Boot 4.0](https://spring.io/projects/spring-boot) &
   [Spring AI 2.0](https://spring.io/projects/spring-ai)
 - **Reference**:
   [open-meteo-mcp (Python v3.2.0)](https://github.com/schlpbch/open-meteo-mcp)

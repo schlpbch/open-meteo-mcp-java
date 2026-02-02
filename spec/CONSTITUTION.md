@@ -33,7 +33,7 @@ tools, enabling AI agents to access real-time forecasts, environmental data, and
 location-based weather intelligence via the Open-Meteo API.
 
 **Migration Goal**: Port the proven open-meteo-mcp (Python v3.2.0) to Java with
-Spring Boot 3.5, Spring AI 2.0, and enterprise-grade architecture following
+Spring Boot 4.0, Spring AI 2.0, and enterprise-grade architecture following
 established ADR patterns from the Swiss AI MCP ecosystem.
 
 ### 1.2 Scope
@@ -59,7 +59,7 @@ established ADR patterns from the Swiss AI MCP ecosystem.
 - **Integration**: Open-Meteo API (free, no API key required)
 - **AI Integration**: Spring AI 2.0 for weather interpretation and LLM-powered
   features
-- **Architecture**: Java 25, Spring Boot 3.5, Spring WebFlux
+- **Architecture**: Java 25, Spring Boot 4.0, Spring WebFlux
   (async/non-blocking)
 - **Documentation**: ADR-driven development with 15 ADRs
 - **Federation**: Compatible with swiss-mobility-mcp for travel + weather
@@ -302,7 +302,7 @@ Per PR | | **System** | All tools + caching + monitoring | QA | Per release | |
 These are locked in for the Java migration:
 
 - **Java 25** (LTS with enhanced virtual threads for async operations)
-- **Spring Boot 3.5.x** (latest stable)
+- **Spring Boot 4.0.x** (latest stable)
 - **Spring WebFlux** (async/non-blocking architecture)
 - **Spring AI 2.0** (AI integration + MCP annotations; see ADR-004)
 - **httpx / Apache HttpClient 5.x** (async HTTP with gzip compression)
@@ -457,7 +457,7 @@ See ADR-043 for backward compatibility and versioning strategy.
 
 - ✅ Project structure and ADR foundation (15 ADRs)
 - ✅ ADR-004: Spring AI 2.0 MCP annotations + ChatClient strategy
-- 🔄 Core architecture setup (Spring Boot 3.5, WebFlux)
+- 🔄 Core architecture setup (Spring Boot 4.0, WebFlux)
 - 🔄 Open-Meteo API client implementation
 - 🔄 Pydantic → Java Records migration
 - ⏳ MCP tools implementation (0 of 4 complete)
@@ -931,7 +931,7 @@ public CompletableFuture<WeatherResponse> getWeather(double lat, double lon) {
 **Tasks**:
 
 - [ ] Create Maven/Gradle project structure
-- [ ] Set up Spring Boot 3.5 with WebFlux
+- [ ] Set up Spring Boot 4.0 with WebFlux
 - [ ] Implement OpenMeteoClient with gzip compression
 - [ ] Migrate Pydantic models to Java Records
 - [ ] Set up test infrastructure (JUnit 5, Mockito, AssertJ)
@@ -1189,9 +1189,9 @@ issue or discussion in the repository
 
 ---
 
-**Migration Context**: Python (FastMCP v3.2.0) → Java (Spring Boot 3.5 + Spring
+**Migration Context**: Python (FastMCP v3.2.0) → Java (Spring Boot 4.0 + Spring
 AI 2.0) **Reference Implementation**: open-meteo-mcp v3.2.0 (Python) **Target
-Architecture**: Java 25, Spring Boot 3.5, Spring AI 2.0, WebFlux **Governed
+Architecture**: Java 25, Spring Boot 4.0, Spring AI 2.0, WebFlux **Governed
 by**: Specification-Driven Development (SDD) + ADR-004 (Spring AI MCP)
 **Community**: Welcoming all contributors, especially during migration
 

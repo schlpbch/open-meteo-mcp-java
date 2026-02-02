@@ -19,7 +19,7 @@ configured and tested. MCP Inspector integration complete.
 **Key Technologies:**
 
 - Java 25 with Virtual Threads
-- Spring Boot 3.5 with WebFlux (async/non-blocking)
+- Spring Boot 4.0 with WebFlux (async/non-blocking)
 - Spring AI 2.0 (native MCP annotations + ChatClient)
 - Maven 3.9+ for build management
 - Jackson for JSON serialization with gzip compression

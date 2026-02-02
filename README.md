@@ -11,7 +11,7 @@ January 30, 2026 **License**: Apache 2.0
 
 This is a **strategic migration** of the proven
 [open-meteo-mcp](https://github.com/schlpbch/open-meteo-mcp) Python v3.2.0 to
-Java with Spring Boot 3.5 and Spring AI 2.0.
+Java with Spring Boot 4.0 and Spring AI 2.0.
 
 **Why Java?**
 
@@ -36,7 +36,7 @@ Java with Spring Boot 3.5 and Spring AI 2.0.
 - ✅ **SSE Transport**: Full MCP protocol support via HTTP/SSE at `/sse`
   endpoint
 - ✅ **MCP Inspector Integration**: Tested with MCP Inspector web UI
-- ✅ **Server Running**: Spring Boot 3.5.0 on port 8888
+- ✅ **Server Running**: Spring Boot 4.0.0 on port 8888
 
 **v1.0.0 Release Highlights**:
 
@@ -109,7 +109,7 @@ All prompts are:
 ### Core Dependencies
 
 - **Java 25** - LTS with enhanced virtual threads
-- **Spring Boot 3.5** - Latest stable
+- **Spring Boot 4.0** - Latest stable
 - **Spring AI 2.0** - AI integration + native MCP annotations
 - **Maven 3.9+** - Build tool
 - **Jackson** - JSON serialization with compression

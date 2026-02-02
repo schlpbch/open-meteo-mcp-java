@@ -704,7 +704,7 @@ Adopt **Java 25 LTS** as the target runtime for the Open Meteo MCP Java project.
   - Better foreign function interface for potential native libraries
 - **Security Enhancements**: Latest security improvements and cryptographic
   algorithms
-- **Spring Boot Compatibility**: Spring Boot 3.x fully supports Java 25
+- **Spring Boot Compatibility**: Spring Boot 4.x fully supports Java 25
 - **Future-Proofing**: Ensures project longevity and access to latest ecosystem
   improvements
 
@@ -757,7 +757,7 @@ Adopt **Java 25 LTS** as the target runtime for the Open Meteo MCP Java project.
 ### [ADR-017] Decision
 
 Adopt **Spring Boot 5** as the application framework, superseding the current
-Spring Boot 3.x approach.
+Spring Boot 4.x approach.
 
 **Rationale**:
 
@@ -780,7 +780,7 @@ Spring Boot 3.x approach.
 
 - **Q3 2026**: Upgrade to Spring Boot 5.0 GA after Java 25 adoption
 - **Q4 2026**: Production deployment with performance validation
-- **Q1 2027**: Remove Spring Boot 3.x compatibility
+- **Q1 2027**: Remove Spring Boot 4.x compatibility
 
 **Key Features for Weather Service**:
 

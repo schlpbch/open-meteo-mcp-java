@@ -8,7 +8,7 @@
 ## Overview
 
 This guide provides a practical roadmap for migrating **Open Meteo MCP** from
-Python/FastMCP v3.2.0 to Java with Spring Boot 3.5 and Spring AI 2.0.
+Python/FastMCP v3.2.0 to Java with Spring Boot 4.0 and Spring AI 2.0.
 
 **Key Documents**:
 
@@ -73,7 +73,7 @@ Python                  →  Java
 
 **Checklist**:
 
-- [x] Create Maven project with Spring Boot 3.5
+- [x] Create Maven project with Spring Boot 4.0
 - [x] Add dependencies: Spring Boot, Spring AI 2.0, WebFlux, Jackson
 - [x] Implement `OpenMeteoClient.java` with gzip compression
 - [x] Create Java Records
