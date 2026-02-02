@@ -9,6 +9,8 @@ spring:
       server:
         type: SYNC
         protocol: SSE
+  main:
+    banner-mode: 'off'
 
 openmeteo:
   api:
