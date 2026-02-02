@@ -3,7 +3,7 @@ package com.openmeteo.mcp.chat.exception;
 /**
  * Base exception for chat-related errors.
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 public class ChatException extends RuntimeException {
     

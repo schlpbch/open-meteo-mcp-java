@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
  * Core ChatHandler service that processes chat messages using Spring AI ChatModel.
  * Integrates conversation memory, context enrichment, and function calling with MCP tools.
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 @Service
 @ConditionalOnProperty(name = "openmeteo.chat.enabled", havingValue = "true")

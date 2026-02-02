@@ -10,7 +10,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 /**
  * Redis configuration for chat conversation memory.
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 @Configuration
 @ConditionalOnProperty(name = "openmeteo.chat.memory.type", havingValue = "redis")

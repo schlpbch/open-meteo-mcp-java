@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * In-memory implementation of ConversationMemoryService.
  * Used for development and testing. Not suitable for production with multiple instances.
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 @Service
 @ConditionalOnProperty(name = "openmeteo.chat.memory.type", havingValue = "inmemory", matchIfMissing = true)

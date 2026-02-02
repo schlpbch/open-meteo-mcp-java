@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
  * Redis-backed implementation of ConversationMemoryService.
  * Suitable for production with multiple instances and persistence.
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 @Service
 @ConditionalOnProperty(name = "openmeteo.chat.memory.type", havingValue = "redis")

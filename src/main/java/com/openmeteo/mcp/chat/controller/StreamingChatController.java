@@ -15,7 +15,7 @@ import java.time.Duration;
  * Controller for streaming chat responses using Server-Sent Events (SSE).
  * Provides real-time streaming of AI responses for better UX.
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 @RestController
 @RequestMapping("/api/chat/stream")

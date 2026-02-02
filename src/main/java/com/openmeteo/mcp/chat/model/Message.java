@@ -14,7 +14,7 @@ import java.util.Map;
  * @param timestamp When the message was created
  * @param metadata Additional metadata (e.g., function call details, token usage)
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 public record Message(
     String id,

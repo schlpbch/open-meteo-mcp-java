@@ -12,7 +12,7 @@ import java.util.Map;
  * @param preferences User weather preferences
  * @param context Additional context data
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 public record ConversationContext(
     String currentLocation,

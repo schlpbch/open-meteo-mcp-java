@@ -12,7 +12,7 @@ import java.util.Map;
  * @param metadata Response metadata (e.g., model used, token usage, latency)
  * @param timestamp When the response was generated
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 public record AiResponse(
     String content,

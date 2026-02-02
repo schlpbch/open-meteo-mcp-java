@@ -3,7 +3,7 @@ package com.openmeteo.mcp.chat.exception;
 /**
  * Exception thrown when an LLM provider fails.
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 public class LlmProviderException extends ChatException {
     

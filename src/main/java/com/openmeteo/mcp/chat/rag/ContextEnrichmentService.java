@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
  * Phase 4.2: Basic implementation with location context.
  * Future: Will integrate with vector store for RAG.
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 @Service
 @ConditionalOnProperty(name = "openmeteo.chat.enabled", havingValue = "true")

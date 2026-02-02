@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * REST API controller for chat operations.
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 @RestController
 @RequestMapping("/api/chat")
@@ -120,7 +120,7 @@ public class ChatController {
         return ResponseEntity.ok(Map.of(
             "status", "UP",
             "service", "ChatHandler",
-            "version", "1.2.0"
+            "version", "2.0.0"
         ));
     }
     

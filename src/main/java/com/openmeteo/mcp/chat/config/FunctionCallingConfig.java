@@ -17,7 +17,7 @@ import java.util.function.Function;
  * Configuration for Spring AI function calling with MCP tools.
  * Registers all 11 Open-Meteo MCP tools as Spring AI functions.
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 @Configuration
 @ConditionalOnProperty(name = "openmeteo.chat.enabled", havingValue = "true")

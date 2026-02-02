@@ -3,7 +3,7 @@ package com.openmeteo.mcp.chat.model;
 /**
  * Type of message in a conversation.
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 public enum MessageType {
     /**

@@ -8,7 +8,7 @@ package com.openmeteo.mcp.chat.model;
  * @param precipitationUnit Preferred precipitation unit (mm or inch)
  * @param timezone Preferred timezone for weather data
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 public record WeatherPreferences(
     String temperatureUnit,

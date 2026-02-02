@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * Metrics tracking for ChatHandler operations.
  * Provides observability through Micrometer metrics.
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 @Component
 @ConditionalOnProperty(name = "openmeteo.chat.enabled", havingValue = "true")

@@ -11,7 +11,7 @@ import java.time.Instant;
  * @param lastActivity Last activity timestamp
  * @param context Conversation context
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 public record ChatSession(
     String sessionId,

@@ -12,7 +12,7 @@ import java.util.Map;
  * Phase 4.2: Static documents.
  * Future (Phase 4.3): Will be indexed in vector store for semantic search.
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 @Component
 public class WeatherKnowledgeDocuments {

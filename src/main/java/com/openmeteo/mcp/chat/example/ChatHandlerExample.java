@@ -16,7 +16,7 @@ import java.util.Map;
  * Example demonstrating ChatHandler integration.
  * Run with: mvn spring-boot:run -Dopenmeteo.chat.example.enabled=true
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 @Component
 @ConditionalOnProperty(name = "openmeteo.chat.example.enabled", havingValue = "true")

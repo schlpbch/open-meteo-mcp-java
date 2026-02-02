@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
  * Service for managing conversation memory (sessions and messages).
  * Implementations can be in-memory or persistent (Redis, database, etc.).
  * 
- * @since 1.2.0
+ * @since 2.0.0
  */
 public interface ConversationMemoryService {
     
