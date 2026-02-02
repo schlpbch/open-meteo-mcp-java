@@ -12,10 +12,6 @@ deployment ready
 
 ## 🎉 Project Overview
 
-Strategic migration of the proven
-[open-meteo-mcp](https://github.com/schlpbch/open-meteo-mcp) Python v3.2.0 to
-Java with Spring Boot 4.0 and Spring AI 2.0 for enterprise-grade architecture.
-
 ### Key Features
 
 - ✅ **11 MCP Tools**: 4 core + 7 advanced (weather, snow, air quality,
