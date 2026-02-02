@@ -16,7 +16,7 @@ class McpPromptAnnotationTest {
 
         assertThat(method.getAnnotation(McpPrompt.class)).isNotNull();
         McpPrompt annotation = method.getAnnotation(McpPrompt.class);
-        assertThat(annotation.name()).isEqualTo("ski-trip-weather");
+        assertThat(annotation.name()).isEqualTo("meteo__ski-trip-weather");
         assertThat(annotation.description()).containsIgnoringCase("ski");
     }
 
@@ -28,7 +28,7 @@ class McpPromptAnnotationTest {
 
         assertThat(method.getAnnotation(McpPrompt.class)).isNotNull();
         McpPrompt annotation = method.getAnnotation(McpPrompt.class);
-        assertThat(annotation.name()).isEqualTo("plan-outdoor-activity");
+        assertThat(annotation.name()).isEqualTo("meteo__plan-outdoor-activity");
         assertThat(annotation.description()).contains("outdoor activity");
     }
 
@@ -40,7 +40,7 @@ class McpPromptAnnotationTest {
 
         assertThat(method.getAnnotation(McpPrompt.class)).isNotNull();
         McpPrompt annotation = method.getAnnotation(McpPrompt.class);
-        assertThat(annotation.name()).isEqualTo("weather-aware-travel");
+        assertThat(annotation.name()).isEqualTo("meteo__weather-aware-travel");
         assertThat(annotation.description()).contains("Travel");
     }
 
