@@ -11,11 +11,11 @@ planning, and automation across various business domains.
 
 - **Zero API Costs**: Uses Open-Meteo's free weather API (no API keys required)
 - **Enterprise-Ready**: Production-grade Java/Spring Boot implementation with
-  360 tests and 47% code coverage
+  426 tests and 72% code coverage
 - **AI-Native**: Designed specifically for Claude and other AI assistants via
   Model Context Protocol
 - **Conversational AI**: Natural language weather queries with ChatHandler
-  (v1.2.0)
+  (v2.0.2)
 - **Swiss-Optimized**: Pre-configured data for 100+ Swiss locations, mountains,
   and ski resorts
 - **High Performance**: Spring Boot 4.0 with virtual threads for optimal
@@ -240,7 +240,7 @@ recommendations based on weather conditions.
 
 ---
 
-### 9. **Conversational Weather Intelligence (v1.2.0 - NEW)**
+### 9. **Conversational Weather Intelligence**
 
 **Capability**: Natural language weather queries through ChatHandler with Spring
 AI.
@@ -294,7 +294,7 @@ AI.
 | **Marine Weather**         | Shipping and waterfront activities        |
 | **UV Index**               | Health and safety applications            |
 | **Comfort Index**          | Lifestyle and wellness services           |
-| **Conversational AI**      | Natural language weather queries (v1.2.0) |
+| **Conversational AI**      | Natural language weather queries |
 
 ### Geographic Coverage
 
@@ -340,7 +340,7 @@ AI.
 
 ### 4. **Enterprise Quality**
 
-- **Production-Ready**: 360 comprehensive tests (100% pass rate)
+- **Production-Ready**: 426 comprehensive tests (100% pass rate)
 - **Type-Safe**: Full Java 25 with Records
 - **High Performance**: Spring Boot 4.0 with virtual threads
 - **Well-Documented**: Extensive documentation and examples
@@ -601,8 +601,8 @@ optimization to supply chain management.
 
 - ✅ **Zero Cost**: Free weather API with no usage limits
 - ✅ **AI-Ready**: Native integration with Claude via MCP + ChatHandler
-- ✅ **Production-Quality**: 360 tests, 100% pass rate, 47% coverage
-- ✅ **Conversational AI**: Natural language weather queries (v1.2.0)
+- ✅ **Production-Quality**: 426 tests, 100% pass rate, 72% coverage
+- ✅ **Conversational AI**: Natural language weather queries
 - ✅ **Swiss-Optimized**: 100+ pre-configured locations
 - ✅ **Fast ROI**: Typical payback period <3 months
 - ✅ **Low Risk**: Open-source Apache 2.0, no vendor lock-in
@@ -621,4 +621,4 @@ to deploy your own weather-intelligent AI assistant today.
 
 ---
 
-_Last Updated: 2026-02-02_ _Version: 1.2.0_ _License: Apache 2.0_
+_Last Updated: 2026-02-03_ _Version: 2.0.2_ _License: Apache 2.0_
