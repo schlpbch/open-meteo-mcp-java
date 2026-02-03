@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  open-meteo-mcp-java:
+    build:
+      context: ..
+      dockerfile: claude-desktop/Dockerfile
+    container_name: open-meteo-mcp-java
+    ports:
+      - "8080:8080"    # MCP Server
+      - "8081:8081"    # Actuator/Health
+      - "5005:5005"    # Debug port
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev,docker
+      - MCP_SERVER_TRANSPORT_TYPE=http
+      - MCP_SERVER_TRANSPORT_PORT=8080
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+    volumes:
+      - ../:/workspace
+      - maven-cache:/root/.m2
+    working_dir: /workspace
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - mcp-network
+
+  # Optional: Prometheus for metrics
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: mcp-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    networks:
+      - mcp-network
+    profiles:
+      - monitoring
+
+volumes:
+  maven-cache:
+    driver: local
+
+networks:
+  mcp-network:
+    driver: bridge

@@ -1,0 +1,47 @@
+{
+  "mcpServers": {
+    "open-meteo-mcp-java": {
+      "command": "java",
+      "args": [
+        "-Dspring.profiles.active=dev",
+        "-Dspring.main.banner-mode=off",
+        "-Dlogging.level.com.openmeteo.mcp=DEBUG",
+        "-jar",
+        "target/open-meteo-mcp-1.0.0.jar"
+      ],
+      "cwd": ".",
+      "env": {
+        "MCP_SERVER_NAME": "open-meteo-mcp-java",
+        "MCP_SERVER_VERSION": "1.0.0",
+        "JAVA_OPTS": "-Xmx512m -Xms256m"
+      }
+    },
+    "open-meteo-mcp-java-dev": {
+      "command": "./mvnw",
+      "args": [
+        "spring-boot:run",
+        "-Dspring-boot.run.profiles=dev",
+        "-Dspring-boot.run.arguments=--mcp.server.transport.type=stdio --spring.main.banner-mode=off"
+      ],
+      "cwd": ".",
+      "env": {
+        "MCP_SERVER_NAME": "open-meteo-mcp-java-dev",
+        "MCP_SERVER_VERSION": "1.1.0-SNAPSHOT",
+        "MAVEN_OPTS": "-Xmx1024m -XX:+UseG1GC"
+      }
+    }
+  },
+  "globalShortcuts": {
+    "toggleMcp": "Cmd+Shift+M"
+  },
+  "ui": {
+    "theme": "auto",
+    "showTokenCount": true,
+    "defaultModel": "claude-3-5-sonnet-20241022"
+  },
+  "developer": {
+    "enableDebugMode": true,
+    "logLevel": "DEBUG",
+    "showMcpLogs": true
+  }
+}

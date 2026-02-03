@@ -1,0 +1,92 @@
+{
+  "remote": {
+    "development": {
+      "docker": {
+        "image": "openjdk:21-jdk-slim",
+        "ports": {
+          "mcp": 8080,
+          "debug": 5005,
+          "actuator": 8081
+        },
+        "volumes": [
+          "./:/workspace"
+        ],
+        "environment": {
+          "SPRING_PROFILES_ACTIVE": "dev,remote",
+          "MCP_SERVER_TRANSPORT_TYPE": "http",
+          "MCP_SERVER_TRANSPORT_PORT": "8080",
+          "JAVA_TOOL_OPTIONS": "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+        },
+        "workingDir": "/workspace"
+      },
+      "vscode": {
+        "remote.containers.workspaceFolder": "/workspace",
+        "remote.containers.shutdownAction": "stopContainer",
+        "java.configuration.updateBuildConfiguration": "automatic",
+        "java.debug.settings.enableRunDebugCodeLens": true,
+        "spring-boot.ls.problem.application-properties.enabled": true
+      }
+    },
+    "production": {
+      "docker": {
+        "image": "gcr.io/distroless/java21-debian12",
+        "ports": {
+          "mcp": 8080,
+          "actuator": 8081
+        },
+        "environment": {
+          "SPRING_PROFILES_ACTIVE": "prod",
+          "MCP_SERVER_TRANSPORT_TYPE": "http",
+          "MCP_SERVER_TRANSPORT_PORT": "8080",
+          "JVM_OPTS": "-XX:+UseG1GC -XX:MaxRAMPercentage=75"
+        },
+        "healthcheck": {
+          "test": ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"],
+          "interval": "30s",
+          "timeout": "10s",
+          "retries": 3
+        }
+      }
+    }
+  },
+  "networking": {
+    "claude_desktop": {
+      "transport": "http",
+      "host": "localhost",
+      "port": 8080,
+      "protocol": "http",
+      "endpoints": {
+        "mcp": "/mcp",
+        "health": "/actuator/health",
+        "metrics": "/actuator/metrics"
+      }
+    },
+    "security": {
+      "cors": {
+        "allowedOrigins": ["https://claude.ai"],
+        "allowedMethods": ["GET", "POST", "OPTIONS"],
+        "allowedHeaders": ["*"]
+      },
+      "authentication": {
+        "type": "api_key",
+        "header": "X-MCP-API-Key"
+      }
+    }
+  },
+  "monitoring": {
+    "metrics": {
+      "enabled": true,
+      "export": {
+        "prometheus": {
+          "enabled": true,
+          "endpoint": "/actuator/prometheus"
+        }
+      }
+    },
+    "logging": {
+      "level": "INFO",
+      "format": "json",
+      "appenders": ["console", "file"]
+    }
+  }
+}

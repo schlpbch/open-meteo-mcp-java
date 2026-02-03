@@ -48,6 +48,7 @@ Java with Spring Boot 4.0 and Spring AI 2.0.
 - ✅ Integrated with MCP Inspector for protocol validation
 - ✅ Production-ready Spring Boot configuration with gzip compression
 - ✅ Comprehensive test coverage across all services
+- ✅ **Claude Desktop Integration**: Ready-to-use configuration files and setup scripts
 - ✅ JSON resource files for weather codes, AQI reference, and Swiss locations
 - ✅ Ready for enterprise deployment
 
@@ -196,6 +197,47 @@ curl http://localhost:8888/sse
 curl -X POST http://localhost:8080/api/tools/search-location \
   -H "Content-Type: application/json" \
   -d '{"name":"London","count":5,"language":"en"}'
+```
+
+## 🤖 Claude Desktop Integration
+
+The project includes ready-to-use Claude Desktop configuration files in the [`claude-desktop/`](claude-desktop/) directory:
+
+### Quick Setup
+
+**Windows:**
+```powershell
+cd claude-desktop
+.\setup.bat
+```
+
+**macOS/Linux:**
+```bash
+cd claude-desktop
+chmod +x setup.sh
+./setup.sh
+```
+
+### Manual Setup
+
+1. **Build the project:**
+   ```bash
+   ./mvnw clean install
+   ```
+
+2. **Copy configuration:**
+   - **Windows:** Copy `claude-desktop/claude-desktop.json` to `%USERPROFILE%\AppData\Roaming\Claude\mcp_servers.json`
+   - **macOS:** Copy to `~/Library/Application Support/Claude/mcp_servers.json`
+   - **Linux:** Copy to `~/.config/Claude/mcp_servers.json`
+
+3. **Restart Claude Desktop** and test with: *"What's the weather like in London?"*
+
+### Configuration Options
+
+- **`open-meteo-mcp-java`** - Production mode using built JAR
+- **`open-meteo-mcp-java-dev`** - Development mode using Maven
+
+For remote development, Docker, and advanced configurations, see [`claude-desktop/README.md`](claude-desktop/README.md).
 
 # Get weather
 curl -X POST http://localhost:8080/api/tools/weather \
