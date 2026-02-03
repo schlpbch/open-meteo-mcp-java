@@ -996,18 +996,18 @@ public class ChatClientConfig {
     public ChatClient chatClient(AzureOpenAiChatModel azureChatModel) {
         return ChatClient.builder(azureChatModel)
             .defaultFunctions(
-                // All 11 MCP tools with meteo__ prefix
-                "meteo__search_location",
-                "meteo__get_weather",
-                "meteo__get_snow_conditions",
-                "meteo__get_air_quality",
-                "meteo__get_weather_alerts",
-                "meteo__get_comfort_index",
-                "meteo__get_astronomy",
-                "meteo__search_location_swiss",
-                "meteo__compare_locations",
-                "meteo__get_historical_weather",
-                "meteo__get_marine_conditions"
+                // All 11 MCP tools with  prefix
+                "search_location",
+                "get_weather",
+                "get_snow_conditions",
+                "get_air_quality",
+                "get_weather_alerts",
+                "get_comfort_index",
+                "get_astronomy",
+                "search_location_swiss",
+                "compare_locations",
+                "get_historical_weather",
+                "get_marine_conditions"
             )
             .build();
     }

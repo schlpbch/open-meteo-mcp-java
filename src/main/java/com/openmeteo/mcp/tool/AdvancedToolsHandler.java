@@ -22,13 +22,13 @@ import java.util.concurrent.CompletableFuture;
  * Advanced MCP Tools Handler providing weather alerts, comfort index, astronomy, and comparison tools.
  *
  * Exposes 7 advanced Open-Meteo MCP tools for AI assistants:
- * 1. meteo__get_weather_alerts - Weather alerts based on thresholds
- * 2. meteo__get_comfort_index - Outdoor activity comfort score (0-100)
- * 3. meteo__get_astronomy - Sunrise, sunset, golden hour, moon phase
- * 4. meteo__search_location_swiss - Swiss-specific location search
- * 5. meteo__compare_locations - Multi-location weather comparison
- * 6. meteo__get_historical_weather - Historical weather data (1940-present)
- * 7. meteo__get_marine_conditions - Wave/swell data for lakes and coasts
+ * 1. get_weather_alerts - Weather alerts based on thresholds
+ * 2. get_comfort_index - Outdoor activity comfort score (0-100)
+ * 3. get_astronomy - Sunrise, sunset, golden hour, moon phase
+ * 4. search_location_swiss - Swiss-specific location search
+ * 5. compare_locations - Multi-location weather comparison
+ * 6. get_historical_weather - Historical weather data (1940-present)
+ * 7. get_marine_conditions - Wave/swell data for lakes and coasts
  */
 @Component
 public class AdvancedToolsHandler {
@@ -55,11 +55,11 @@ public class AdvancedToolsHandler {
     }
 
     /**
-     * MCP Tool: meteo__get_weather_alerts
+     * MCP Tool: get_weather_alerts
      *
      * Generate weather alerts based on thresholds and current forecast.
      */
-    @McpTool(name = "meteo__get_weather_alerts", description = """
+    @McpTool(name = "get_weather_alerts", description = """
             Generate weather alerts based on thresholds and current forecast.
 
             Automatically identifies severe weather conditions and generates actionable alerts.
@@ -86,7 +86,7 @@ public class AdvancedToolsHandler {
             @McpToolParam(description = "Longitude in decimal degrees", required = true) double longitude,
             @McpToolParam(description = "Hours to check for alerts (1-168, default: 24)") int forecastHours,
             @McpToolParam(description = "Timezone for timestamps (default: 'auto')") String timezone) {
-        log.info("Tool invoked: meteo__get_weather_alerts(lat={}, lon={}, hours={}, timezone={})",
+        log.info("Tool invoked: get_weather_alerts(lat={}, lon={}, hours={}, timezone={})",
                 latitude, longitude, forecastHours, timezone);
 
         if (forecastHours <= 0) forecastHours = 24;
@@ -117,11 +117,11 @@ public class AdvancedToolsHandler {
     }
 
     /**
-     * MCP Tool: meteo__get_comfort_index
+     * MCP Tool: get_comfort_index
      *
      * Calculates outdoor activity comfort index (0-100).
      */
-    @McpTool(name = "meteo__get_comfort_index", description = """
+    @McpTool(name = "get_comfort_index", description = """
             Calculates outdoor activity comfort index (0-100).
 
             Combines weather, air quality, UV, and precipitation factors into a single
@@ -150,7 +150,7 @@ public class AdvancedToolsHandler {
             @McpToolParam(description = "Latitude in decimal degrees", required = true) double latitude,
             @McpToolParam(description = "Longitude in decimal degrees", required = true) double longitude,
             @McpToolParam(description = "Timezone for timestamps (default: 'auto')") String timezone) {
-        log.info("Tool invoked: meteo__get_comfort_index(lat={}, lon={}, timezone={})",
+        log.info("Tool invoked: get_comfort_index(lat={}, lon={}, timezone={})",
                 latitude, longitude, timezone);
 
         if (timezone == null || timezone.isEmpty()) timezone = "auto";
@@ -178,11 +178,11 @@ public class AdvancedToolsHandler {
     }
 
     /**
-     * MCP Tool: meteo__get_astronomy
+     * MCP Tool: get_astronomy
      *
      * Provides astronomical data for a location (sunrise, sunset, golden hour).
      */
-    @McpTool(name = "meteo__get_astronomy", description = """
+    @McpTool(name = "get_astronomy", description = """
             Provides astronomical data for a location (sunrise, sunset, golden hour).
 
             Useful for photography, event planning, and outdoor activity scheduling.
@@ -210,7 +210,7 @@ public class AdvancedToolsHandler {
             @McpToolParam(description = "Latitude in decimal degrees", required = true) double latitude,
             @McpToolParam(description = "Longitude in decimal degrees", required = true) double longitude,
             @McpToolParam(description = "Timezone for timestamps (default: 'auto')") String timezone) {
-        log.info("Tool invoked: meteo__get_astronomy(lat={}, lon={}, timezone={})",
+        log.info("Tool invoked: get_astronomy(lat={}, lon={}, timezone={})",
                 latitude, longitude, timezone);
 
         if (timezone == null || timezone.isEmpty() || "auto".equals(timezone)) {
@@ -239,11 +239,11 @@ public class AdvancedToolsHandler {
     }
 
     /**
-     * MCP Tool: meteo__search_location_swiss
+     * MCP Tool: search_location_swiss
      *
      * Search for locations in Switzerland with optional geographic features.
      */
-    @McpTool(name = "meteo__search_location_swiss", description = """
+    @McpTool(name = "search_location_swiss", description = """
             Search for locations in Switzerland with optional geographic features.
 
             Specialized search for Swiss locations including cities, mountains, lakes, and passes.
@@ -272,7 +272,7 @@ public class AdvancedToolsHandler {
             @McpToolParam(description = "Include geographic features like mountains, lakes (default: false)") boolean includeFeatures,
             @McpToolParam(description = "Language for results (de, fr, it, en; default: en)") String language,
             @McpToolParam(description = "Number of results (1-50, default: 10)") int count) {
-        log.info("Tool invoked: meteo__search_location_swiss(name={}, includeFeatures={}, language={}, count={})",
+        log.info("Tool invoked: search_location_swiss(name={}, includeFeatures={}, language={}, count={})",
                 name, includeFeatures, language, count);
 
         if (language == null || language.isEmpty()) language = "en";
@@ -317,11 +317,11 @@ public class AdvancedToolsHandler {
     }
 
     /**
-     * MCP Tool: meteo__compare_locations
+     * MCP Tool: compare_locations
      *
      * Compare weather conditions across multiple locations.
      */
-    @McpTool(name = "meteo__compare_locations", description = """
+    @McpTool(name = "compare_locations", description = """
             Compare weather conditions across multiple locations.
 
             Rank locations by specified weather criteria to find the best destination.
@@ -349,7 +349,7 @@ public class AdvancedToolsHandler {
             @McpToolParam(description = "List of location maps with 'name', 'latitude', 'longitude'", required = true) List<Map<String, Object>> locations,
             @McpToolParam(description = "Comparison criteria (default: 'best_overall')") String criteria,
             @McpToolParam(description = "Days to forecast (1-16, default: 1)") int forecastDays) {
-        log.info("Tool invoked: meteo__compare_locations(locations={}, criteria={}, days={})",
+        log.info("Tool invoked: compare_locations(locations={}, criteria={}, days={})",
                 locations.size(), criteria, forecastDays);
 
         if (criteria == null || criteria.isEmpty()) criteria = "best_overall";
@@ -434,11 +434,11 @@ public class AdvancedToolsHandler {
     }
 
     /**
-     * MCP Tool: meteo__get_historical_weather
+     * MCP Tool: get_historical_weather
      *
      * Retrieves historical weather data from 1940 to present.
      */
-    @McpTool(name = "meteo__get_historical_weather", description = """
+    @McpTool(name = "get_historical_weather", description = """
             Retrieves historical weather data from 1940 to present day.
 
             Access 80+ years of historical weather records for any location worldwide.
@@ -472,7 +472,7 @@ public class AdvancedToolsHandler {
             @McpToolParam(description = "Start date in YYYY-MM-DD format", required = true) String startDate,
             @McpToolParam(description = "End date in YYYY-MM-DD format", required = true) String endDate,
             @McpToolParam(description = "Timezone for timestamps (default: 'auto')") String timezone) {
-        log.info("Tool invoked: meteo__get_historical_weather(lat={}, lon={}, start={}, end={}, timezone={})",
+        log.info("Tool invoked: get_historical_weather(lat={}, lon={}, start={}, end={}, timezone={})",
                 latitude, longitude, startDate, endDate, timezone);
 
         if (timezone == null || timezone.isEmpty()) timezone = "auto";
@@ -481,11 +481,11 @@ public class AdvancedToolsHandler {
     }
 
     /**
-     * MCP Tool: meteo__get_marine_conditions
+     * MCP Tool: get_marine_conditions
      *
      * Retrieves wave/swell data for coastal areas and large lakes.
      */
-    @McpTool(name = "meteo__get_marine_conditions", description = """
+    @McpTool(name = "get_marine_conditions", description = """
             Retrieves marine/wave forecast data for coastal areas and large lakes.
 
             Essential for water sports, sailing, and lake activities in Switzerland.
@@ -524,7 +524,7 @@ public class AdvancedToolsHandler {
             @McpToolParam(description = "Longitude in decimal degrees", required = true) double longitude,
             @McpToolParam(description = "Forecast days (1-7, default: 7)") int forecastDays,
             @McpToolParam(description = "Timezone for timestamps (default: 'auto')") String timezone) {
-        log.info("Tool invoked: meteo__get_marine_conditions(lat={}, lon={}, days={}, timezone={})",
+        log.info("Tool invoked: get_marine_conditions(lat={}, lon={}, days={}, timezone={})",
                 latitude, longitude, forecastDays, timezone);
 
         if (forecastDays <= 0) forecastDays = 7;

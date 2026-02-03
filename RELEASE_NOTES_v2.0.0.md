@@ -22,19 +22,19 @@
 **MCP Protocol Reference**:
 
 - **4 MCP Tools**: Complete documentation with examples, use cases, and schemas
-  - `meteo__search_location` - Geocoding and location search
-  - `meteo__get_weather` - Weather forecasts with interpretations
-  - `meteo__get_snow_conditions` - Snow depth and ski conditions
-  - `meteo__get_air_quality` - Air quality, UV, and pollen data
+  - `search_location` - Geocoding and location search
+  - `get_weather` - Weather forecasts with interpretations
+  - `get_snow_conditions` - Snow depth and ski conditions
+  - `get_air_quality` - Air quality, UV, and pollen data
 - **4 MCP Resources**: Reference data with health guidance
   - `weather://codes` - WMO weather code interpretations
   - `weather://parameters` - Complete parameter documentation
   - `weather://aqi-reference` - Air quality scales and health recommendations
   - `weather://swiss-locations` - Swiss locations database
 - **3 MCP Prompts**: Structured workflows for complex planning
-  - `meteo__ski-trip-weather` - Ski trip planning workflow
-  - `meteo__plan-outdoor-activity` - Activity planning with weather awareness
-  - `meteo__weather-aware-travel` - Multi-destination travel planning
+  - `ski-trip-weather` - Ski trip planning workflow
+  - `plan-outdoor-activity` - Activity planning with weather awareness
+  - `weather-aware-travel` - Multi-destination travel planning
 
 **OpenAPI Specifications**:
 

@@ -38,7 +38,7 @@ public class FunctionCallingConfig {
     
     @Bean
     @Description("Search for locations by name to get coordinates for weather queries")
-    public Function<SearchLocationRequest, CompletableFuture<Map<String, Object>>> meteo__search_location() {
+    public Function<SearchLocationRequest, CompletableFuture<Map<String, Object>>> search_location() {
         return request -> {
             String language = request.language() != null ? request.language() : "en";
             int count = request.count() > 0 ? request.count() : 10;
@@ -53,7 +53,7 @@ public class FunctionCallingConfig {
     
     @Bean
     @Description("Get weather forecast for a location (temperature, rain, sunshine)")
-    public Function<GetWeatherRequest, CompletableFuture<Map<String, Object>>> meteo__get_weather() {
+    public Function<GetWeatherRequest, CompletableFuture<Map<String, Object>>> get_weather() {
         return request -> mcpTools.getWeather(
             request.latitude(),
             request.longitude(),
@@ -64,7 +64,7 @@ public class FunctionCallingConfig {
     
     @Bean
     @Description("Get snow conditions and forecasts for mountain locations")
-    public Function<SnowConditionsRequest, CompletableFuture<Map<String, Object>>> meteo__get_snow_conditions() {
+    public Function<SnowConditionsRequest, CompletableFuture<Map<String, Object>>> get_snow_conditions() {
         return request -> mcpTools.getSnowConditions(
             request.latitude(),
             request.longitude(),
@@ -75,7 +75,7 @@ public class FunctionCallingConfig {
     
     @Bean
     @Description("Get air quality forecast including AQI, pollutants, UV index, and pollen data")
-    public Function<AirQualityRequest, CompletableFuture<Map<String, Object>>> meteo__get_air_quality() {
+    public Function<AirQualityRequest, CompletableFuture<Map<String, Object>>> get_air_quality() {
         return request -> mcpTools.getAirQuality(
             request.latitude(),
             request.longitude(),
@@ -89,7 +89,7 @@ public class FunctionCallingConfig {
     
     @Bean
     @Description("Generate weather alerts based on thresholds and current forecast")
-    public Function<WeatherAlertsRequest, CompletableFuture<Map<String, Object>>> meteo__get_weather_alerts() {
+    public Function<WeatherAlertsRequest, CompletableFuture<Map<String, Object>>> get_weather_alerts() {
         return request -> advancedTools.getWeatherAlerts(
             request.latitude(),
             request.longitude(),
@@ -100,7 +100,7 @@ public class FunctionCallingConfig {
     
     @Bean
     @Description("Calculate outdoor activity comfort index (0-100)")
-    public Function<ComfortIndexRequest, CompletableFuture<Map<String, Object>>> meteo__get_comfort_index() {
+    public Function<ComfortIndexRequest, CompletableFuture<Map<String, Object>>> get_comfort_index() {
         return request -> advancedTools.getComfortIndex(
             request.latitude(),
             request.longitude(),
@@ -110,7 +110,7 @@ public class FunctionCallingConfig {
     
     @Bean
     @Description("Get astronomical data for a location (sunrise, sunset, golden hour)")
-    public Function<AstronomyRequest, CompletableFuture<Map<String, Object>>> meteo__get_astronomy() {
+    public Function<AstronomyRequest, CompletableFuture<Map<String, Object>>> get_astronomy() {
         return request -> advancedTools.getAstronomy(
             request.latitude(),
             request.longitude(),
@@ -120,7 +120,7 @@ public class FunctionCallingConfig {
     
     @Bean
     @Description("Search for locations in Switzerland with optional geographic features")
-    public Function<SearchSwissRequest, CompletableFuture<Map<String, Object>>> meteo__search_location_swiss() {
+    public Function<SearchSwissRequest, CompletableFuture<Map<String, Object>>> search_location_swiss() {
         return request -> advancedTools.searchLocationSwiss(
             request.query(),
             request.includeFeatures(),
@@ -131,7 +131,7 @@ public class FunctionCallingConfig {
     
     @Bean
     @Description("Compare weather conditions across multiple locations")
-    public Function<CompareLocationsRequest, CompletableFuture<Map<String, Object>>> meteo__compare_locations() {
+    public Function<CompareLocationsRequest, CompletableFuture<Map<String, Object>>> compare_locations() {
         return request -> advancedTools.compareLocations(
             request.locations(),
             request.criteria() != null ? request.criteria() : "best_overall",
@@ -141,7 +141,7 @@ public class FunctionCallingConfig {
     
     @Bean
     @Description("Get historical weather data from 1940 to present")
-    public Function<HistoricalWeatherRequest, CompletableFuture<Map<String, Object>>> meteo__get_historical_weather() {
+    public Function<HistoricalWeatherRequest, CompletableFuture<Map<String, Object>>> get_historical_weather() {
         return request -> advancedTools.getHistoricalWeather(
             request.latitude(),
             request.longitude(),
@@ -153,7 +153,7 @@ public class FunctionCallingConfig {
     
     @Bean
     @Description("Get wave/swell data for coastal areas and large lakes")
-    public Function<MarineConditionsRequest, CompletableFuture<Map<String, Object>>> meteo__get_marine_conditions() {
+    public Function<MarineConditionsRequest, CompletableFuture<Map<String, Object>>> get_marine_conditions() {
         return request -> advancedTools.getMarineConditions(
             request.latitude(),
             request.longitude(),

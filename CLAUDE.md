@@ -40,7 +40,7 @@ docker compose down
 - **MCP API** - `/sse` - Model Context Protocol (Claude Desktop)
 - **Chat API** - `/api/chat/*` - Conversational interface
 
-**11 MCP Tools**: `meteo__*` (weather, snow, air quality, location, alerts, etc.)
+**11 MCP Tools**: `*` (weather, snow, air quality, location, alerts, etc.)
 **4 Resources**: weather codes, parameters, AQI reference, Swiss locations
 **3 Prompts**: ski-trip, outdoor-activity, travel planning
 
@@ -75,7 +75,7 @@ com.openmeteo.mcp/
 - **Java Records** for all DTOs (immutable, type-safe)
 - **CompletableFuture** for async (no reactive Mono/Flux)
 - **@McpTool/@McpResource/@McpPrompt** annotations
-- **snake_case** for MCP tool names (`meteo__*`)
+- **snake_case** for MCP tool names (`*`)
 - **>=80% test coverage** target
 
 ### New MCP Tool Example
@@ -134,17 +134,17 @@ openmeteo:
 
 | Tool | Description |
 |------|-------------|
-| `meteo__search_location` | Geocoding - search locations by name |
-| `meteo__get_weather` | Weather forecast with temperature, precipitation |
-| `meteo__get_snow_conditions` | Snow depth, snowfall, mountain weather |
-| `meteo__get_air_quality` | AQI, pollutants, UV index, pollen |
-| `meteo__get_weather_alerts` | Weather alerts based on thresholds |
-| `meteo__get_comfort_index` | Outdoor activity comfort score (0-100) |
-| `meteo__get_astronomy` | Sunrise, sunset, golden hour, moon phase |
-| `meteo__search_location_swiss` | Swiss-specific location search |
-| `meteo__compare_locations` | Multi-location weather comparison |
-| `meteo__get_historical_weather` | Historical weather data (1940-present) |
-| `meteo__get_marine_conditions` | Wave/swell data for lakes and coasts |
+| `search_location` | Geocoding - search locations by name |
+| `get_weather` | Weather forecast with temperature, precipitation |
+| `get_snow_conditions` | Snow depth, snowfall, mountain weather |
+| `get_air_quality` | AQI, pollutants, UV index, pollen |
+| `get_weather_alerts` | Weather alerts based on thresholds |
+| `get_comfort_index` | Outdoor activity comfort score (0-100) |
+| `get_astronomy` | Sunrise, sunset, golden hour, moon phase |
+| `search_location_swiss` | Swiss-specific location search |
+| `compare_locations` | Multi-location weather comparison |
+| `get_historical_weather` | Historical weather data (1940-present) |
+| `get_marine_conditions` | Wave/swell data for lakes and coasts |
 
 ### Resources (4 total)
 
@@ -159,9 +159,9 @@ openmeteo:
 
 | Prompt | Description |
 |--------|-------------|
-| `meteo__ski-trip-weather` | Ski trip planning with snow conditions |
-| `meteo__plan-outdoor-activity` | Weather-aware activity planning |
-| `meteo__weather-aware-travel` | Travel planning with weather integration |
+| `ski-trip-weather` | Ski trip planning with snow conditions |
+| `plan-outdoor-activity` | Weather-aware activity planning |
+| `weather-aware-travel` | Travel planning with weather integration |
 
 ## Endpoints
 

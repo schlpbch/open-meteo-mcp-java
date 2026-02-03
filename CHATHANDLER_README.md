@@ -76,17 +76,17 @@ curl -N http://localhost:8080/api/chat/stream/sessions/user-123/messages \
 
 ### 📊 Available Tools
 
-1. `meteo__search_location` - Geocoding
-2. `meteo__get_weather` - Weather forecast
-3. `meteo__get_snow_conditions` - Snow conditions
-4. `meteo__get_air_quality` - Air quality & pollen
-5. `meteo__get_weather_alerts` - Weather alerts
-6. `meteo__get_comfort_index` - Comfort index
-7. `meteo__get_astronomy` - Sunrise/sunset
-8. `meteo__search_location_swiss` - Swiss locations
-9. `meteo__compare_locations` - Location comparison
-10. `meteo__get_historical_weather` - Historical data
-11. `meteo__get_marine_conditions` - Wave/swell data
+1. `search_location` - Geocoding
+2. `get_weather` - Weather forecast
+3. `get_snow_conditions` - Snow conditions
+4. `get_air_quality` - Air quality & pollen
+5. `get_weather_alerts` - Weather alerts
+6. `get_comfort_index` - Comfort index
+7. `get_astronomy` - Sunrise/sunset
+8. `search_location_swiss` - Swiss locations
+9. `compare_locations` - Location comparison
+10. `get_historical_weather` - Historical data
+11. `get_marine_conditions` - Wave/swell data
 
 ## Configuration
 

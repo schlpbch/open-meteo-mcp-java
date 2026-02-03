@@ -26,7 +26,7 @@ MCP enables AI models to:
 
 ### 🔧 Available Tools (4 total)
 
-#### 1. `meteo__search_location`
+#### 1. `search_location`
 
 **Purpose**: Search for geographic locations by name (geocoding)
 
@@ -43,7 +43,7 @@ MCP enables AI models to:
 
 ```json
 {
-  "name": "meteo__search_location",
+  "name": "search_location",
   "arguments": {
     "name": "Zermatt",
     "count": 5,
@@ -74,7 +74,7 @@ MCP enables AI models to:
 
 ---
 
-#### 2. `meteo__get_weather`
+#### 2. `get_weather`
 
 **Purpose**: Get weather forecast with current conditions and multi-day outlook
 
@@ -91,7 +91,7 @@ MCP enables AI models to:
 
 ```json
 {
-  "name": "meteo__get_weather",
+  "name": "get_weather",
   "arguments": {
     "latitude": 47.3769,
     "longitude": 8.5417,
@@ -135,7 +135,7 @@ MCP enables AI models to:
 
 ---
 
-#### 3. `meteo__get_snow_conditions`
+#### 3. `get_snow_conditions`
 
 **Purpose**: Get snow depth, snowfall, and mountain weather conditions
 
@@ -152,7 +152,7 @@ MCP enables AI models to:
 
 ```json
 {
-  "name": "meteo__get_snow_conditions",
+  "name": "get_snow_conditions",
   "arguments": {
     "latitude": 46.0207,
     "longitude": 7.7491,
@@ -188,7 +188,7 @@ MCP enables AI models to:
 
 ---
 
-#### 4. `meteo__get_air_quality`
+#### 4. `get_air_quality`
 
 **Purpose**: Get air quality index, pollutants, UV index, and pollen data
 
@@ -207,7 +207,7 @@ MCP enables AI models to:
 
 ```json
 {
-  "name": "meteo__get_air_quality",
+  "name": "get_air_quality",
   "arguments": {
     "latitude": 52.52,
     "longitude": 13.405,
@@ -443,7 +443,7 @@ landmarks with precise coordinates and elevation data
 Prompts provide structured workflows that guide AI assistants through complex
 multi-step weather-related planning tasks.
 
-#### 1. `meteo__ski-trip-weather`
+#### 1. `ski-trip-weather`
 
 **Purpose**: Comprehensive ski trip planning workflow
 
@@ -498,7 +498,7 @@ Rate ski conditions as Excellent/Good/Fair/Poor based on:
 
 ---
 
-#### 2. `meteo__plan-outdoor-activity`
+#### 2. `plan-outdoor-activity`
 
 **Purpose**: Weather-aware outdoor activity planning with safety assessment
 
@@ -525,7 +525,7 @@ Rate ski conditions as Excellent/Good/Fair/Poor based on:
 
 ---
 
-#### 3. `meteo__weather-aware-travel`
+#### 3. `weather-aware-travel`
 
 **Purpose**: Multi-destination travel planning with weather integration
 
@@ -603,7 +603,7 @@ const tools = await client.listTools();
 console.log('Available tools:', tools);
 
 // Call weather tool
-const weather = await client.callTool('meteo__get_weather', {
+const weather = await client.callTool('get_weather', {
   latitude: 47.3769,
   longitude: 8.5417,
   forecastDays: 5,

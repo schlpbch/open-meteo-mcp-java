@@ -190,20 +190,20 @@ openmeteo:
 
 ### Core Tools
 
-- `meteo__search_location` - Geocoding and location search
-- `meteo__get_weather` - Weather forecasts with interpretations
-- `meteo__get_snow_conditions` - Snow depth and ski conditions
-- `meteo__get_air_quality` - AQI, pollutants, UV, pollen data
+- `search_location` - Geocoding and location search
+- `get_weather` - Weather forecasts with interpretations
+- `get_snow_conditions` - Snow depth and ski conditions
+- `get_air_quality` - AQI, pollutants, UV, pollen data
 
 ### Advanced Tools
 
-- `meteo__get_weather_alerts` - Threshold-based weather alerts
-- `meteo__get_comfort_index` - Outdoor activity comfort score (0-100)
-- `meteo__get_astronomy` - Sunrise, sunset, moon phases
-- `meteo__search_location_swiss` - Swiss-specific location search
-- `meteo__compare_locations` - Multi-location comparison
-- `meteo__get_historical_weather` - Historical data (1940-present)
-- `meteo__get_marine_conditions` - Wave/swell data
+- `get_weather_alerts` - Threshold-based weather alerts
+- `get_comfort_index` - Outdoor activity comfort score (0-100)
+- `get_astronomy` - Sunrise, sunset, moon phases
+- `search_location_swiss` - Swiss-specific location search
+- `compare_locations` - Multi-location comparison
+- `get_historical_weather` - Historical data (1940-present)
+- `get_marine_conditions` - Wave/swell data
 
 ### Resources & Prompts
 

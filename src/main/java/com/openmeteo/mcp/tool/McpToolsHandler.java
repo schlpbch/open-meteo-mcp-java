@@ -89,7 +89,7 @@ public class McpToolsHandler {
      *         longitude,
      *         elevation (meters), country, timezone, population
      */
-    @McpTool(name = "meteo__search_location", description = """
+    @McpTool(name = "search_location", description = """
             Provides geocoding search: Searches for locations by name to get coordinates for weather queries.
 
             Convert location names to coordinates using fuzzy search. Essential for natural language weather queries like "weather in Zurich" instead of requiring latitude/longitude coordinates.
@@ -195,7 +195,7 @@ public class McpToolsHandler {
      *         weather codes
      *         - location (map): Location metadata with coordinates and timezone
      */
-    @McpTool(name = "meteo__get_weather", description = """
+    @McpTool(name = "get_weather", description = """
             Retrieves weather forecast for a location (temperature, rain, sunshine).
 
             Get current weather conditions for any location in Switzerland (or worldwide).
@@ -289,7 +289,7 @@ public class McpToolsHandler {
      *         temperature
      *         - location (map): Mountain location metadata
      */
-    @McpTool(name = "meteo__get_snow_conditions", description = """
+    @McpTool(name = "get_snow_conditions", description = """
             Retrieves snow conditions and forecasts for mountain locations.
 
             Essential for ski trip planning and mountain weather assessment.
@@ -398,7 +398,7 @@ public class McpToolsHandler {
      *         is in Europe
      *         - location (map): Location metadata
      */
-    @McpTool(name = "meteo__get_air_quality", description = """
+    @McpTool(name = "get_air_quality", description = """
             Retrieves air quality forecast including AQI, pollutants, UV index, and pollen data.
 
             Monitor air quality for health-aware outdoor planning, allergy management, and UV exposure assessment. Provides both European and US Air Quality Indices along with detailed pollutant measurements.
