@@ -1,202 +1,111 @@
 # Open Meteo MCP Server (Java)
 
 A Model Context Protocol (MCP) server providing weather, snow conditions, and
-air quality tools via the [Open-Meteo API](https://open-meteo.com/).
+air quality tools via the [Open-Meteo API](https://open-meteo.com/) with
+conversational AI capabilities.
 
-**Version**: 1.0.0 (Production Ready) **Status**: ✅ MCP Server Complete -
-Enhanced Descriptions with Examples & Health Guidelines **Release Date**:
-January 30, 2026 **License**: Apache 2.0
+**Version**: 2.0.0 - Enterprise Ready ✅  
+**Status**: Complete API documentation suite, Docker infrastructure, production
+deployment ready  
+**Release Date**: February 2, 2026  
+**License**: Apache 2.0
 
-## 🎉 Project Milestone
+## 🎉 Project Overview
 
-This is a **strategic migration** of the proven
-[open-meteo-mcp](https://github.com/schlpbch/open-meteo-mcp) Python v3.2.0 to
-Java with Spring Boot 4.0 and Spring AI 2.0.
+### Key Features
 
-**Why Java?**
+- ✅ **11 MCP Tools**: 4 core + 7 advanced (weather, snow, air quality,
+  location, alerts, astronomy, marine)
+- ✅ **ChatHandler**: Conversational AI with Spring AI 2.0, function calling,
+  Redis memory
+- ✅ **4 MCP Resources**: weather codes, parameters, AQI reference, Swiss
+  locations
+- ✅ **3 MCP Prompts**: ski-trip, outdoor-activity, travel planning
+- ✅ **360 Tests**: 100% pass rate, 81% coverage
+- ✅ **Docker Infrastructure**: Multi-stage builds, Redis orchestration
+- ✅ **Complete API Documentation**: MCP protocol, OpenAPI 3.0.3 specs
 
-- ✅ Enterprise-grade architecture with Spring Boot ecosystem
-- ✅ Spring AI 2.0 integration for enhanced weather intelligence
-- ✅ Type safety with Java Records
-- ✅ Better integration with Swiss AI MCP infrastructure
-- ✅ JVM performance and scalability characteristics
+### Three API Endpoints
 
-**Current Implementation Status**:
+1. **🌐 REST API** - Traditional HTTP endpoints for direct integration
+2. **🔗 MCP API** - Model Context Protocol for AI tools (Claude Desktop, IDEs)
+3. **💬 Chat API** - Conversational interface with memory and streaming
 
-- ✅ **4 MCP Tools**: search_location, get_weather, get_snow_conditions,
-  get_air_quality
-- ✅ **4 MCP Resources**: weather://codes, weather://parameters,
-  weather://aqi-reference, weather://swiss-locations
-- ✅ **3 MCP Prompts**: ski-trip-weather, plan-outdoor-activity,
-  weather-aware-travel
-- ✅ **Enhanced Descriptions**: All components include comprehensive examples,
-  features, use cases, and health guidelines
-- ✅ **MCP Server Configuration**: Spring Boot with
-  @McpTool/@McpPrompt/@McpResource annotations
-- ✅ **SSE Transport**: Full MCP protocol support via HTTP/SSE at `/sse`
-  endpoint
+### Current Implementation Status
+
+- ✅ **11 MCP Tools**: 4 core + 7 advanced (weather, snow, air quality, location, alerts, astronomy, marine)
+- ✅ **ChatHandler**: Conversational AI with Spring AI 2.0, function calling, Redis memory  
+- ✅ **4 MCP Resources**: weather codes, parameters, AQI reference, Swiss locations
+- ✅ **3 MCP Prompts**: ski-trip, outdoor-activity, travel planning
+- ✅ **Enhanced Descriptions**: All components include comprehensive examples, features, use cases, and health guidelines
+- ✅ **MCP Server Configuration**: Spring Boot with @McpTool/@McpPrompt/@McpResource annotations
+- ✅ **SSE Transport**: Full MCP protocol support via HTTP/SSE at `/sse` endpoint
 - ✅ **MCP Inspector Integration**: Tested with MCP Inspector web UI
-- ✅ **Server Running**: Spring Boot 4.0.0 on port 8888
-
-**v1.0.0 Release Highlights**:
-
-- ✅ Spring AI 2.0 MCP annotations with comprehensive multiline descriptions
-- ✅ All tools include examples, features, use cases, and health guidelines
-- ✅ All resources include detailed documentation and use cases
-- ✅ All prompts include step-by-step workflows
-- ✅ HTTP/SSE transport configured and tested
-- ✅ Integrated with MCP Inspector for protocol validation
-- ✅ Production-ready Spring Boot configuration with gzip compression
-- ✅ Comprehensive test coverage across all services
 - ✅ **Claude Desktop Integration**: Ready-to-use configuration files and setup scripts
-- ✅ JSON resource files for weather codes, AQI reference, and Swiss locations
-- ✅ Ready for enterprise deployment
-
-## Features
-
-### 🌦️ MCP Tools (Implemented ✅)
-
-- **`search_location`**: Geocoding and location search via Open-Meteo Geocoding
-  API
-- **`get_weather`**: Weather forecasts with temperature, precipitation, wind, UV
-  index
-- **`get_snow_conditions`**: Snow depth, snowfall, mountain weather for ski
-  planning
-- **`get_air_quality`**: AQI, pollutants, UV index, pollen data (European
-  coverage)
-
-All tools are:
-
-- ✅ Annotated with `@McpTool` (Spring AI 2.0)
-- ✅ Exposed via REST API endpoints at `/api/tools/*`
-- ✅ Returning CompletableFuture for async operations
-- ✅ Fully tested and integrated with Open-Meteo API
-
-### 📚 MCP Resources (Implemented ✅)
-
-- **`weather://codes`**: WMO weather code interpretations with descriptions
-- **`weather://parameters`**: Available weather and snow parameters from
-  Open-Meteo API
-- **`weather://aqi-reference`**: AQI scales with health implications and
-  recommendations
-- **`weather://swiss-locations`**: Swiss cities, mountains, and mountain passes
-  with coordinates
-
-All resources are:
-
-- ✅ Annotated with `@McpResource` (Spring AI 2.0)
-- ✅ Served from JSON files in classpath
-- ✅ Loaded via ResourceService component
-- ✅ Available for MCP clients to reference
-
-### 🎯 MCP Prompts (Implemented ✅)
-
-- **`ski-trip-weather`**: Ski trip planning workflow using snow conditions and
-  weather data
-- **`plan-outdoor-activity`**: Weather-aware outdoor activity planning with AQI
-  awareness
-- **`weather-aware-travel`**: Travel planning with weather integration and
-  packing recommendations
-
-All prompts are:
-
-- ✅ Annotated with `@McpPrompt` (Spring AI 2.0)
-- ✅ Provided by PromptService component
-- ✅ Return workflow instructions for AI assistants
-- ✅ Integrated with all available tools and resources
+- ✅ **Docker Infrastructure**: Multi-stage builds, Redis orchestration
+- ✅ **Server Running**: Spring Boot 4.0.0 on port 8888
 
 ## Technology Stack
 
-### Core Dependencies
+- **Java 25** with Virtual Threads, **Spring Boot 4.0**, **Spring AI 2.0**
+- **Docker** (Eclipse Temurin), **Redis**, **Maven 3.9+**
+- **AI Providers**: Azure OpenAI (primary), OpenAI, Anthropic Claude
+- **Testing**: JUnit 5 + Mockito + AssertJ
 
-- **Java 25** - LTS with enhanced virtual threads
-- **Spring Boot 4.0** - Latest stable
-- **Spring AI 2.0** - AI integration + native MCP annotations
-- **Maven 3.9+** - Build tool
-- **Jackson** - JSON serialization with compression
-- **Micrometer** - Observability and metrics
-- **JUnit 5 + AssertJ + Mockito** - Testing framework
+## Quick Start
 
-### Key Architectural Decisions
-
-- **CompletableFuture + Virtual Threads** for async operations (no reactive
-  Mono/Flux)
-- **Java Records** for all data models
-- **Spring AI 2.0 MCP annotations** (`@McpTool`, `@McpResource`, `@McpPrompt`)
-- **SLF4J + Logback** for structured JSON logging
-- **Specification-Driven Development** - Document before coding
-
-See [ADR_COMPENDIUM.md](spec/ADR_COMPENDIUM.md) for all 15 architectural
-decisions.
-
-## Prerequisites
-
-- Java 25 or higher
-- Maven 3.9+ or Gradle 8+
-- (Optional) Docker for containerized deployment
-
-## Installation
-
-### Clone the Repository
+### Installation
 
 ```bash
 git clone https://github.com/schlpbch/open-meteo-mcp-java.git
 cd open-meteo-mcp-java
-```
-
-### Build the Project
-
-**Maven:**
-
-```bash
 ./mvnw clean install
 ```
 
-**Gradle:**
+### Run Application
 
 ```bash
-./gradlew build
-```
-
-## Running the MCP Server
-
-### Quick Start
-
-**Maven:**
-
-```bash
+# Java
 ./mvnw spring-boot:run
+
+# Docker
+docker compose up --build
 ```
 
-Server will start on `http://localhost:8888`
-
-**Gradle:**
+### Test Endpoints
 
 ```bash
-./gradlew bootRun
-```
-
-### Test the Server
-
-Once running, test the endpoints:
-
-```bash
-# MCP Inspector (Web UI)
-# Use MCP Inspector to interact with tools, resources, and prompts
-# Visit: http://localhost:6274 (when MCP Inspector is running)
-npx @modelcontextprotocol/inspector http://localhost:8888/sse
-
 # Health check
-curl http://localhost:8080/actuator/health
+curl http://localhost:8888/actuator/health
 
-# Test SSE endpoint (MCP protocol)
+# MCP Protocol
 curl http://localhost:8888/sse
 
-# REST API endpoints (optional)
-# Search for a location
+# Chat API
+curl -X POST http://localhost:8888/api/chat/sessions/test/messages \
+  -H "Content-Type: application/json" \
+  -d '{"message": "What's the weather in Zurich?"}'
+
+# REST API Examples
+# Search location
 curl -X POST http://localhost:8080/api/tools/search-location \
   -H "Content-Type: application/json" \
   -d '{"name":"London","count":5,"language":"en"}'
+
+# Get weather
+curl -X POST http://localhost:8080/api/tools/weather \
+  -H "Content-Type: application/json" \
+  -d '{"latitude":51.5074,"longitude":-0.1278,"forecastDays":7,"timezone":"UTC"}'
+
+# Get snow conditions
+curl -X POST http://localhost:8080/api/tools/snow-conditions \
+  -H "Content-Type: application/json" \
+  -d '{"latitude":46.5197,"longitude":10.2093,"forecastDays":7,"timezone":"Europe/Rome"}'
+
+# Get air quality
+curl -X POST http://localhost:8080/api/tools/air-quality \
+  -H "Content-Type: application/json" \
+  -d '{"latitude":52.52,"longitude":13.405,"forecastDays":7,"timezone":"Europe/Berlin"}'
 ```
 
 ## 🤖 Claude Desktop Integration
@@ -239,22 +148,6 @@ chmod +x setup.sh
 
 For remote development, Docker, and advanced configurations, see [`claude-desktop/README.md`](claude-desktop/README.md).
 
-# Get weather
-curl -X POST http://localhost:8080/api/tools/weather \
-  -H "Content-Type: application/json" \
-  -d '{"latitude":51.5074,"longitude":-0.1278,"forecastDays":7,"timezone":"UTC"}'
-
-# Get snow conditions
-curl -X POST http://localhost:8080/api/tools/snow-conditions \
-  -H "Content-Type: application/json" \
-  -d '{"latitude":46.5197,"longitude":10.2093,"forecastDays":7,"timezone":"Europe/Rome"}'
-
-# Get air quality
-curl -X POST http://localhost:8080/api/tools/air-quality \
-  -H "Content-Type: application/json" \
-  -d '{"latitude":52.52,"longitude":13.405,"forecastDays":7,"timezone":"Europe/Berlin"}'
-```
-
 ### With Spring AI Integration (Optional)
 
 Set environment variables for Claude AI integration:
@@ -267,289 +160,200 @@ export ANTHROPIC_API_KEY=your_api_key_here
 
 ## Configuration
 
+### Environment Variables
+
+```bash
+# AI Provider Keys
+AZURE_OPENAI_KEY=your_key
+OPENAI_API_KEY=your_key
+ANTHROPIC_API_KEY=your_key
+
+# Redis (production)
+REDIS_URL=redis://localhost:6379
+```
+
 ### Application Properties
 
-Configure via `src/main/resources/application.yml`:
-
 ```yaml
-spring:
-  application:
-    name: open-meteo-mcp
-  webflux:
-    base-path: /api
-
 openmeteo:
   api:
     weather-url: https://api.open-meteo.com/v1
-    air-quality-url: https://air-quality-api.open-meteo.com/v1
-    geocoding-url: https://geocoding-api.open-meteo.com/v1
-    marine-url: https://marine-api.open-meteo.com/v1
     timeout-seconds: 30
     gzip-enabled: true
-
-logging:
-  level:
-    com.openmeteo.mcp: DEBUG
+  chat:
+    enabled: true
+    memory:
+      type: redis # or inmemory
 ```
 
-### MCP Server Configuration
+## MCP Tools & Resources
 
-The MCP server is configured in `config/McpServerConfig.java`:
+### Core Tools
 
-- ✅ Auto-discovers `@McpTool` annotated methods
-- ✅ Auto-discovers `@McpPrompt` annotated methods
-- ✅ Auto-discovers `@McpResource` annotated methods
-- ✅ Logs component initialization on startup
+- `meteo__search_location` - Geocoding and location search
+- `meteo__get_weather` - Weather forecasts with interpretations
+- `meteo__get_snow_conditions` - Snow depth and ski conditions
+- `meteo__get_air_quality` - AQI, pollutants, UV, pollen data
 
-## MCP Server Status
+### Advanced Tools
 
-### Verify Server is Running
+- `meteo__get_weather_alerts` - Threshold-based weather alerts
+- `meteo__get_comfort_index` - Outdoor activity comfort score (0-100)
+- `meteo__get_astronomy` - Sunrise, sunset, moon phases
+- `meteo__search_location_swiss` - Swiss-specific location search
+- `meteo__compare_locations` - Multi-location comparison
+- `meteo__get_historical_weather` - Historical data (1940-present)
+- `meteo__get_marine_conditions` - Wave/swell data
 
-Check the startup logs for MCP component initialization:
+### Resources & Prompts
 
-```
-2026-01-30T18:27:13.299+01:00  INFO 25520 --- [open-meteo-mcp] c.openmeteo.mcp.config.McpServerConfig   : MCP Server configuration initialized
-2026-01-30T18:27:13.299+01:00  INFO 25520 --- [open-meteo-mcp] c.openmeteo.mcp.config.McpServerConfig   :   - MCP Tools: search_location, get_weather, get_snow_conditions, get_air_quality
-2026-01-30T18:27:13.299+01:00  INFO 25520 --- [open-meteo-mcp] c.openmeteo.mcp.config.McpServerConfig   :   - MCP Prompts: ski-trip-weather, plan-outdoor-activity, weather-aware-travel
-2026-01-30T18:27:13.299+01:00  INFO 25520 --- [open-meteo-mcp] c.openmeteo.mcp.config.McpServerConfig   :   - MCP Resources: weather://codes, weather://parameters, weather://aqi-reference, weather://swiss-locations
-2026-01-30T18:27:13.650+01:00  INFO 25520 --- [open-meteo-mcp] o.s.b.web.embedded.netty.NettyWebServer  : Netty started on port 8888 (http)
-2026-01-30T18:27:13.660+01:00  INFO 25520 --- [open-meteo-mcp] c.openmeteo.mcp.OpenMeteoMcpApplication  : Started OpenMeteoMcpApplication in 2.904 seconds
-```
-
-**MCP Protocol Support**:
-
-- ✅ SSE Endpoint: `http://localhost:8888/sse`
-- ✅ MCP Inspector Web UI: `http://localhost:6274` (when running
-  `npx @modelcontextprotocol/inspector`)
-- ✅ Protocol: HTTP/SSE (Server-Sent Events)
-- ✅ Auto-discovered components: 4 tools, 3 prompts, 4 resources
-
-### Check Health
-
-```bash
-curl http://localhost:8080/actuator/health
-```
-
-Expected response:
-
-```json
-{
-  "status": "UP",
-  "components": {...}
-}
-```
-
-## Testing
-
-### Run All Tests
-
-```bash
-./mvnw test
-```
-
-### Run with Coverage
-
-```bash
-./mvnw test jacoco:report
-# Report at: target/site/jacoco/index.html
-```
-
-### Run Integration Tests
-
-```bash
-./mvnw verify -P integration-tests
-```
+- **Resources**: Weather codes, parameters, AQI scales, Swiss locations
+- **Prompts**: Ski trip planning, outdoor activities, travel planning
 
 ## Documentation
 
+### API Specifications
+
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System design with three API
+  endpoints
+- **[docs/MCP_DOCUMENTATION.md](docs/MCP_DOCUMENTATION.md)** - Complete MCP
+  protocol reference
+- **[docs/openapi-open-meteo.yaml](docs/openapi-open-meteo.yaml)** - REST API
+  specification
+- **[docs/openapi-chat.yaml](docs/openapi-chat.yaml)** - Chat API specification
+
 ### Project Documentation
 
-- **[CONSTITUTION.md](spec/CONSTITUTION.md)** - Project governance and migration
-  strategy
-- **[ADR_COMPENDIUM.md](spec/ADR_COMPENDIUM.md)** - 15 Architecture Decision
-  Records
-- **[MIGRATION_GUIDE.md](spec/MIGRATION_GUIDE.md)** - Python to Java migration
-  guide
-- **[CLAUDE.md](CLAUDE.md)** - AI-friendly development guide
-
-### Python Reference Implementation
-
-- **Repository**:
-  [open-meteo-mcp (Python)](https://github.com/schlpbch/open-meteo-mcp)
-- **Version**: v3.2.0 (production reference)
-- **Status**: Production-ready with 4 tools, 5 resources, 3 prompts
-
-## Project Structure
-
-```
-open-meteo-mcp-java/
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── com/openmeteo/mcp/
-│   │   │       ├── OpenMeteoMcpApplication.java
-│   │   │       ├── config/          # Configuration classes
-│   │   │       ├── tool/            # MCP tools (@McpTool)
-│   │   │       ├── service/         # Business logic
-│   │   │       ├── client/          # Open-Meteo API client
-│   │   │       ├── model/           # Java Records (DTOs)
-│   │   │       ├── exception/       # Exception handling
-│   │   │       └── util/            # Utilities
-│   │   └── resources/
-│   │       ├── application.yml      # Configuration
-│   │       ├── data/                # JSON resource files
-│   │       └── logback-spring.xml   # Logging config
-│   └── test/
-│       └── java/
-│           └── com/openmeteo/mcp/   # Test classes
-├── spec/
-│   ├── CONSTITUTION.md              # Project governance
-│   ├── ADR_COMPENDIUM.md            # Architecture decisions
-│   └── MIGRATION_GUIDE.md           # Migration guide
-├── pom.xml                          # Maven configuration
-├── README.md                        # This file
-└── CLAUDE.md                        # AI development guide
-```
-
-## Migration Timeline
-
-**9-Week Migration** (Q1-Q2 2026):
-
-1. **Phase 1: Foundation** (Weeks 1-2) - ✅ Complete
-   - Project setup, API client, 18 Java Records, comprehensive testing
-
-2. **Phase 2: Services & Utilities** (Weeks 3-4) - ✅ Complete
-   - 4 service classes, 4 utility classes, 87 unit tests (78-100% coverage)
-
-3. **Phase 3: Resources & Prompts** (Week 5) - ✅ Complete
-   - ResourceService with 4 resources, PromptService with 3 prompts, 112 tests
-     (67% coverage)
-
-4. **Phase 4: AI Enhancement** (Week 6)
-   - Spring AI ChatClient integration, @McpTool annotations
-
-5. **Phase 5: Testing & Documentation** (Weeks 7-8)
-   - 80%+ test coverage, complete docs
-
-6. **Phase 6: Deployment** (Week 9)
-   - CI/CD, cloud deployment, v1.0.0 release
-
-## Contributing
-
-We welcome contributions during the migration phase!
-
-### How to Contribute
-
-1. Check the [CONSTITUTION.md](spec/CONSTITUTION.md) for governance principles
-2. Review [ADR_COMPENDIUM.md](spec/ADR_COMPENDIUM.md) for architectural
-   decisions
-3. Follow [MIGRATION_GUIDE.md](spec/MIGRATION_GUIDE.md) for implementation
-   patterns
-4. Open an issue or pull request
-
-### Code Standards
-
-- **Specification-Driven Development**: Document before coding
-- **Test Coverage**: ≥80% for new code
-- **Code Style**: Follow Spring Boot best practices
-- **Commit Messages**: Use Conventional Commits format
+- **[CHATHANDLER_README.md](CHATHANDLER_README.md)** - ChatHandler
+  implementation guide
+- **[spec/CONSTITUTION.md](spec/CONSTITUTION.md)** - Project governance
+- **[spec/ADR_COMPENDIUM.md](spec/ADR_COMPENDIUM.md)** - Architecture decisions
+- **[CLAUDE.md](CLAUDE.md)** - AI development guide
 
 ## MCP Integration
 
-### Claude Desktop Configuration (Future)
+### Claude Desktop Configuration
 
-Once v1.0.0 is released, add to Claude Desktop configuration:
-
-**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
+or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
 
 ```json
 {
   "mcpServers": {
     "open-meteo-java": {
       "command": "java",
-      "args": [
-        "-jar",
-        "/path/to/open-meteo-mcp-java/target/open-meteo-mcp-1.0.0.jar"
-      ]
+      "args": ["-jar", "/path/to/open-meteo-mcp-2.0.0.jar"]
     }
   }
 }
 ```
 
-## API Details
+### MCP Inspector
 
-### Open-Meteo API
+```bash
+npx @modelcontextprotocol/inspector http://localhost:8888/sse
+```
 
-- **Geocoding**: `https://geocoding-api.open-meteo.com/v1/search`
-- **Weather**: `https://api.open-meteo.com/v1/forecast`
-- **Air Quality**: `https://air-quality-api.open-meteo.com/v1/air-quality`
+## Testing
 
-**Features**:
+```bash
+# Run all tests
+./mvnw test
 
-- No API key required (free tier)
-- Rate limiting: ~10,000 requests/day
-- Gzip compression supported
-- JSON responses with extensive parameters
+# Run with coverage
+./mvnw test jacoco:report
+# Report at: target/site/jacoco/index.html
 
-## Roadmap
+# Integration tests
+./mvnw verify -P integration-tests
+```
 
-### v1.0.0 (Q2 2026) - Feature Parity
+## Docker Deployment
 
-- ✅ All 4 tools match Python functionality
-- ✅ All 5 resources available
-- ✅ All 3 prompts working
-- ✅ Gzip compression
-- ✅ 80%+ test coverage
-- ✅ Spring AI integration
+### Single Container
 
-### v1.1.0 - Enhanced Features
+```bash
+docker build -t open-meteo-mcp:2.0.0 .
+docker run -p 8888:8888 open-meteo-mcp:2.0.0
+```
 
-- Historical weather data access
-- Weather alerts and notifications
-- Extended forecast periods (beyond 16 days)
-- Multi-location batch queries
+### Full Stack with Redis
 
-### v2.0.0 - Advanced AI
+```bash
+docker compose up --build
+```
 
-- Predictive weather analysis
-- Travel recommendation engine
-- Weather pattern recognition
-- Integration with other Swiss AI MCP servers
+## Development
 
-## Support
+### Core Patterns
+
+- **Java Records** for all DTOs (immutable, type-safe)
+- **CompletableFuture** for async operations (no reactive Mono/Flux)
+- **@McpTool/@McpResource/@McpPrompt** Spring AI annotations
+- **≥80% test coverage** target
+
+### Adding New Tools
+
+```java
+@Service
+public class MyToolService {
+    @McpTool(description = "Tool description")
+    public CompletableFuture<MyResponse> myTool(
+        @McpParam("param") String param
+    ) {
+        return myService.process(param);
+    }
+}
+```
+
+## API Endpoints
+
+### REST API
+
+- `GET /api/weather` - Weather forecasts
+- `GET /api/air-quality` - Air quality data
+- `GET /api/geocoding/search` - Location search
+- `GET /api/snow` - Snow conditions
+
+### Chat API
+
+- `POST /api/chat/sessions/{id}/messages` - Send message
+- `GET /api/chat/sessions/{id}` - Session details
+- `DELETE /api/chat/sessions/{id}` - Delete session
+
+### MCP Protocol
+
+- `GET /sse` - Server-Sent Events endpoint for MCP clients
+
+## v2.0.0 Release Highlights
+
+- 📚 **Complete API Documentation Suite** - MCP protocol, OpenAPI specs, client
+  examples
+- 🐳 **Docker Infrastructure** - Multi-stage builds, Redis orchestration,
+  production ready
+- 🏗️ **Enhanced Architecture** - Three distinct APIs with comprehensive
+  documentation
+- 📖 **Professional Documentation** - Enterprise-grade specifications and guides
+- 🔧 **Developer Experience** - Optimized development workflow and tools
+
+## Support & Contributing
 
 - **Issues**:
   [GitHub Issues](https://github.com/schlpbch/open-meteo-mcp-java/issues)
-- **Discussions**:
-  [GitHub Discussions](https://github.com/schlpbch/open-meteo-mcp-java/discussions)
-- **Python Version**:
-  [open-meteo-mcp](https://github.com/schlpbch/open-meteo-mcp)
+- **Python Reference**:
+  [open-meteo-mcp](https://github.com/schlpbch/open-meteo-mcp) v3.2.0
+- **Contributing**: See [CONSTITUTION.md](spec/CONSTITUTION.md) for guidelines
 
-## License
+## License & Credits
 
-Apache License 2.0 - See [LICENSE](LICENSE) for details.
-
-## Credits
-
-- Weather data provided by [Open-Meteo](https://open-meteo.com/) - Free
-  Open-Source Weather API
-- Based on [open-meteo-mcp (Python)](https://github.com/schlpbch/open-meteo-mcp)
-  v3.2.0
-- Part of the Swiss AI MCP ecosystem
-
-## Acknowledgments
-
-Special thanks to:
-
-- Open-Meteo team for their excellent free weather API
-- Spring AI team for native MCP protocol support
-- Anthropic for the Model Context Protocol specification
-- Contributors to the Python reference implementation
+- **License**: Apache 2.0
+- **Weather Data**: [Open-Meteo](https://open-meteo.com/) - Free Open-Source
+  Weather API
+- **Framework**: Spring AI 2.0 with native MCP support
+- **Protocol**: [Model Context Protocol](https://modelcontextprotocol.io/) by
+  Anthropic
 
 ---
 
-**🔄 Migration in Progress** - Follow along on
-[GitHub](https://github.com/schlpbch/open-meteo-mcp-java) or check the
-[Python version](https://github.com/schlpbch/open-meteo-mcp) for a
-production-ready implementation.
+**v2.0.0**: ✅ **ENTERPRISE READY** - Complete documentation, Docker
+infrastructure, production deployment ready

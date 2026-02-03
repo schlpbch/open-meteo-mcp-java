@@ -13,9 +13,9 @@
 
     <groupId>com.openmeteo</groupId>
     <artifactId>open-meteo-mcp</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <name>Open Meteo MCP Server (Java)</name>
-    <description>Model Context Protocol server providing weather, snow conditions, and air quality tools via Open-Meteo API</description>
+    <description>Model Context Protocol server providing weather, snow conditions, and air quality tools via Open-Meteo API with conversational AI interface</description>
 
     <properties>
         <java.version>25</java.version>
@@ -68,26 +68,29 @@
             <artifactId>spring-ai-starter-mcp-server-webflux</artifactId>
         </dependency>
 
-        <!-- Spring AI Starters - Choose one or more based on your AI provider needs -->
-        <!-- spring-ai-core does not exist in v2.0.0-M2; use provider-specific starters below -->
-
-        <!-- Spring AI OpenAI Starter -->
-        <!-- <dependency>
+        <!-- Spring AI Azure OpenAI (Primary Provider for ChatHandler) -->
+        <dependency>
             <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
-        </dependency> -->
+            <artifactId>spring-ai-azure-openai</artifactId>
+        </dependency>
 
-        <!-- Spring AI Anthropic Starter -->
-        <!-- <dependency>
+        <!-- Spring AI OpenAI (Fallback Provider) -->
+        <dependency>
             <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-anthropic-spring-boot-starter</artifactId>
-        </dependency> -->
+            <artifactId>spring-ai-openai</artifactId>
+        </dependency>
 
-        <!-- Spring AI Azure OpenAI Starter -->
-        <!-- <dependency>
+        <!-- Spring AI Anthropic (Fallback Provider) -->
+        <dependency>
             <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-azure-openai-spring-boot-starter</artifactId>
-        </dependency> -->
+            <artifactId>spring-ai-anthropic</artifactId>
+        </dependency>
+
+        <!-- Redis for Conversation Memory -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
 
         <!-- HTTP Client -->
         <dependency>
@@ -198,7 +201,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.11</version>
+                <version>0.8.14</version>
                 <executions>
                     <execution>
                         <goals>

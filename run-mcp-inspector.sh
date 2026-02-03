@@ -1,3 +1,3 @@
 #!/bin/bash
 
-pnpx @modelcontextprotocol/inspector http://localhost:8888/sse
+npx -y @modelcontextprotocol/inspector  --server-url http://localhost:8888/sse

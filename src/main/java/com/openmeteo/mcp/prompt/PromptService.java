@@ -34,7 +34,7 @@ public class PromptService {
      * @param dates  Travel dates (e.g., "this weekend", "January 10-15")
      * @return Workflow instructions for AI assistant with multi-step ski condition assessment
      */
-    @McpPrompt(name = "ski-trip-weather", description = """
+    @McpPrompt(name = "meteo__ski-trip-weather", description = """
             Generates a guide for checking snow conditions and weather for ski trips to Swiss resorts.
 
             Comprehensive workflow for assessing ski conditions combining snow depth, weather forecasts, and safety considerations.
@@ -159,7 +159,7 @@ public class PromptService {
      * @param timeframe When to do the activity (this weekend, next week)
      * @return Workflow instructions for AI assistant with weather-aware activity assessment
      */
-    @McpPrompt(name = "plan-outdoor-activity", description = """
+    @McpPrompt(name = "meteo__plan-outdoor-activity", description = """
             Generates a weather-aware outdoor activity planning workflow for hiking, cycling, and other outdoor pursuits.
 
             ACTIVITY SENSITIVITY LEVELS:
@@ -326,7 +326,7 @@ public class PromptService {
      * @param tripType    Type of trip (day trip, weekend, business, vacation)
      * @return Workflow instructions for AI assistant with comprehensive travel planning guidance
      */
-    @McpPrompt(name = "weather-aware-travel", description = """
+    @McpPrompt(name = "meteo__weather-aware-travel", description = """
             Travel planning with weather integration: Provides a comprehensive guide for travel planning with weather integration.
 
             Complete travel planning workflow with temperature-based packing recommendations, activity suggestions, and weather-aware travel advice.
