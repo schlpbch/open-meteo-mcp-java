@@ -242,7 +242,7 @@ or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
   "mcpServers": {
     "open-meteo-java": {
       "command": "java",
-      "args": ["-jar", "/path/to/open-meteo-mcp-2.0.0.jar"]
+      "args": ["-jar", "/path/to/open-meteo-mcp-2.0.1.jar"]
     }
   }
 }
