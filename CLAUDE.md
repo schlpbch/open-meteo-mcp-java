@@ -6,7 +6,7 @@ AI development guide for the Open-Meteo MCP Java project.
 
 **Open Meteo MCP (Java)** - Model Context Protocol server providing weather, snow conditions, and air quality data via [Open-Meteo API](https://open-meteo.com/) with conversational AI capabilities.
 
-**Status**: v2.0.1 - Enterprise Ready
+**Status**: v2.0.2 - Enterprise Ready
 **Updated**: February 3, 2026
 **Test Coverage**: 426 tests (100% pass, 72% coverage)
 
@@ -25,7 +25,7 @@ mvn test jacoco:report
 
 # Run Application
 mvn spring-boot:run
-java -jar target/open-meteo-mcp-2.0.1.jar
+java -jar target/open-meteo-mcp-2.0.2.jar
 
 # Docker
 docker compose up --build
@@ -203,4 +203,4 @@ cat target/surefire-reports/*.txt
 
 ---
 
-**v2.0.1**: Enterprise Ready - Complete documentation, Docker infrastructure, production deployment ready
+**v2.0.2**: Enterprise Ready - Complete documentation, Docker infrastructure, production deployment ready
