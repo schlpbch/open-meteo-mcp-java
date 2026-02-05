@@ -98,6 +98,13 @@ logging:
     reactor.netty: INFO
     org.springframework.web: INFO
 
+# Streaming Configuration (ADR-020)
+streaming:
+  max-concurrent-connections: 100
+  max-connection-duration-ms: 600000  # 10 minutes
+  chunk-delay-ms: 100  # Default delay between chunks
+  max-chunks: 1000  # Maximum chunks per stream
+
 management:
   endpoints:
     web:

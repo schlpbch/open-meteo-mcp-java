@@ -56,6 +56,9 @@ public class SecurityConfig {
                 // Public endpoints - no authentication required
                 .pathMatchers("/health/**", "/actuator/**", "/metrics").permitAll()
                 
+                // Streaming endpoints - require authentication (role checked at method level)
+                .pathMatchers("/stream/**").authenticated()
+                
                 // MCP endpoints - require MCP_CLIENT role
                 .pathMatchers("/api/mcp/**", "/mcp/**").hasRole("MCP_CLIENT")
                 
