@@ -1,7 +1,7 @@
 # Open Meteo MCP - Architecture Decision Records (ADR) Compendium
 
-**Document Version**: 3.3.0 **Last Updated**: 2026-02-02 **Total ADRs**: 18 (10
-Accepted, 8 Proposed)
+**Document Version**: 3.5.0 **Last Updated**: 2026-02-05 **Total ADRs**: 20 (10
+Accepted, 10 Proposed)
 
 **Related Documents**:
 
@@ -59,6 +59,8 @@ Accepted, 8 Proposed)
 - [ADR-012: MCP Resources and Prompts Strategy](#adr-012-mcp-resources-and-prompts-strategy)
   ✅
 - [ADR-013: Open-Meteo API Client with Gzip Compression](#adr-013-open-meteo-api-client-with-gzip-compression)
+  🔄
+- [ADR-020: MCP Streamable HTTP Protocol Support](#adr-020-mcp-streamable-http-protocol-support)
   🔄
 
 ### Security & Privacy
@@ -1101,9 +1103,444 @@ public class ChatClientConfig {
 
 ---
 
+## ADR-020: MCP Streamable HTTP Protocol Support
+
+**Status**: 🔄 Proposed **Date**: 2026-02-05 **Deciders**: Architecture Team
+**Context**: Integration & APIs
+
+### [ADR-020] Decision
+
+Implement **MCP Streamable HTTP Protocol Support** to enable real-time streaming communication between MCP clients and the Open Meteo server.
+
+**Rationale**:
+
+- **Real-time Weather Updates**: Support streaming weather data for dynamic conditions
+- **Improved User Experience**: Reduce latency for weather queries with immediate response streaming
+- **MCP Protocol Evolution**: Align with MCP protocol specifications for HTTP streaming
+- **Resource Efficiency**: Stream large datasets (historical weather, forecasts) without memory overhead
+- **Interactive Chat Experience**: Enable real-time conversational AI responses for weather queries
+- **Modern Web Standards**: Leverage Server-Sent Events (SSE) and HTTP streaming best practices
+
+### [ADR-020] Architecture
+
+```
+MCP Streamable HTTP Architecture
+    ├── HTTP Streaming Layer
+    │   ├── Server-Sent Events (SSE) Support
+    │   ├── Chunked Transfer Encoding
+    │   └── WebSocket Fallback (Future)
+    ├── MCP Stream Protocol
+    │   ├── Stream Initialization
+    │   ├── Data Chunks with Metadata
+    │   ├── Progress Indicators
+    │   └── Stream Completion Signals
+    ├── Weather Data Streaming
+    │   ├── Real-time Current Conditions
+    │   ├── Forecast Data Streams
+    │   ├── Historical Data Pagination
+    │   └── Multi-location Weather Streams
+    ├── Chat Response Streaming
+    │   ├── Token-by-token AI Responses
+    │   ├── Function Call Results
+    │   ├── Weather Interpretation Streaming
+    │   └── Context-aware Response Building
+    └── Client Compatibility
+        ├── Claude Desktop Integration
+        ├── Browser-based MCP Clients
+        ├── Mobile App Support
+        └── Legacy Non-streaming Fallback
+```
+
+### [ADR-020] Implementation Details
+
+**1. Streamable HTTP Configuration**
+
+```java
+@Configuration
+@EnableWebFlux
+public class StreamingConfig {
+    
+    @Bean
+    public RouterFunction<ServerResponse> streamingRoutes() {
+        return RouterFunctions.route()
+            .path("/api/mcp/stream", builder -> builder
+                .GET("/weather/{location}", this::streamWeatherData)
+                .GET("/forecast/{location}", this::streamForecastData)
+                .GET("/chat/{sessionId}", this::streamChatResponse)
+                .POST("/chat/stream", this::streamChatInteraction)
+            )
+            .build();
+    }
+    
+    @Bean
+    public WebFluxConfigurer webFluxConfigurer() {
+        return new WebFluxConfigurer() {
+            @Override
+            public void configureHttpMessageCodecs(ServerCodecConfigurer configurer) {
+                // Enable streaming for large responses
+                configurer.defaultCodecs().maxInMemorySize(1024 * 1024); // 1MB
+                configurer.defaultCodecs().enableLoggingRequestDetails(true);
+            }
+        };
+    }
+}
+```
+
+**2. MCP Stream Protocol Handler**
+
+```java
+@Component
+public class McpStreamHandler {
+    
+    public Flux<ServerSentEvent<McpStreamChunk>> streamWeatherData(
+            String location, 
+            ServerRequest request) {
+        
+        return weatherService.getStreamingWeatherData(location)
+            .map(weatherData -> ServerSentEvent.<McpStreamChunk>builder()
+                .id(UUID.randomUUID().toString())
+                .event("weather-data")
+                .data(new McpStreamChunk("weather", weatherData, false))
+                .build())
+            .concatWith(Mono.just(ServerSentEvent.<McpStreamChunk>builder()
+                .event("stream-complete")
+                .data(new McpStreamChunk("completion", null, true))
+                .build()));
+    }
+    
+    public Flux<ServerSentEvent<McpChatChunk>> streamChatResponse(
+            String sessionId,
+            Mono<ChatRequest> chatRequest) {
+        
+        return chatRequest
+            .flatMapMany(request -> chatService.streamResponse(sessionId, request))
+            .map(token -> ServerSentEvent.<McpChatChunk>builder()
+                .id(UUID.randomUUID().toString())
+                .event("chat-token")
+                .data(new McpChatChunk(token, false))
+                .build())
+            .concatWith(Mono.just(ServerSentEvent.<McpChatChunk>builder()
+                .event("chat-complete")
+                .data(new McpChatChunk("", true))
+                .build()));
+    }
+}
+```
+
+**3. Stream Data Models**
+
+```java
+public record McpStreamChunk(
+    String type,
+    Object data,
+    boolean isComplete,
+    String timestamp,
+    Map<String, Object> metadata
+) {
+    public McpStreamChunk(String type, Object data, boolean isComplete) {
+        this(type, data, isComplete, Instant.now().toString(), Map.of());
+    }
+}
+
+public record McpChatChunk(
+    String token,
+    boolean isComplete,
+    String timestamp,
+    ChatMetadata metadata
+) {
+    public McpChatChunk(String token, boolean isComplete) {
+        this(token, isComplete, Instant.now().toString(), new ChatMetadata());
+    }
+}
+
+public record ChatMetadata(
+    int tokenCount,
+    String functionCall,
+    String modelUsed,
+    long processingTimeMs
+) {
+    public ChatMetadata() {
+        this(0, null, "gpt-4", 0L);
+    }
+}
+```
+
+**4. Streaming Weather Service**
+
+```java
+@Service
+public class StreamingWeatherService {
+    
+    private final WeatherService weatherService;
+    private final LocationService locationService;
+    
+    public Flux<WeatherData> getStreamingWeatherData(String location) {
+        return Mono.fromCallable(() -> locationService.resolveLocation(location))
+            .flatMapMany(coords -> Flux.merge(
+                getCurrentConditions(coords),
+                getHourlyForecast(coords),
+                getDailyForecast(coords)
+            ))
+            .delayElements(Duration.ofMillis(100)); // Simulate streaming delay
+    }
+    
+    private Flux<WeatherData> getCurrentConditions(Coordinates coords) {
+        return weatherService.getCurrentWeatherReactive(coords.lat(), coords.lon())
+            .flux()
+            .map(weather -> new WeatherData("current", weather));
+    }
+    
+    private Flux<WeatherData> getHourlyForecast(Coordinates coords) {
+        return weatherService.getHourlyForecastReactive(coords.lat(), coords.lon())
+            .flatMapMany(forecast -> Flux.fromIterable(forecast.hourly()))
+            .map(hour -> new WeatherData("hourly", hour));
+    }
+}
+```
+
+**5. Client-Side Stream Consumption**
+
+```javascript
+// JavaScript client example for MCP Streamable HTTP
+class McpStreamClient {
+    constructor(baseUrl, apiKey) {
+        this.baseUrl = baseUrl;
+        this.apiKey = apiKey;
+    }
+    
+    streamWeatherData(location, onData, onComplete, onError) {
+        const eventSource = new EventSource(
+            `${this.baseUrl}/api/mcp/stream/weather/${location}`,
+            {
+                headers: {
+                    'X-API-Key': this.apiKey
+                }
+            }
+        );
+        
+        eventSource.addEventListener('weather-data', (event) => {
+            const chunk = JSON.parse(event.data);
+            onData(chunk);
+        });
+        
+        eventSource.addEventListener('stream-complete', (event) => {
+            eventSource.close();
+            onComplete();
+        });
+        
+        eventSource.onerror = onError;
+        
+        return eventSource;
+    }
+    
+    async streamChatResponse(sessionId, message, onToken, onComplete) {
+        const response = await fetch(`${this.baseUrl}/api/mcp/stream/chat/stream`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-API-Key': this.apiKey,
+                'Accept': 'text/event-stream'
+            },
+            body: JSON.stringify({
+                sessionId: sessionId,
+                message: message
+            })
+        });
+        
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            
+            const chunk = decoder.decode(value);
+            const lines = chunk.split('\n');
+            
+            for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                    const data = JSON.parse(line.substring(6));
+                    if (data.isComplete) {
+                        onComplete();
+                    } else {
+                        onToken(data.token);
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+### [ADR-020] Protocol Specification
+
+**Stream Message Format:**
+```json
+{
+  "event": "weather-data|chat-token|stream-complete|error",
+  "id": "uuid-v4",
+  "data": {
+    "type": "current|hourly|daily|chat|completion",
+    "content": {...},
+    "isComplete": false,
+    "timestamp": "2026-02-05T10:30:00Z",
+    "metadata": {
+      "progress": 0.75,
+      "totalChunks": 10,
+      "chunkIndex": 7
+    }
+  }
+}
+```
+
+**Stream Endpoints:**
+- **GET `/api/mcp/stream/weather/{location}`** - Stream real-time weather data
+- **GET `/api/mcp/stream/forecast/{location}`** - Stream forecast data chunks
+- **POST `/api/mcp/stream/chat`** - Stream chat conversation
+- **GET `/api/mcp/stream/chat/{sessionId}`** - Resume streaming chat session
+
+**Headers:**
+- **`Accept: text/event-stream`** - Enable SSE streaming
+- **`Cache-Control: no-cache`** - Disable caching for real-time data
+- **`X-API-Key`** - Authentication (as per ADR-019)
+
+### [ADR-020] Configuration Properties
+
+```yaml
+mcp:
+  streaming:
+    enabled: true
+    max-connections: 100
+    heartbeat-interval: 30s
+    chunk-size: 1024
+    timeout: 300s
+    
+  sse:
+    enabled: true
+    retry-interval: 3000
+    keep-alive: true
+    
+  websocket:
+    enabled: false  # Future implementation
+    max-frame-size: 65536
+    
+  weather-streaming:
+    batch-size: 10
+    delay-between-chunks: 100ms
+    include-metadata: true
+    
+  chat-streaming:
+    token-delay: 50ms
+    include-function-calls: true
+    buffer-size: 256
+```
+
+### [ADR-020] Benefits
+
+**Performance Benefits:**
+- **Reduced Memory Usage**: Stream large datasets without loading entirely in memory
+- **Lower Latency**: Start processing data as soon as first chunk arrives
+- **Better Responsiveness**: Real-time updates for changing weather conditions
+- **Scalable Connections**: Handle multiple concurrent streaming clients
+
+**User Experience Benefits:**
+- **Immediate Feedback**: Users see data arriving in real-time
+- **Interactive Chat**: Token-by-token AI responses for natural conversation
+- **Progress Indicators**: Visual feedback for long-running operations
+- **Cancellable Operations**: Users can stop streaming if needed
+
+**Technical Benefits:**
+- **Protocol Compliance**: Full MCP streamable HTTP specification support
+- **Backward Compatibility**: Graceful fallback to standard HTTP for legacy clients
+- **Error Handling**: Stream-aware error recovery and retry mechanisms
+- **Monitoring**: Stream-specific metrics and observability
+
+### [ADR-020] Implementation Roadmap
+
+**Phase 1: Core Streaming Infrastructure (Week 1-2)**
+- [ ] Spring WebFlux configuration for streaming
+- [ ] Basic SSE endpoint implementation
+- [ ] Stream data models and protocol definitions
+- [ ] Authentication integration with existing Spring Security
+
+**Phase 2: Weather Data Streaming (Week 3)**
+- [ ] Current conditions streaming endpoint
+- [ ] Forecast data streaming with chunking
+- [ ] Historical weather data pagination streaming
+- [ ] Multi-location concurrent streaming
+
+**Phase 3: Chat Response Streaming (Week 4)**
+- [ ] Integration with Spring AI ChatClient
+- [ ] Token-by-token response streaming
+- [ ] Function call result streaming
+- [ ] Conversation context streaming
+
+**Phase 4: Advanced Features (Week 5-6)**
+- [ ] WebSocket fallback implementation
+- [ ] Stream compression and optimization
+- [ ] Advanced error handling and recovery
+- [ ] Performance monitoring and metrics
+
+**Testing & Documentation:**
+- [ ] Stream protocol compliance tests
+- [ ] Load testing for concurrent streams
+- [ ] Client SDK examples (JavaScript, Python)
+- [ ] Integration with Claude Desktop MCP client
+
+### [ADR-020] Related ADRs
+
+- [ADR-001](#adr-001-use-standard-java-with-completablefuture-for-async-operations) - Async operations foundation
+- [ADR-008](#adr-008-structured-json-logging-with-slf4j) - Streaming operation logging
+- [ADR-009](#adr-009-micrometer-for-observability) - Stream performance metrics
+- [ADR-011](#adr-011-mcp-protocol-implementation) - Core MCP protocol compliance
+- [ADR-018](#adr-018-chathandler-with-spring-ai-chatclient) - Chat streaming integration
+- [ADR-019](#adr-019-use-spring-security-for-authentication-and-authorization) - Stream authentication
+
+### [ADR-020] Dependencies
+
+```xml
+<!-- Spring WebFlux for Reactive Streaming -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-webflux</artifactId>
+</dependency>
+
+<!-- Reactor Core for Stream Processing -->
+<dependency>
+    <groupId>io.projectreactor</groupId>
+    <artifactId>reactor-core</artifactId>
+</dependency>
+
+<!-- Jackson for JSON Streaming -->
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-streaming</artifactId>
+</dependency>
+```
+
+### [ADR-020] Risks & Mitigation
+
+**Risks:**
+1. **Connection Management**: Large number of concurrent streams may exhaust server resources
+   - **Mitigation**: Implement connection limits and proper cleanup
+2. **Network Reliability**: Stream interruptions due to network issues
+   - **Mitigation**: Implement retry mechanisms and stream resumption
+3. **Client Compatibility**: Not all MCP clients support streaming
+   - **Mitigation**: Maintain backward compatibility with standard HTTP endpoints
+4. **Resource Consumption**: Streaming may increase server resource usage
+   - **Mitigation**: Implement proper backpressure and resource monitoring
+
+**Monitoring:**
+- Track active stream connections and resource usage
+- Monitor stream completion rates and error frequencies
+- Measure streaming latency and throughput
+- Alert on connection limit violations
+
+---
+
 ## Summary
 
-This streamlined ADR compendium focuses on **18 core architectural decisions**
+This streamlined ADR compendium focuses on **20 core architectural decisions**
 relevant to the Open Meteo MCP Java project:
 
 **Core Architecture** (7 ADRs):
@@ -1127,16 +1564,18 @@ relevant to the Open Meteo MCP Java project:
 - Micrometer metrics
 - 80%+ test coverage
 
-**Integration & APIs** (3 ADRs):
+**Integration & APIs** (4 ADRs):
 
 - MCP protocol implementation
 - MCP resources and prompts
 - Open-Meteo API client with gzip
+- MCP Streamable HTTP protocol support
 
-**Security & Privacy** (2 ADRs):
+**Security & Privacy** (3 ADRs):
 
 - Privacy-first data handling
 - API versioning strategy
+- Spring Security for authentication and authorization
 
 ---
 
