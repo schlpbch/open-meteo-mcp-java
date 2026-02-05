@@ -1,26 +1,36 @@
 package com.openmeteo.mcp.controller;
 
+import com.openmeteo.mcp.model.dto.ApiKeyRequest;
+import com.openmeteo.mcp.model.dto.ApiKeyResponse;
+import com.openmeteo.mcp.model.dto.SecurityAuditEvent;
 import com.openmeteo.mcp.service.ApiKeyService;
+import com.openmeteo.mcp.service.SecurityAuditService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Security Management REST Controller.
  * 
  * Provides endpoints for API key management and security administration
- * as specified in ADR-019.
+ * as specified in ADR-019 Phase 2.
  * 
  * Security Features:
- * - API key generation and management (Admin only)
- * - Security status and health checks
+ * - API key generation, revocation, and management (Admin only)
+ * - Security audit logging and monitoring
  * - Authentication information endpoints
+ * - Role-based access control
  */
 @RestController
 @RequestMapping("/api/security")
@@ -30,9 +40,11 @@ public class SecurityController {
     private static final Logger log = LoggerFactory.getLogger(SecurityController.class);
     
     private final ApiKeyService apiKeyService;
+    private final SecurityAuditService auditService;
 
-    public SecurityController(ApiKeyService apiKeyService) {
+    public SecurityController(ApiKeyService apiKeyService, SecurityAuditService auditService) {
         this.apiKeyService = apiKeyService;
+        this.auditService = auditService;
     }
 
     /**
@@ -59,32 +71,42 @@ public class SecurityController {
      */
     @PostMapping("/api-keys")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Map<String, Object>> generateApiKey(
-            @RequestBody Map<String, Object> request,
-            Authentication authentication) {
+    public ResponseEntity<ApiKeyResponse> generateApiKey(
+            @RequestBody ApiKeyRequest request,
+            Authentication authentication,
+            ServerHttpRequest httpRequest) {
         
-        String clientName = (String) request.get("clientName");
-        @SuppressWarnings("unchecked")
-        List<String> roles = (List<String>) request.get("roles");
-        
-        if (clientName == null || roles == null || roles.isEmpty()) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("error", "clientName and roles are required"));
+        try {
+            log.info("Admin {} generating API key for client: {} with roles: {}", 
+                    authentication.getName(), request.clientName(), request.roles());
+            
+            String apiKey = apiKeyService.generateApiKey(
+                    request.clientName(), 
+                    request.roles(),
+                    request.description()
+            );
+            
+            // Audit log
+            auditService.logApiKeyGeneration(
+                    authentication.getName(),
+                    request.clientName(),
+                    request.roles(),
+                    getClientIpAddress(httpRequest)
+            );
+            
+            ApiKeyResponse response = ApiKeyResponse.forGeneration(
+                    apiKey,
+                    request.clientName(),
+                    request.roles(),
+                    request.description()
+            );
+            
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid API key generation request: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
         }
-        
-        log.info("Admin {} generating API key for client: {} with roles: {}", 
-                authentication.getName(), clientName, roles);
-        
-        String apiKey = apiKeyService.generateApiKey(clientName, roles);
-        
-        Map<String, Object> response = Map.of(
-                "apiKey", apiKey,
-                "clientName", clientName,
-                "roles", roles,
-                "message", "API key generated successfully. Store securely - it cannot be retrieved again."
-        );
-        
-        return ResponseEntity.ok(response);
     }
 
     /**
@@ -92,11 +114,37 @@ public class SecurityController {
      */
     @GetMapping("/api-keys")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<ApiKeyService.ApiKeyInfo>> listApiKeys(Authentication authentication) {
+    public ResponseEntity<List<ApiKeyResponse>> listApiKeys(
+            @RequestParam(required = false, defaultValue = "false") boolean includeInactive,
+            Authentication authentication) {
+        
         log.info("Admin {} requested API key list", authentication.getName());
         
-        List<ApiKeyService.ApiKeyInfo> apiKeys = apiKeyService.listActiveApiKeys();
-        return ResponseEntity.ok(apiKeys);
+        List<ApiKeyService.ApiKeyInfo> apiKeys = includeInactive 
+                ? apiKeyService.listAllApiKeys()
+                : apiKeyService.listActiveApiKeys();
+        
+        List<ApiKeyResponse> response = apiKeys.stream()
+                .map(info -> ApiKeyResponse.forInfo(
+                        info.getName(),
+                        info.getRoles(),
+                        info.getDescription(),
+                        info.isActive(),
+                        info.getCreatedAt()
+                ))
+                .collect(Collectors.toList());
+        
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Get API key statistics (Admin only).
+     */
+    @GetMapping("/api-keys/stats")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Long>> getApiKeyStatistics(Authentication authentication) {
+        log.info("Admin {} requested API key statistics", authentication.getName());
+        return ResponseEntity.ok(apiKeyService.getApiKeyStatistics());
     }
 
     /**
@@ -106,13 +154,21 @@ public class SecurityController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> revokeApiKey(
             @PathVariable String apiKey,
-            Authentication authentication) {
+            Authentication authentication,
+            ServerHttpRequest httpRequest) {
         
-        log.info("Admin {} revoking API key: {}***", 
-                authentication.getName(), 
-                apiKey.substring(0, Math.min(8, apiKey.length())));
+        String apiKeyPrefix = apiKey.substring(0, Math.min(8, apiKey.length()));
+        log.info("Admin {} revoking API key: {}***", authentication.getName(), apiKeyPrefix);
         
         boolean revoked = apiKeyService.revokeApiKey(apiKey);
+        
+        // Audit log
+        auditService.logApiKeyRevocation(
+                authentication.getName(),
+                apiKeyPrefix,
+                revoked,
+                getClientIpAddress(httpRequest)
+            );
         
         if (revoked) {
             return ResponseEntity.ok(Map.of(
@@ -125,6 +181,76 @@ public class SecurityController {
     }
 
     /**
+     * Update API key roles (Admin only).
+     */
+    @PutMapping("/api-keys/{apiKey}/roles")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Object>> updateApiKeyRoles(
+            @PathVariable String apiKey,
+            @RequestBody Map<String, List<String>> request,
+            Authentication authentication) {
+        
+        List<String> newRoles = request.get("roles");
+        if (newRoles == null || newRoles.isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "roles are required"));
+        }
+        
+        try {
+            boolean updated = apiKeyService.updateApiKeyRoles(apiKey, newRoles);
+            
+            if (updated) {
+                log.info("Admin {} updated API key roles", authentication.getName());
+                return ResponseEntity.ok(Map.of(
+                        "message", "API key roles updated successfully",
+                        "roles", newRoles
+                ));
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Get audit events (Admin only).
+     */
+    @GetMapping("/audit")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<SecurityAuditEvent>> getAuditEvents(
+            @RequestParam(required = false, defaultValue = "100") int limit,
+            @RequestParam(required = false) String principal,
+            Authentication authentication) {
+        
+        log.info("Admin {} requested audit events", authentication.getName());
+        
+        List<SecurityAuditEvent> events = principal != null
+                ? auditService.getEventsByPrincipal(principal, limit)
+                : auditService.getRecentEvents(limit);
+        
+        return ResponseEntity.ok(events);
+    }
+
+    /**
+     * Get failed authentication attempts (Admin only).
+     */
+    @GetMapping("/audit/failed-auth")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<SecurityAuditEvent>> getFailedAuthAttempts(
+            @RequestParam(required = false, defaultValue = "24") int hours,
+            Authentication authentication) {
+        
+        log.info("Admin {} requested failed auth attempts", authentication.getName());
+        
+        Instant since = Instant.now().minus(hours, ChronoUnit.HOURS);
+        List<SecurityAuditEvent> events = auditService.getFailedAuthAttempts(since);
+        
+        return ResponseEntity.ok(events);
+    }
+
+    /**
      * Security health check (Public endpoint).
      */
     @GetMapping("/health")
@@ -133,9 +259,29 @@ public class SecurityController {
                 "status", "UP",
                 "security", "enabled",
                 "authenticationMethods", List.of("JWT", "API_KEY"),
+                "auditEventCount", auditService.getEventCount(),
                 "timestamp", System.currentTimeMillis()
         );
         
         return ResponseEntity.ok(health);
+    }
+
+    /**
+     * Helper method to extract client IP address from request.
+     */
+    private String getClientIpAddress(ServerHttpRequest request) {
+        String xForwardedFor = request.getHeaders().getFirst("X-Forwarded-For");
+        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
+            return xForwardedFor.split(",")[0].trim();
+        }
+
+        String xRealIp = request.getHeaders().getFirst("X-Real-IP");
+        if (xRealIp != null && !xRealIp.isEmpty()) {
+            return xRealIp.trim();
+        }
+
+        return request.getRemoteAddress() != null
+                ? request.getRemoteAddress().getAddress().getHostAddress()
+                : "unknown";
     }
 }
