@@ -8,16 +8,22 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![MCP](https://img.shields.io/badge/MCP-compatible-purple.svg)](https://modelcontextprotocol.io/)
 
-A Model Context Protocol (MCP) server providing weather, snow conditions, and air quality tools via the [Open-Meteo API](https://open-meteo.com/) with conversational AI capabilities.
+**One unified server** providing weather, snow conditions, and air quality data through **three API interfaces** (REST, MCP, Chat) - all powered by the same core business logic - via the [Open-Meteo API](https://open-meteo.com/).
 
 ## Overview
 
-| | |
-|---|---|
-| **11 MCP Tools** | Weather, snow, air quality, location, alerts, astronomy, marine |
-| **4 MCP Resources** | Weather codes, parameters, AQI reference, Swiss locations |
-| **3 MCP Prompts** | Ski-trip, outdoor-activity, travel planning |
-| **3 API Endpoints** | REST `/api/*`, MCP `/sse`, Chat `/api/chat/*` |
+**Unified Architecture:** Single server application with shared business logic exposing three different API interfaces:
+
+| Interface | Endpoint | Purpose |
+|-----------|----------|----------|
+| **REST API** | `/api/*` | Direct HTTP/JSON access to weather services |
+| **MCP API** | `/sse` | Model Context Protocol for AI assistants (Claude) |
+| **Chat API** | `/api/chat/*` | Conversational AI interface with memory |
+
+**Shared Capabilities:**
+- **11 MCP Tools** - Weather, snow, air quality, location, alerts, astronomy, marine
+- **4 MCP Resources** - Weather codes, parameters, AQI reference, Swiss locations
+- **3 MCP Prompts** - Ski-trip, outdoor-activity, travel planning
 
 ## Quick Start
 
@@ -36,8 +42,11 @@ docker compose up --build
 
 **Endpoints:**
 - Health: http://localhost:8888/actuator/health
+- REST: http://localhost:8888/api/weather (and other `/api/*` endpoints)
 - MCP: http://localhost:8888/sse
 - Chat: http://localhost:8888/api/chat
+
+> **Architecture:** All three APIs share the same weather services, business logic, and data models. Choose the interface that best fits your use case - REST for direct integration, MCP for AI assistants, or Chat for conversational interactions.
 
 ## MCP Tools
 
