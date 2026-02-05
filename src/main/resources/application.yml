@@ -45,6 +45,26 @@ spring:
       timeout: 2000ms
   main:
     banner-mode: 'off'
+  # Security Configuration
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI:http://localhost:8888}
+          jwk-set-uri: ${JWT_JWK_SET_URI:http://localhost:8888/.well-known/jwks.json}
+
+# Security Settings (ADR-019)
+security:
+  jwt:
+    secret: ${JWT_SECRET:openmeteo-mcp-jwt-secret-change-in-production}
+    expiration: 86400000 # 24 hours in milliseconds
+    refresh-expiration: 604800000 # 7 days in milliseconds
+  api-key:
+    header-name: X-API-Key
+    cache-ttl: 300 # 5 minutes in seconds
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:*,http://127.0.0.1:*}
+    max-age: 3600 # 1 hour in seconds
 
 openmeteo:
   api:

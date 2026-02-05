@@ -1,7 +1,7 @@
 # Open Meteo MCP - Architecture Decision Records (ADR) Compendium
 
-**Document Version**: 3.3.0 **Last Updated**: 2026-02-02 **Total ADRs**: 18 (10
-Accepted, 8 Proposed)
+**Document Version**: 3.4.0 **Last Updated**: 2026-02-05 **Total ADRs**: 19 (10
+Accepted, 9 Proposed)
 
 **Related Documents**:
 
@@ -66,6 +66,8 @@ Accepted, 8 Proposed)
 - [ADR-014: Privacy-First Weather Data Handling](#adr-014-privacy-first-weather-data-handling)
   🔄
 - [ADR-015: API Versioning and Backward Compatibility](#adr-015-api-versioning-and-backward-compatibility)
+  🔄
+- [ADR-019: Use Spring Security for Authentication and Authorization](#adr-019-use-spring-security-for-authentication-and-authorization)
   🔄
 
 ---
@@ -1101,9 +1103,273 @@ public class ChatClientConfig {
 
 ---
 
+## ADR-019: Use Spring Security for Authentication and Authorization
+
+**Status**: 🔄 Proposed **Date**: 2026-02-05 **Deciders**: Architecture Team
+**Context**: Security & Privacy
+
+### [ADR-019] Decision
+
+Implement **Spring Security 7** for authentication and authorization in the Open Meteo MCP Java application.
+
+**Rationale**:
+
+- **Industry Standard**: Spring Security is the de facto standard for securing Spring Boot applications
+- **Comprehensive Security**: Provides authentication, authorization, CSRF protection, and security headers
+- **MCP Integration**: Secure MCP endpoints with token-based authentication
+- **Flexibility**: Support multiple authentication mechanisms (JWT, OAuth2, API Keys)
+- **Enterprise Ready**: Battle-tested in production environments with extensive security features
+- **Future-Proof**: Evolves with security best practices and standards
+
+### [ADR-019] Architecture
+
+```
+Spring Security Layer
+    ├── Authentication
+    │   ├── JWT Authentication (Primary)
+    │   ├── API Key Authentication (MCP clients)
+    │   └── OAuth2 (Future: Claude Desktop integration)
+    ├── Authorization
+    │   ├── Method-level security (@PreAuthorize)
+    │   ├── URL-based security (SecurityFilterChain)
+    │   └── Role-based access control (RBAC)
+    ├── Security Configuration
+    │   ├── SecurityConfig (WebSecurityConfigurerAdapter)
+    │   ├── CORS configuration for MCP
+    │   ├── CSRF protection (disabled for MCP APIs)
+    │   └── Security headers (XSS, Content-Type, etc.)
+    └── Token Management
+        ├── JWT token provider/validator
+        ├── API key store (Redis/Database)
+        └── Token refresh mechanism
+```
+
+### [ADR-019] Implementation Details
+
+**1. Security Configuration**
+
+```java
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
+public class SecurityConfig {
+    
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+            .csrf(csrf -> csrf.disable()) // MCP APIs are stateless
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/health", "/metrics").permitAll()
+                .requestMatchers("/api/mcp/**").hasRole("MCP_CLIENT")
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+            )
+            .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
+            .addFilterBefore(apiKeyAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+            .build();
+    }
+}
+```
+
+**2. JWT Token Provider**
+
+```java
+@Component
+public class JwtTokenProvider {
+    
+    public String generateToken(Authentication authentication) {
+        return Jwts.builder()
+            .setSubject(authentication.getName())
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+            .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+            .compact();
+    }
+    
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            log.error("Invalid JWT token: {}", e.getMessage());
+            return false;
+        }
+    }
+}
+```
+
+**3. API Key Authentication**
+
+```java
+@Component
+public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
+    
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, 
+                                  HttpServletResponse response, 
+                                  FilterChain filterChain) throws ServletException, IOException {
+        String apiKey = request.getHeader("X-API-Key");
+        
+        if (apiKey != null && apiKeyService.isValidApiKey(apiKey)) {
+            var authentication = apiKeyService.getAuthentication(apiKey);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+        
+        filterChain.doFilter(request, response);
+    }
+}
+```
+
+### [ADR-019] Security Features
+
+**Authentication Methods**:
+- **JWT Tokens**: For web clients and admin interfaces
+- **API Keys**: For MCP clients (Claude Desktop, other AI tools)
+- **OAuth2**: Future integration with identity providers
+
+**Authorization Levels**:
+- **PUBLIC**: Health checks, metrics (no auth required)
+- **MCP_CLIENT**: Weather tools, MCP protocol access
+- **ADMIN**: System administration, user management
+
+**Security Headers**:
+```java
+.headers(headers -> headers
+    .frameOptions().deny()
+    .contentTypeOptions().and()
+    .httpStrictTransportSecurity(hstsConfig -> hstsConfig
+        .maxAgeInSeconds(31536000)
+        .includeSubdomains(true)
+    )
+    .and()
+)
+```
+
+**CORS Configuration**:
+```java
+@Bean
+public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOriginPatterns(List.of("*"));
+    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    configuration.setAllowedHeaders(List.of("*"));
+    configuration.setAllowCredentials(true);
+    
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/api/**", configuration);
+    return source;
+}
+```
+
+### [ADR-019] Configuration Properties
+
+```yaml
+security:
+  jwt:
+    secret: ${JWT_SECRET:defaultSecretForDevelopment}
+    expiration: 86400000 # 24 hours
+    refresh-expiration: 604800000 # 7 days
+  api-key:
+    header-name: X-API-Key
+    cache-ttl: 300 # 5 minutes
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:*}
+    max-age: 3600
+```
+
+### [ADR-019] Benefits
+
+**Security Benefits**:
+- **Authentication**: Verify client identity before API access
+- **Authorization**: Control access to different MCP tools based on roles
+- **Token Management**: Secure JWT tokens with configurable expiration
+- **CORS Protection**: Prevent unauthorized cross-origin requests
+- **Security Headers**: Protect against XSS, clickjacking, and other attacks
+
+**Operational Benefits**:
+- **Audit Trail**: Log authentication and authorization events
+- **Rate Limiting**: Integrate with rate limiting based on authenticated user
+- **Monitoring**: Track security metrics and failed authentication attempts
+- **Scalability**: Stateless authentication suitable for horizontal scaling
+
+### [ADR-019] Implementation Roadmap
+
+**Phase 1: Core Security (Week 1-2)**
+- [ ] Spring Security dependency integration
+- [ ] Basic JWT authentication
+- [ ] API key authentication for MCP clients
+- [ ] Security configuration and CORS setup
+
+**Phase 2: Authorization & Roles (Week 3)**
+- [ ] Role-based access control implementation
+- [ ] Method-level security annotations
+- [ ] Admin endpoints protection
+
+**Phase 3: Advanced Features (Week 4)**
+- [ ] Token refresh mechanism
+- [ ] Security audit logging
+- [ ] Rate limiting integration
+- [ ] Security metrics and monitoring
+
+**Testing & Documentation**:
+- [ ] Unit tests for security components (90%+ coverage)
+- [ ] Integration tests for authentication flows
+- [ ] Security documentation and API examples
+- [ ] Penetration testing and vulnerability assessment
+
+### [ADR-019] Related ADRs
+
+- [ADR-008](#adr-008-structured-json-logging-with-slf4j) - Security audit logging
+- [ADR-009](#adr-009-micrometer-for-observability) - Security metrics
+- [ADR-011](#adr-011-mcp-protocol-implementation) - Securing MCP endpoints
+- [ADR-014](#adr-014-privacy-first-weather-data-handling) - Data privacy and security
+- [ADR-017](#adr-017-adopt-spring-boot-5) - Spring Boot framework foundation
+
+### [ADR-019] Dependencies
+
+```xml
+<!-- Spring Security -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+
+<!-- JWT Support -->
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-api</artifactId>
+    <version>0.11.5</version>
+</dependency>
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-impl</artifactId>
+    <version>0.11.5</version>
+    <scope>runtime</scope>
+</dependency>
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-jackson</artifactId>
+    <version>0.11.5</version>
+    <scope>runtime</scope>
+</dependency>
+
+<!-- OAuth2 Resource Server (for JWT) -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+</dependency>
+```
+
+---
+
 ## Summary
 
-This streamlined ADR compendium focuses on **18 core architectural decisions**
+This streamlined ADR compendium focuses on **19 core architectural decisions**
 relevant to the Open Meteo MCP Java project:
 
 **Core Architecture** (7 ADRs):
@@ -1133,10 +1399,11 @@ relevant to the Open Meteo MCP Java project:
 - MCP resources and prompts
 - Open-Meteo API client with gzip
 
-**Security & Privacy** (2 ADRs):
+**Security & Privacy** (3 ADRs):
 
 - Privacy-first data handling
 - API versioning strategy
+- Spring Security for authentication and authorization
 
 ---
 
