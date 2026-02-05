@@ -1,11 +1,14 @@
 package com.openmeteo.mcp.controller;
 
+import com.openmeteo.mcp.model.chat.ChatStreamRequest;
 import com.openmeteo.mcp.model.stream.StreamChunk;
 import com.openmeteo.mcp.model.stream.StreamMessage;
 import com.openmeteo.mcp.model.stream.StreamMetadata;
+import com.openmeteo.mcp.service.StreamingChatService;
 import com.openmeteo.mcp.service.StreamingWeatherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
@@ -39,9 +42,14 @@ public class StreamingController {
     private static final Logger log = LoggerFactory.getLogger(StreamingController.class);
 
     private final StreamingWeatherService streamingWeatherService;
+    private final StreamingChatService streamingChatService;
 
-    public StreamingController(StreamingWeatherService streamingWeatherService) {
+    public StreamingController(
+        StreamingWeatherService streamingWeatherService,
+        StreamingChatService streamingChatService
+    ) {
         this.streamingWeatherService = streamingWeatherService;
+        this.streamingChatService = streamingChatService;
     }
 
     /**
@@ -278,6 +286,94 @@ public class StreamingController {
                         .build())
                 .doOnComplete(() -> log.info("Progress stream completed"))
                 .doOnError(error -> log.error("Progress stream error", error));
+    }
+
+    // ==================== CHAT STREAMING ENDPOINTS (PHASE 5) ====================
+
+    /**
+     * Stream AI chat response token-by-token.
+     * 
+     * Provides real-time chat streaming with <100ms latency between tokens
+     * for natural conversation flow.
+     * 
+     * @param request Chat stream request with session and message
+     * @return Flux of ServerSentEvent with token chunks
+     */
+    @PostMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @PreAuthorize("hasAnyAuthority('MCP_CLIENT', 'ADMIN')")
+    @ConditionalOnProperty(name = "openmeteo.chat.enabled", havingValue = "true")
+    public Flux<ServerSentEvent<StreamMessage>> streamChat(@RequestBody ChatStreamRequest request) {
+        log.info("Starting chat stream for session: {}", request.sessionId());
+        
+        return streamingChatService.streamChat(request.sessionId(), request.message())
+                .map(message -> ServerSentEvent.<StreamMessage>builder()
+                        .event(message.type().toLowerCase())
+                        .data(message)
+                        .build())
+                .doOnComplete(() -> log.info("Chat stream completed for session: {}", request.sessionId()))
+                .doOnError(error -> log.error("Chat stream error for session: {}", request.sessionId(), error))
+                .doOnCancel(() -> log.info("Chat stream cancelled for session: {}", request.sessionId()));
+    }
+
+    /**
+     * Stream AI chat response with progress indicators.
+     * 
+     * Enhanced streaming with progress tracking for long responses.
+     * Shows preparation steps before delivering actual tokens.
+     * 
+     * @param request Chat stream request with session and message
+     * @return Flux of ServerSentEvent with progress and token chunks
+     */
+    @PostMapping(value = "/chat/progress", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @PreAuthorize("hasAnyAuthority('MCP_CLIENT', 'ADMIN')")
+    @ConditionalOnProperty(name = "openmeteo.chat.enabled", havingValue = "true")
+    public Flux<ServerSentEvent<StreamMessage>> streamChatWithProgress(@RequestBody ChatStreamRequest request) {
+        log.info("Starting chat stream with progress for session: {}", request.sessionId());
+        
+        return streamingChatService.streamChatWithProgress(request.sessionId(), request.message())
+                .map(message -> ServerSentEvent.<StreamMessage>builder()
+                        .event(message.type().toLowerCase())
+                        .data(message)
+                        .build())
+                .doOnComplete(() -> log.info("Progress chat stream completed for session: {}", request.sessionId()))
+                .doOnError(error -> log.error("Progress chat stream error for session: {}", request.sessionId(), error))
+                .doOnCancel(() -> log.info("Progress chat stream cancelled for session: {}", request.sessionId()));
+    }
+
+    /**
+     * Stream AI chat response with weather context enrichment.
+     * 
+     * Integrates weather data into chat responses when location is provided.
+     * Automatically fetches and includes relevant weather information in context.
+     * 
+     * @param request Chat stream request with session, message, and optional location
+     * @return Flux of ServerSentEvent with context-enriched token chunks
+     */
+    @PostMapping(value = "/chat/context", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @PreAuthorize("hasAnyAuthority('MCP_CLIENT', 'ADMIN')")
+    @ConditionalOnProperty(name = "openmeteo.chat.enabled", havingValue = "true")
+    public Flux<ServerSentEvent<StreamMessage>> streamChatWithContext(@RequestBody ChatStreamRequest request) {
+        log.info("Starting context-enriched chat stream for session: {} with weather: {}", 
+            request.sessionId(), request.shouldIncludeWeather());
+        
+        if (request.shouldIncludeWeather()) {
+            return streamingChatService.streamWithContext(
+                    request.sessionId(), 
+                    request.message(),
+                    request.latitude(),
+                    request.longitude()
+                )
+                .map(message -> ServerSentEvent.<StreamMessage>builder()
+                        .event(message.type().toLowerCase())
+                        .data(message)
+                        .build())
+                .doOnComplete(() -> log.info("Context chat stream completed for session: {}", request.sessionId()))
+                .doOnError(error -> log.error("Context chat stream error for session: {}", request.sessionId(), error))
+                .doOnCancel(() -> log.info("Context chat stream cancelled for session: {}", request.sessionId()));
+        } else {
+            // Fallback to simple chat if no weather context
+            return streamChat(request);
+        }
     }
 
     /**

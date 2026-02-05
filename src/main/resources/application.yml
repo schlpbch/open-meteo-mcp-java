@@ -104,6 +104,11 @@ streaming:
   max-connection-duration-ms: 600000  # 10 minutes
   chunk-delay-ms: 100  # Default delay between chunks
   max-chunks: 1000  # Maximum chunks per stream
+  # Chat streaming specific settings (Phase 5)
+  chat:
+    token-delay-ms: 50  # Delay between token chunks for natural conversation flow
+    max-tokens-per-chunk: 10  # Number of tokens per SSE chunk
+    enable-progress: true  # Send progress indicators for long responses
 
 management:
   endpoints:
