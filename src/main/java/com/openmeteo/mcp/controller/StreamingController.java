@@ -3,8 +3,10 @@ package com.openmeteo.mcp.controller;
 import com.openmeteo.mcp.model.stream.StreamChunk;
 import com.openmeteo.mcp.model.stream.StreamMessage;
 import com.openmeteo.mcp.model.stream.StreamMetadata;
+import com.openmeteo.mcp.service.StreamingWeatherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -34,6 +37,12 @@ import java.util.UUID;
 public class StreamingController {
 
     private static final Logger log = LoggerFactory.getLogger(StreamingController.class);
+
+    private final StreamingWeatherService streamingWeatherService;
+
+    public StreamingController(StreamingWeatherService streamingWeatherService) {
+        this.streamingWeatherService = streamingWeatherService;
+    }
 
     /**
      * Test SSE endpoint with heartbeat.
@@ -139,6 +148,136 @@ public class StreamingController {
                 100,
                 10000L
         );
+    }
+
+    /**
+     * Stream current weather conditions.
+     * 
+     * Returns current weather as SSE stream with single data chunk.
+     * 
+     * @param latitude Latitude in decimal degrees
+     * @param longitude Longitude in decimal degrees
+     * @param timezone Timezone (default: auto)
+     * @return Flux of ServerSentEvent with current weather
+     */
+    @GetMapping(value = "/weather/current", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @PreAuthorize("hasAnyAuthority('MCP_CLIENT', 'ADMIN')")
+    public Flux<ServerSentEvent<StreamMessage>> streamCurrentWeather(
+            @RequestParam double latitude,
+            @RequestParam double longitude,
+            @RequestParam(defaultValue = "auto") String timezone) {
+        
+        log.info("Streaming current weather: lat={}, lon={}", latitude, longitude);
+
+        return streamingWeatherService.streamCurrentWeather(latitude, longitude, timezone)
+                .map(msg -> ServerSentEvent.<StreamMessage>builder()
+                        .id(UUID.randomUUID().toString())
+                        .event(msg.type())
+                        .data(msg)
+                        .build())
+                .doOnComplete(() -> log.info("Current weather stream completed"))
+                .doOnError(error -> log.error("Current weather stream error", error));
+    }
+
+    /**
+     * Stream weather forecast with chunking.
+     * 
+     * Returns forecast data as SSE stream, chunked for large datasets.
+     * 
+     * @param latitude Latitude in decimal degrees
+     * @param longitude Longitude in decimal degrees
+     * @param forecastDays Number of forecast days (1-16, default: 7)
+     * @param includeHourly Include hourly data (default: false)
+     * @param timezone Timezone (default: auto)
+     * @return Flux of ServerSentEvent with forecast chunks
+     */
+    @GetMapping(value = "/weather/forecast", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @PreAuthorize("hasAnyAuthority('MCP_CLIENT', 'ADMIN')")
+    public Flux<ServerSentEvent<StreamMessage>> streamForecast(
+            @RequestParam double latitude,
+            @RequestParam double longitude,
+            @RequestParam(defaultValue = "7") int forecastDays,
+            @RequestParam(defaultValue = "false") boolean includeHourly,
+            @RequestParam(defaultValue = "auto") String timezone) {
+        
+        log.info("Streaming forecast: lat={}, lon={}, days={}, hourly={}", 
+                latitude, longitude, forecastDays, includeHourly);
+
+        return streamingWeatherService.streamForecast(latitude, longitude, forecastDays, includeHourly, timezone)
+                .map(msg -> ServerSentEvent.<StreamMessage>builder()
+                        .id(UUID.randomUUID().toString())
+                        .event(msg.type())
+                        .data(msg)
+                        .build())
+                .doOnComplete(() -> log.info("Forecast stream completed"))
+                .doOnError(error -> log.error("Forecast stream error", error));
+    }
+
+    /**
+     * Stream historical weather data.
+     * 
+     * Returns historical weather as SSE stream, chunked by time period
+     * for large date ranges.
+     * 
+     * @param latitude Latitude in decimal degrees
+     * @param longitude Longitude in decimal degrees
+     * @param startDate Start date (yyyy-MM-dd)
+     * @param endDate End date (yyyy-MM-dd)
+     * @param timezone Timezone (default: auto)
+     * @return Flux of ServerSentEvent with historical data chunks
+     */
+    @GetMapping(value = "/weather/historical", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @PreAuthorize("hasAnyAuthority('MCP_CLIENT', 'ADMIN')")
+    public Flux<ServerSentEvent<StreamMessage>> streamHistoricalWeather(
+            @RequestParam double latitude,
+            @RequestParam double longitude,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(defaultValue = "auto") String timezone) {
+        
+        log.info("Streaming historical weather: lat={}, lon={}, start={}, end={}", 
+                latitude, longitude, startDate, endDate);
+
+        return streamingWeatherService.streamHistoricalWeather(latitude, longitude, startDate, endDate, timezone)
+                .map(msg -> ServerSentEvent.<StreamMessage>builder()
+                        .id(UUID.randomUUID().toString())
+                        .event(msg.type())
+                        .data(msg)
+                        .build())
+                .doOnComplete(() -> log.info("Historical weather stream completed"))
+                .doOnError(error -> log.error("Historical weather stream error", error));
+    }
+
+    /**
+     * Stream weather with progress indicators.
+     * 
+     * Returns weather data with progress updates, useful for long operations.
+     * 
+     * @param latitude Latitude in decimal degrees
+     * @param longitude Longitude in decimal degrees
+     * @param forecastDays Number of forecast days (default: 7)
+     * @param timezone Timezone (default: auto)
+     * @return Flux of ServerSentEvent with progress updates
+     */
+    @GetMapping(value = "/weather/progress", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @PreAuthorize("hasAnyAuthority('MCP_CLIENT', 'ADMIN')")
+    public Flux<ServerSentEvent<StreamMessage>> streamWithProgress(
+            @RequestParam double latitude,
+            @RequestParam double longitude,
+            @RequestParam(defaultValue = "7") int forecastDays,
+            @RequestParam(defaultValue = "auto") String timezone) {
+        
+        log.info("Streaming weather with progress: lat={}, lon={}, days={}", 
+                latitude, longitude, forecastDays);
+
+        return streamingWeatherService.streamWithProgress(latitude, longitude, forecastDays, timezone)
+                .map(msg -> ServerSentEvent.<StreamMessage>builder()
+                        .id(UUID.randomUUID().toString())
+                        .event(msg.type())
+                        .data(msg)
+                        .build())
+                .doOnComplete(() -> log.info("Progress stream completed"))
+                .doOnError(error -> log.error("Progress stream error", error));
     }
 
     /**
