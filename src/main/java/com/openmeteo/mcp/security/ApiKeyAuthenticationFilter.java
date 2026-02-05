@@ -94,14 +94,15 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         if (StringUtils.hasText(authHeader)) {
             authHeader = authHeader.trim();
+            String authHeaderLower = authHeader.toLowerCase();
             
             // Format: "ApiKey key-value"
-            if (authHeader.toLowerCase().startsWith("apikey ")) {
+            if (authHeaderLower.startsWith("apikey ")) {
                 return authHeader.substring(7).trim();
             }
             
             // Format: "Bearer key-value" (but not JWT - simple heuristic)
-            if (authHeader.toLowerCase().startsWith("bearer ")) {
+            if (authHeaderLower.startsWith("bearer ")) {
                 String token = authHeader.substring(7).trim();
                 // Simple heuristic: JWTs have dots, API keys typically don't
                 if (!token.contains(".")) {
