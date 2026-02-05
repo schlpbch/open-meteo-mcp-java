@@ -25,8 +25,9 @@ class JwtTokenProviderTest {
     @BeforeEach
     void setUp() {
         // Initialize with test configuration
+        // Key must be at least 512 bits (64 bytes) for HS512
         jwtTokenProvider = new JwtTokenProvider(
-                "test-secret-key-for-jwt-token-signing",
+                "test-secret-key-for-jwt-token-signing-must-be-at-least-512-bits-long-for-hs512-algorithm",
                 3600000, // 1 hour
                 86400000 // 24 hours
         );

@@ -1,16 +1,14 @@
 package com.openmeteo.mcp.security;
 
 import com.openmeteo.mcp.service.ApiKeyService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import org.springframework.context.ApplicationContext;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 /**
  * Integration tests for Spring Security configuration.
@@ -19,107 +17,137 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * and authorization as specified in ADR-019.
  */
 @SpringBootTest
-@AutoConfigureMockMvc
 @DisplayName("Security Configuration Integration Tests")
 class SecurityConfigIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private WebTestClient webTestClient;
 
     @Autowired
     private ApiKeyService apiKeyService;
 
+    @Autowired
+    private ApplicationContext context;
+
+    @BeforeEach
+    void setUp() {
+        webTestClient = WebTestClient.bindToApplicationContext(context).build();
+    }
+
     @Test
     @DisplayName("Should allow access to public health endpoint")
-    void shouldAllowAccessToPublicHealthEndpoint() throws Exception {
-        mockMvc.perform(get("/health"))
-                .andExpect(status().isOk());
+    void shouldAllowAccessToPublicHealthEndpoint() {
+        webTestClient.get()
+                .uri("/health")
+                .exchange()
+                .expectStatus().isOk();
     }
 
     @Test
     @DisplayName("Should allow access to public actuator endpoints")
-    void shouldAllowAccessToPublicActuatorEndpoints() throws Exception {
-        mockMvc.perform(get("/actuator/health"))
-                .andExpect(status().isOk());
+    void shouldAllowAccessToPublicActuatorEndpoints() {
+        webTestClient.get()
+                .uri("/actuator/health")
+                .exchange()
+                .expectStatus().isOk();
     }
 
     @Test
     @DisplayName("Should deny access to MCP endpoints without authentication")
-    void shouldDenyAccessToMcpEndpointsWithoutAuth() throws Exception {
-        mockMvc.perform(get("/api/mcp/tools"))
-                .andExpect(status().isUnauthorized())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$.error").value("unauthorized"));
+    void shouldDenyAccessToMcpEndpointsWithoutAuth() {
+        webTestClient.get()
+                .uri("/api/mcp/tools")
+                .exchange()
+                .expectStatus().isUnauthorized()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.error").isEqualTo("unauthorized");
     }
 
     @Test
     @DisplayName("Should allow access to MCP endpoints with valid API key")
-    void shouldAllowAccessToMcpEndpointsWithValidApiKey() throws Exception {
-        mockMvc.perform(get("/api/mcp/tools")
-                        .header("X-API-Key", "mcp-client-dev-key-12345"))
-                .andExpect(status().isNotFound()); // 404 because endpoint doesn't exist yet, but auth passed
+    void shouldAllowAccessToMcpEndpointsWithValidApiKey() {
+        webTestClient.get()
+                .uri("/api/mcp/tools")
+                .header("X-API-Key", "mcp-client-dev-key-12345")
+                .exchange()
+                .expectStatus().isNotFound(); // 404 because endpoint doesn't exist yet, but auth passed
     }
 
     @Test
     @DisplayName("Should deny access to MCP endpoints with invalid API key")
-    void shouldDenyAccessToMcpEndpointsWithInvalidApiKey() throws Exception {
-        mockMvc.perform(get("/api/mcp/tools")
-                        .header("X-API-Key", "invalid-key"))
-                .andExpect(status().isUnauthorized());
+    void shouldDenyAccessToMcpEndpointsWithInvalidApiKey() {
+        webTestClient.get()
+                .uri("/api/mcp/tools")
+                .header("X-API-Key", "invalid-key")
+                .exchange()
+                .expectStatus().isUnauthorized();
     }
 
     @Test
     @DisplayName("Should deny access to admin endpoints without authentication")
-    void shouldDenyAccessToAdminEndpointsWithoutAuth() throws Exception {
-        mockMvc.perform(get("/api/admin/users"))
-                .andExpect(status().isUnauthorized())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$.error").value("unauthorized"));
+    void shouldDenyAccessToAdminEndpointsWithoutAuth() {
+        webTestClient.get()
+                .uri("/api/admin/users")
+                .exchange()
+                .expectStatus().isUnauthorized()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.error").isEqualTo("unauthorized");
     }
 
     @Test
     @DisplayName("Should allow access to admin endpoints with admin API key")
-    void shouldAllowAccessToAdminEndpointsWithAdminApiKey() throws Exception {
-        mockMvc.perform(get("/api/admin/users")
-                        .header("X-API-Key", "admin-dev-key-67890"))
-                .andExpect(status().isNotFound()); // 404 because endpoint doesn't exist yet, but auth passed
+    void shouldAllowAccessToAdminEndpointsWithAdminApiKey() {
+        webTestClient.get()
+                .uri("/api/admin/users")
+                .header("X-API-Key", "admin-dev-key-67890")
+                .exchange()
+                .expectStatus().isNotFound(); // 404 because endpoint doesn't exist yet, but auth passed
     }
 
     @Test
     @DisplayName("Should deny access to admin endpoints with MCP client API key")
-    void shouldDenyAccessToAdminEndpointsWithMcpClientApiKey() throws Exception {
-        mockMvc.perform(get("/api/admin/users")
-                        .header("X-API-Key", "mcp-client-dev-key-12345"))
-                .andExpect(status().isForbidden()); // 403 Forbidden - authenticated but not authorized
+    void shouldDenyAccessToAdminEndpointsWithMcpClientApiKey() {
+        webTestClient.get()
+                .uri("/api/admin/users")
+                .header("X-API-Key", "mcp-client-dev-key-12345")
+                .exchange()
+                .expectStatus().isForbidden(); // 403 Forbidden - authenticated but not authorized
     }
 
     @Test
     @DisplayName("Should support Authorization header with ApiKey format")
-    void shouldSupportAuthorizationHeaderWithApiKeyFormat() throws Exception {
-        mockMvc.perform(get("/api/mcp/tools")
-                        .header("Authorization", "ApiKey mcp-client-dev-key-12345"))
-                .andExpect(status().isNotFound()); // 404 because endpoint doesn't exist yet, but auth passed
+    void shouldSupportAuthorizationHeaderWithApiKeyFormat() {
+        webTestClient.get()
+                .uri("/api/mcp/tools")
+                .header("Authorization", "ApiKey mcp-client-dev-key-12345")
+                .exchange()
+                .expectStatus().isNotFound(); // 404 because endpoint doesn't exist yet, but auth passed
     }
 
     @Test
     @DisplayName("Should include CORS headers for MCP endpoints")
-    void shouldIncludeCorsHeadersForMcpEndpoints() throws Exception {
-        mockMvc.perform(get("/api/mcp/tools")
-                        .header("X-API-Key", "mcp-client-dev-key-12345")
-                        .header("Origin", "http://localhost:3000"))
-                .andExpect(header().exists("Access-Control-Allow-Origin"));
+    void shouldIncludeCorsHeadersForMcpEndpoints() {
+        webTestClient.get()
+                .uri("/api/mcp/tools")
+                .header("X-API-Key", "mcp-client-dev-key-12345")
+                .header("Origin", "http://localhost:3000")
+                .exchange()
+                .expectHeader().exists("Access-Control-Allow-Origin");
     }
 
     @Test
     @DisplayName("Should handle OPTIONS preflight request")
-    void shouldHandleOptionsPreflightRequest() throws Exception {
-        mockMvc.perform(options("/api/mcp/tools")
-                        .header("Origin", "http://localhost:3000")
-                        .header("Access-Control-Request-Method", "POST")
-                        .header("Access-Control-Request-Headers", "X-API-Key"))
-                .andExpect(status().isOk())
-                .andExpect(header().exists("Access-Control-Allow-Origin"))
-                .andExpect(header().exists("Access-Control-Allow-Methods"))
-                .andExpect(header().exists("Access-Control-Allow-Headers"));
+    void shouldHandleOptionsPreflightRequest() {
+        webTestClient.options()
+                .uri("/api/mcp/tools")
+                .header("Origin", "http://localhost:3000")
+                .header("Access-Control-Request-Method", "POST")
+                .header("Access-Control-Request-Headers", "X-API-Key")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().exists("Access-Control-Allow-Origin")
+                .expectHeader().exists("Access-Control-Allow-Methods")
+                .expectHeader().exists("Access-Control-Allow-Headers");
     }
 }

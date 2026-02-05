@@ -1,16 +1,19 @@
 package com.openmeteo.mcp.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.util.Map;
 
@@ -25,10 +28,11 @@ import java.util.Map;
  * - Client-friendly error messages
  * - HTTP 401 status for authentication failures
  */
-@Slf4j
 @Component
-public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class JwtAuthenticationEntryPoint implements ServerAuthenticationEntryPoint {
 
+    private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationEntryPoint.class);
+    
     private final ObjectMapper objectMapper;
 
     public JwtAuthenticationEntryPoint(ObjectMapper objectMapper) {
@@ -36,20 +40,19 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     }
 
     @Override
-    public void commence(HttpServletRequest request,
-                        HttpServletResponse response,
-                        AuthenticationException authException) throws IOException {
-
+    public Mono<Void> commence(ServerWebExchange exchange, AuthenticationException authException) {
+        ServerHttpResponse response = exchange.getResponse();
+        
         // Log authentication failure for security audit
         log.warn("Authentication failed for request: {} {} from IP: {} - {}",
-                request.getMethod(),
-                request.getRequestURI(),
-                getClientIpAddress(request),
+                exchange.getRequest().getMethod(),
+                exchange.getRequest().getPath(),
+                getClientIpAddress(exchange),
                 authException.getMessage());
 
         // Set response status and content type
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatusCode(HttpStatus.UNAUTHORIZED);
+        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
         // Create structured error response
         Map<String, Object> errorResponse = Map.of(
@@ -57,29 +60,38 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                 "message", "Authentication required",
                 "details", "Valid JWT token or API key required to access this resource",
                 "timestamp", Instant.now().toString(),
-                "path", request.getRequestURI(),
+                "path", exchange.getRequest().getPath().value(),
                 "status", HttpStatus.UNAUTHORIZED.value()
         );
 
-        // Write JSON response
-        response.getOutputStream()
-                .println(objectMapper.writeValueAsString(errorResponse));
+        try {
+            byte[] bytes = objectMapper.writeValueAsBytes(errorResponse);
+            DataBuffer buffer = response.bufferFactory().wrap(bytes);
+            return response.writeWith(Mono.just(buffer));
+        } catch (Exception e) {
+            log.error("Error writing authentication error response", e);
+            return response.setComplete();
+        }
     }
 
     /**
      * Get client IP address from request, handling proxies.
      */
-    private String getClientIpAddress(HttpServletRequest request) {
-        String xForwardedFor = request.getHeader("X-Forwarded-For");
+    private String getClientIpAddress(ServerWebExchange exchange) {
+        HttpHeaders headers = exchange.getRequest().getHeaders();
+        
+        String xForwardedFor = headers.getFirst("X-Forwarded-For");
         if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
             return xForwardedFor.split(",")[0].trim();
         }
 
-        String xRealIp = request.getHeader("X-Real-IP");
+        String xRealIp = headers.getFirst("X-Real-IP");
         if (xRealIp != null && !xRealIp.isEmpty()) {
             return xRealIp.trim();
         }
 
-        return request.getRemoteAddr();
+        return exchange.getRequest().getRemoteAddress() != null
+                ? exchange.getRequest().getRemoteAddress().getAddress().getHostAddress()
+                : "unknown";
     }
 }

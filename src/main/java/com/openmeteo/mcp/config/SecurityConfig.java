@@ -4,20 +4,16 @@ import com.openmeteo.mcp.security.ApiKeyAuthenticationFilter;
 import com.openmeteo.mcp.security.JwtAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 /**
  * Spring Security configuration for the Open Meteo MCP server.
@@ -33,8 +29,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
  * - Stateless session management
  */
 @Configuration
-@EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
+@EnableWebFluxSecurity
+@EnableReactiveMethodSecurity
 public class SecurityConfig {
 
     private final ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
@@ -47,54 +43,41 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
             // Disable CSRF as we're using stateless authentication
-            .csrf(csrf -> csrf.disable())
+            .csrf(ServerHttpSecurity.CsrfSpec::disable)
             
             // Configure CORS for MCP clients
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             
-            // Stateless session management (no server-side sessions)
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            
             // Configure authorization rules
-            .authorizeHttpRequests(authz -> authz
+            .authorizeExchange(authz -> authz
                 // Public endpoints - no authentication required
-                .requestMatchers("/health/**", "/actuator/**", "/metrics").permitAll()
+                .pathMatchers("/health/**", "/actuator/**", "/metrics").permitAll()
                 
                 // MCP endpoints - require MCP_CLIENT role
-                .requestMatchers("/api/mcp/**", "/mcp/**").hasRole("MCP_CLIENT")
+                .pathMatchers("/api/mcp/**", "/mcp/**").hasRole("MCP_CLIENT")
                 
                 // Admin endpoints - require ADMIN role
-                .requestMatchers("/api/admin/**", "/admin/**").hasRole("ADMIN")
+                .pathMatchers("/api/admin/**", "/admin/**").hasRole("ADMIN")
                 
                 // All other requests require authentication
-                .anyRequest().authenticated()
+                .anyExchange().authenticated()
             )
             
-            // Configure JWT authentication via OAuth2 Resource Server
+            // Configure OAuth2 Resource Server for JWT authentication
             .oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(withDefaults())
+                .jwt(jwt -> {})
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
             )
             
-            // Add API key authentication filter before standard authentication
-            .addFilterBefore(apiKeyAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            
-            // Configure security headers
-            .headers(headers -> headers
-                .frameOptions().deny()
-                .contentTypeOptions().and()
-                .httpStrictTransportSecurity(hstsConfig -> hstsConfig
-                    .maxAgeInSeconds(31536000) // 1 year
-                    .includeSubdomains(true)
-                )
-            )
+            // Add API key authentication filter
+            .addFilterAt(apiKeyAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
             
             // Configure exception handling
             .exceptionHandling(exceptions -> exceptions
-                .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
             )
             
             .build();

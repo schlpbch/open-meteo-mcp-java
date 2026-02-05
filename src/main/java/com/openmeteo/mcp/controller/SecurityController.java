@@ -1,7 +1,8 @@
 package com.openmeteo.mcp.controller;
 
 import com.openmeteo.mcp.service.ApiKeyService;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -21,12 +22,13 @@ import java.util.Map;
  * - Security status and health checks
  * - Authentication information endpoints
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/security")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class SecurityController {
 
+    private static final Logger log = LoggerFactory.getLogger(SecurityController.class);
+    
     private final ApiKeyService apiKeyService;
 
     public SecurityController(ApiKeyService apiKeyService) {

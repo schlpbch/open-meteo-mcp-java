@@ -1,19 +1,19 @@
 package com.openmeteo.mcp.security;
 
 import com.openmeteo.mcp.service.ApiKeyService;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
+import reactor.core.publisher.Mono;
 
 /**
  * API Key Authentication Filter for MCP clients.
@@ -27,10 +27,11 @@ import java.io.IOException;
  * - Support for multiple API key formats
  * - Comprehensive logging for security audit
  */
-@Slf4j
 @Component
-public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
+public class ApiKeyAuthenticationFilter implements WebFilter {
 
+    private static final Logger log = LoggerFactory.getLogger(ApiKeyAuthenticationFilter.class);
+    
     private final ApiKeyService apiKeyService;
     private final String apiKeyHeaderName;
 
@@ -43,9 +44,14 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                  HttpServletResponse response,
-                                  FilterChain filterChain) throws ServletException, IOException {
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        ServerHttpRequest request = exchange.getRequest();
+        String path = request.getPath().value();
+        
+        // Skip public endpoints
+        if (shouldNotFilter(path)) {
+            return chain.filter(exchange);
+        }
 
         try {
             // Extract API key from request header
@@ -57,22 +63,23 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
                 // Validate API key and get authentication if valid
                 if (apiKeyService.isValidApiKey(apiKey)) {
                     Authentication authentication = apiKeyService.getAuthentication(apiKey);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
                     
                     log.info("Successfully authenticated API key for: {}", 
                             authentication.getName());
+                    
+                    // Continue with authentication context
+                    return chain.filter(exchange)
+                            .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication));
                 } else {
                     log.warn("Invalid API key attempted from IP: {}", getClientIpAddress(request));
                 }
             }
         } catch (Exception e) {
             log.error("Error occurred during API key authentication: {}", e.getMessage(), e);
-            // Clear security context on error
-            SecurityContextHolder.clearContext();
         }
 
-        // Continue filter chain regardless of authentication result
-        filterChain.doFilter(request, response);
+        // Continue filter chain without authentication
+        return chain.filter(exchange);
     }
 
     /**
@@ -83,15 +90,17 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
      * - Authorization: ApiKey key-value
      * - Authorization: Bearer key-value (if it's not a JWT)
      */
-    private String extractApiKey(HttpServletRequest request) {
+    private String extractApiKey(ServerHttpRequest request) {
+        HttpHeaders headers = request.getHeaders();
+        
         // Primary: Check configured API key header
-        String apiKey = request.getHeader(apiKeyHeaderName);
+        String apiKey = headers.getFirst(apiKeyHeaderName);
         if (StringUtils.hasText(apiKey)) {
             return apiKey.trim();
         }
 
         // Secondary: Check Authorization header for API key formats
-        String authHeader = request.getHeader("Authorization");
+        String authHeader = headers.getFirst(HttpHeaders.AUTHORIZATION);
         if (StringUtils.hasText(authHeader)) {
             authHeader = authHeader.trim();
             String authHeaderLower = authHeader.toLowerCase();
@@ -117,28 +126,29 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
     /**
      * Get client IP address from request, handling proxies.
      */
-    private String getClientIpAddress(HttpServletRequest request) {
-        String xForwardedFor = request.getHeader("X-Forwarded-For");
+    private String getClientIpAddress(ServerHttpRequest request) {
+        HttpHeaders headers = request.getHeaders();
+        
+        String xForwardedFor = headers.getFirst("X-Forwarded-For");
         if (StringUtils.hasText(xForwardedFor)) {
             return xForwardedFor.split(",")[0].trim();
         }
 
-        String xRealIp = request.getHeader("X-Real-IP");
+        String xRealIp = headers.getFirst("X-Real-IP");
         if (StringUtils.hasText(xRealIp)) {
             return xRealIp.trim();
         }
 
-        return request.getRemoteAddr();
+        return request.getRemoteAddress() != null 
+                ? request.getRemoteAddress().getAddress().getHostAddress() 
+                : "unknown";
     }
 
     /**
      * Determine if filter should be applied to the request.
      * Skip authentication for public endpoints.
      */
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        
+    private boolean shouldNotFilter(String path) {
         // Skip public endpoints
         return path.startsWith("/health") ||
                path.startsWith("/actuator") ||

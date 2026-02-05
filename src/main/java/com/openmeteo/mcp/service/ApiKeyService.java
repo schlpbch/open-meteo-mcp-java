@@ -1,6 +1,7 @@
 package com.openmeteo.mcp.service;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,10 +26,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * - Role-based API key assignment
  * - Secure API key generation
  */
-@Slf4j
 @Service
 public class ApiKeyService {
 
+    private static final Logger log = LoggerFactory.getLogger(ApiKeyService.class);
+    
     private final Map<String, ApiKeyInfo> apiKeys = new ConcurrentHashMap<>();
     private final SecureRandom secureRandom = new SecureRandom();
     private final int cacheTimeToLive;
