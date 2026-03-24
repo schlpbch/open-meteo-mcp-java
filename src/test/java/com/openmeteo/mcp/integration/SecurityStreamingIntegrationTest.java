@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,8 +46,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Import(IntegrationTestConfig.class)
 class SecurityStreamingIntegrationTest {
 
-    @Autowired
     private WebTestClient webTestClient;
+
+    @Autowired
+    private ApplicationContext context;
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
@@ -59,6 +62,8 @@ class SecurityStreamingIntegrationTest {
 
     @BeforeEach
     void setUp() {
+        webTestClient = WebTestClient.bindToApplicationContext(context).build();
+
         // Generate JWT token for testing
         Authentication auth = new UsernamePasswordAuthenticationToken(
             "testuser",
