@@ -8,15 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 /**
  * Integration tests for Spring Security configuration.
- * 
- * Tests security configuration, API key authentication, 
+ *
+ * Tests security configuration, API key authentication,
  * and authorization as specified in ADR-019.
  */
 @SpringBootTest
+@ActiveProfiles("test")
 @DisplayName("Security Configuration Integration Tests")
 class SecurityConfigIntegrationTest {
 

@@ -6,9 +6,11 @@ import com.openmeteo.mcp.service.ApiKeyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.FluxExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -16,7 +18,7 @@ import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
-import java.util.Set;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,7 +39,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * - Performance requirements
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureWebTestClient(timeout = "PT30S")
 @ActiveProfiles("test")
 class SecurityStreamingIntegrationTest {
 
@@ -56,10 +57,15 @@ class SecurityStreamingIntegrationTest {
     @BeforeEach
     void setUp() {
         // Generate JWT token for testing
-        jwtToken = jwtTokenProvider.generateToken("testuser");
-        
+        Authentication auth = new UsernamePasswordAuthenticationToken(
+            "testuser",
+            "password",
+            List.of(new SimpleGrantedAuthority("ROLE_MCP_CLIENT"))
+        );
+        jwtToken = jwtTokenProvider.generateToken(auth);
+
         // Generate API key for testing
-        apiKey = apiKeyService.generateApiKey("test-client", Set.of("MCP_CLIENT"));
+        apiKey = apiKeyService.generateApiKey("test-client", List.of("MCP_CLIENT"));
     }
 
     // ==================== SECURITY TESTS ====================
