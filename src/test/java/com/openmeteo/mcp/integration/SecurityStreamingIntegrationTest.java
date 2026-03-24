@@ -1,5 +1,6 @@
 package com.openmeteo.mcp.integration;
 
+import com.openmeteo.mcp.config.IntegrationTestConfig;
 import com.openmeteo.mcp.model.stream.StreamMessage;
 import com.openmeteo.mcp.security.JwtTokenProvider;
 import com.openmeteo.mcp.service.ApiKeyService;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,13 +26,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * End-to-end integration tests for Phase 6 (Integration & Testing).
- * 
+ *
  * Validates the complete integration of:
  * - Spring Security (Phases 1-2)
  * - Streaming Infrastructure (Phase 3)
  * - Weather Streaming (Phase 4)
  * - Chat Streaming (Phase 5)
- * 
+ *
  * Tests all acceptance criteria from Issue #10:
  * - JWT and API key authentication
  * - Role-based authorization
@@ -40,6 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
+@Import(IntegrationTestConfig.class)
 class SecurityStreamingIntegrationTest {
 
     @Autowired

@@ -11,3 +11,8 @@ logging:
 openmeteo:
   api:
     timeout-seconds: 10  # Shorter timeout for tests
+  # Enable chat for integration tests
+  chat:
+    enabled: true
+    memory:
+      type: inmemory
