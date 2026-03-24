@@ -49,7 +49,6 @@ class StreamingChatServiceTest {
     @BeforeEach
     void setUp() {
         streamingChatService = new StreamingChatService(chatModel, memoryService, chatHandler);
-        when(memoryService.getSession(anyString())).thenReturn(CompletableFuture.completedFuture(Optional.empty()));
     }
     
     @Test

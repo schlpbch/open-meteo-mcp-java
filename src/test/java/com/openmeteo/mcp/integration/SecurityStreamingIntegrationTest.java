@@ -97,13 +97,17 @@ class SecurityStreamingIntegrationTest {
      */
     @Test
     void shouldAuthenticateWithApiKeyOnStreamingEndpoint() {
-        webTestClient.get()
+        FluxExchangeResult<StreamMessage> result = webTestClient.get()
             .uri("/stream/test")
             .header("X-API-Key", apiKey)
             .accept(MediaType.TEXT_EVENT_STREAM)
             .exchange()
             .expectStatus().isOk()
-            .expectHeader().contentType(MediaType.TEXT_EVENT_STREAM_VALUE);
+            .returnResult(StreamMessage.class);
+
+        StepVerifier.create(result.getResponseBody().take(3))
+            .expectNextCount(3)
+            .verifyComplete();
     }
 
     /**
