@@ -1,9 +1,9 @@
 # Open Meteo MCP Server (Java)
 
-[![Version](https://img.shields.io/badge/version-2.0.2-blue.svg)](https://github.com/schlpbch/open-meteo-mcp-java/releases/tag/v2.0.2)
+[![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)](https://github.com/schlpbch/open-meteo-mcp-java/releases/tag/v2.1.0)
 [![Java](https://img.shields.io/badge/Java-25-orange.svg)](https://openjdk.org/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0-green.svg)](https://spring.io/projects/spring-boot)
-[![Tests](https://img.shields.io/badge/tests-426%20passing-brightgreen.svg)](#testing)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.0--M2-green.svg)](https://spring.io/projects/spring-boot)
+[![Tests](https://img.shields.io/badge/tests-515%20passing-brightgreen.svg)](#testing)
 [![Coverage](https://img.shields.io/badge/coverage-72%25-yellow.svg)](#testing)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![MCP](https://img.shields.io/badge/MCP-compatible-purple.svg)](https://modelcontextprotocol.io/)
@@ -93,7 +93,7 @@ Add to your Claude Desktop config:
   "mcpServers": {
     "open-meteo": {
       "command": "java",
-      "args": ["-jar", "/path/to/open-meteo-mcp-2.0.2.jar"]
+      "args": ["-jar", "/path/to/open-meteo-mcp-2.1.0.jar"]
     }
   }
 }
@@ -127,7 +127,7 @@ mvn test                    # Run all tests
 mvn test jacoco:report      # With coverage report
 ```
 
-**Current:** 426 tests passing, 72% coverage
+**Current:** 515 tests passing, 72% coverage
 
 ## Documentation
 
@@ -141,7 +141,7 @@ mvn test jacoco:report      # With coverage report
 ## Technology Stack
 
 - **Java 25** with Virtual Threads
-- **Spring Boot 4.0** / **Spring AI 2.0**
+- **Spring Boot 4.1.0-M2** / **Spring AI 2.0.0-M3**
 - **Docker** (Eclipse Temurin) / **Redis**
 - **JUnit 5** + Mockito + AssertJ
 
@@ -156,4 +156,4 @@ Apache 2.0 - See [LICENSE](LICENSE)
 
 ---
 
-**v2.0.2** - Enterprise Ready
+**v2.1.0** - Enterprise Ready
