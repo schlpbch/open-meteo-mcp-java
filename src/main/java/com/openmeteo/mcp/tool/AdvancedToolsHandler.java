@@ -10,8 +10,8 @@ import com.openmeteo.mcp.service.MarineConditionsService;
 import com.openmeteo.mcp.service.WeatherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springaicommunity.mcp.annotation.McpTool;
-import org.springaicommunity.mcp.annotation.McpToolParam;
+import org.springframework.ai.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

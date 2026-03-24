@@ -2,6 +2,10 @@ spring:
   main:
     banner-mode: "off"
 
+security:
+  jwt:
+    secret: "testSecretKeyWith64BytesMinimumForHS512AlgorithmValidation1234567890"
+
 logging:
   level:
     com.openmeteo.mcp: INFO

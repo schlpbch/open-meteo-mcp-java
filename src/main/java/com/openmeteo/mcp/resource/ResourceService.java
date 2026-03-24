@@ -1,7 +1,7 @@
 package com.openmeteo.mcp.resource;
 
 import com.openmeteo.mcp.resource.util.ResourceLoader;
-import org.springaicommunity.mcp.annotation.McpResource;
+import org.springframework.ai.mcp.annotation.McpResource;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
