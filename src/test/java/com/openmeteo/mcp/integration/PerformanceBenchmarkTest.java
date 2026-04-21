@@ -8,13 +8,14 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.time.Duration;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,11 +34,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @Import(MockBeansTestConfiguration.class)
-@Disabled("Test endpoints require proper HTTP configuration - use actual server for performance testing")
+@Disabled("OAuth2 resource server bean conflict - requires separate SecurityConfig for tests (Phase 8)")
 class PerformanceBenchmarkTest {
 
-    @Autowired
-    private ApplicationContext applicationContext;
+    @LocalServerPort
+    private int port;
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
@@ -50,7 +51,10 @@ class PerformanceBenchmarkTest {
 
     @BeforeEach
     void setUp() {
-        webTestClient = WebTestClient.bindToApplicationContext(applicationContext).build();
+        webTestClient = WebTestClient.bindToServer()
+            .baseUrl("http://localhost:" + port)
+            .responseTimeout(Duration.ofSeconds(10))
+            .build();
 
         var auth = new UsernamePasswordAuthenticationToken(
             "testuser",
