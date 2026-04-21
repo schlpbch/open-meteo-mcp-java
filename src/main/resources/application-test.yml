@@ -8,6 +8,24 @@ spring:
       port: 6379
       password: ""
 
+management:
+  health:
+    defaults:
+      enabled: false
+    redis:
+      enabled: false
+    db:
+      enabled: false
+    livenessState:
+      enabled: false
+    readinessState:
+      enabled: false
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: false
+
 logging:
   level:
     com.openmeteo.mcp: INFO
