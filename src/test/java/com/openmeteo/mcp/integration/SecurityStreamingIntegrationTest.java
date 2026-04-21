@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -44,11 +45,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @Import(MockBeansTestConfiguration.class)
-@Disabled("Streaming endpoints not yet fully implemented - requires SSE controller setup")
+@Disabled("OAuth2 resource server bean conflict - requires separate SecurityConfig for tests")
 class SecurityStreamingIntegrationTest {
 
-    @Autowired
-    private ApplicationContext applicationContext;
+    @LocalServerPort
+    private int port;
 
     private WebTestClient webTestClient;
 
@@ -63,7 +64,10 @@ class SecurityStreamingIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        webTestClient = WebTestClient.bindToApplicationContext(applicationContext).build();
+        webTestClient = WebTestClient.bindToServer()
+            .baseUrl("http://localhost:" + port)
+            .responseTimeout(Duration.ofSeconds(10))
+            .build();
 
         // Generate JWT token for testing
         var auth = new UsernamePasswordAuthenticationToken(

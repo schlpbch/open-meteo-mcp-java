@@ -38,7 +38,7 @@ class SecurityConfigIntegrationTest {
     }
 
     @Test
-    @Disabled("Actuator health depends on unavailable components in test environment")
+    @Disabled("Requires Redis running - health check depends on redis.health.enabled")
     @DisplayName("Should allow access to public health endpoint")
     void shouldAllowAccessToPublicHealthEndpoint() {
         webTestClient.get()
@@ -48,7 +48,7 @@ class SecurityConfigIntegrationTest {
     }
 
     @Test
-    @Disabled("Actuator endpoints not configured in test environment")
+    @Disabled("Requires Redis running - health check depends on redis.health.enabled")
     @DisplayName("Should allow access to public actuator endpoints")
     void shouldAllowAccessToPublicActuatorEndpoints() {
         webTestClient.get()

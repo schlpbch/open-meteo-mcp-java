@@ -63,24 +63,28 @@ public class StreamingChatService {
     
     /**
      * Stream chat response token-by-token.
-     * 
+     *
      * @param sessionId Session identifier
      * @param message User message
      * @return Flux of StreamMessage containing response tokens
      */
     public Flux<StreamMessage> streamChat(String sessionId, String message) {
         log.info("Starting chat stream for session: {}", sessionId);
-        
+
         return Flux.concat(
             // 1. Send metadata
             Flux.just(StreamMessage.metadata(
                 StreamMetadata.of("chat-stream-" + sessionId)
             )),
-            
-            // 2. Stream response from ChatModel
+
+            // 2. Stream response from ChatModel with error handling
             streamChatResponse(sessionId, message)
-                .delayElements(Duration.ofMillis(tokenDelayMs)),
-            
+                .delayElements(Duration.ofMillis(tokenDelayMs))
+                .onErrorResume(err -> {
+                    log.error("Error in chat stream response", err);
+                    return Flux.just(StreamMessage.error(err.getMessage(), "CHAT_STREAM_ERROR"));
+                }),
+
             // 3. Send completion
             Flux.just(StreamMessage.complete())
         ).doOnSubscribe(sub -> log.debug("Chat stream started for session: {}", sessionId))
@@ -97,30 +101,34 @@ public class StreamingChatService {
      */
     public Flux<StreamMessage> streamChatWithProgress(String sessionId, String message) {
         log.info("Starting chat stream with progress for session: {}", sessionId);
-        
+
         if (!enableProgress) {
             return streamChat(sessionId, message);
         }
-        
+
         return Flux.concat(
             // 1. Send metadata
             Flux.just(StreamMessage.metadata(
                 StreamMetadata.of("chat-stream-progress-" + sessionId)
             )),
-            
+
             // 2. Progress: Fetching context
             Flux.just(StreamMessage.progress(25, 100, "Fetching conversation context...")),
-            
+
             // 3. Progress: Preparing prompt
             Flux.just(StreamMessage.progress(50, 100, "Preparing AI prompt...")),
-            
+
             // 4. Progress: Generating response
             Flux.just(StreamMessage.progress(75, 100, "Generating response...")),
-            
-            // 5. Stream actual response
+
+            // 5. Stream actual response with error handling
             streamChatResponse(sessionId, message)
-                .delayElements(Duration.ofMillis(tokenDelayMs)),
-            
+                .delayElements(Duration.ofMillis(tokenDelayMs))
+                .onErrorResume(err -> {
+                    log.error("Error in progress chat stream response", err);
+                    return Flux.just(StreamMessage.error(err.getMessage(), "CHAT_STREAM_ERROR"));
+                }),
+
             // 6. Complete
             Flux.just(StreamMessage.complete())
         ).doOnSubscribe(sub -> log.debug("Progress chat stream started for session: {}", sessionId))
@@ -138,20 +146,20 @@ public class StreamingChatService {
      * @return Flux of StreamMessage with context-enriched response
      */
     public Flux<StreamMessage> streamWithContext(
-        String sessionId, 
-        String message, 
-        Double latitude, 
+        String sessionId,
+        String message,
+        Double latitude,
         Double longitude
     ) {
-        log.info("Starting context-enriched chat stream for session: {} at location: {},{}", 
+        log.info("Starting context-enriched chat stream for session: {} at location: {},{}",
             sessionId, latitude, longitude);
-        
+
         return Flux.concat(
             // 1. Send metadata with location
             Flux.just(StreamMessage.metadata(
                 StreamMetadata.of("chat-stream-context-" + sessionId)
             )),
-            
+
             // 2. Update session context with location and send progress
             Flux.defer(() -> {
                 if (latitude != null && longitude != null) {
@@ -160,11 +168,15 @@ public class StreamingChatService {
                 }
                 return Flux.just(StreamMessage.progress(25, 100, "Using existing context"));
             }),
-            
-            // 3. Stream response
+
+            // 3. Stream response with error handling
             streamChatResponse(sessionId, message)
-                .delayElements(Duration.ofMillis(tokenDelayMs)),
-            
+                .delayElements(Duration.ofMillis(tokenDelayMs))
+                .onErrorResume(err -> {
+                    log.error("Error in context chat stream response", err);
+                    return Flux.just(StreamMessage.error(err.getMessage(), "CHAT_STREAM_ERROR"));
+                }),
+
             // 4. Complete
             Flux.just(StreamMessage.complete())
         ).doOnSubscribe(sub -> log.debug("Context chat stream started for session: {}", sessionId))
@@ -192,7 +204,7 @@ public class StreamingChatService {
                         var token = chatResponse.getResult().getOutput().getText();
                         if (token != null && !token.isEmpty()) {
                             tokenBuffer.append(token);
-                            
+
                             // Send chunk when buffer reaches threshold
                             if (tokenBuffer.length() >= maxTokensPerChunk) {
                                 var chunkData = tokenBuffer.toString();
@@ -205,7 +217,7 @@ public class StreamingChatService {
                     error -> {
                         log.error("Error in chat stream", error);
                         sink.next(StreamMessage.error(error.getMessage(), "CHAT_STREAM_ERROR"));
-                        sink.error(error);
+                        sink.complete();
                     },
                     () -> {
                         // Send any remaining tokens
@@ -213,10 +225,10 @@ public class StreamingChatService {
                             var chunk = StreamChunk.last(chunkIndex.get(), tokenBuffer.toString());
                             sink.next(StreamMessage.data(chunk));
                         }
-                        
+
                         // Save conversation to memory
                         saveConversation(sessionId, message, tokenBuffer.toString());
-                        
+
                         sink.complete();
                     }
                 );
