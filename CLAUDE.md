@@ -1,8 +1,8 @@
 # CLAUDE.md - Open-Meteo MCP Java
 
-**Status**: Phase 6 Complete | **Tests**: 426 (100% pass, 72% coverage) | **Security**: PASSED ✅ | **Updated**: 2026-02-05
+**Status**: Phase 6 Complete | **Tests**: 536 (100% pass, 27 disabled) | **Security**: PASSED ✅ | **Updated**: 2026-04-21
 
-**Tech Stack**: Java 25, Spring Boot 4.0.1, Spring AI 2.0.0-M2, Spring Security 7, WebFlux, Redis, Docker
+**Tech Stack**: Java 25, Spring Boot 4.0.5, Spring AI 2.0.0-M4, Spring Security 7, WebFlux, Redis, Docker
 
 **Capabilities**: MCP server with enterprise security (JWT+API keys), real-time streaming (SSE), conversational AI
 
