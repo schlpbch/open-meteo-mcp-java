@@ -3,6 +3,7 @@ package com.openmeteo.mcp.security;
 import tools.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * JWT Authentication Entry Point for handling authentication failures.
@@ -32,11 +34,11 @@ import java.util.Map;
 public class JwtAuthenticationEntryPoint implements ServerAuthenticationEntryPoint {
 
     private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationEntryPoint.class);
-    
+
     private final ObjectMapper objectMapper;
 
-    public JwtAuthenticationEntryPoint(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+    public JwtAuthenticationEntryPoint(@Autowired(required = false) ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper != null ? objectMapper : new ObjectMapper();
     }
 
     @Override
