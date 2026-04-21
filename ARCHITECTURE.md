@@ -554,7 +554,7 @@ sequenceDiagram
 
 ### Core Runtime
 
-- **Runtime**: Java 25, Spring Boot 4.0.1
+- **Runtime**: Java 25, Spring Boot 4.0.5
 - **Framework**: Spring Framework 7.x with reactive support
 
 ### API Layer
@@ -567,7 +567,7 @@ sequenceDiagram
 ### Security (Phase 1-2)
 
 - **Authentication**: Spring Security 7 with OAuth2 Resource Server
-- **JWT**: JJWT 0.11.5 with HMAC-SHA512 signing
+- **JWT**: JJWT 0.12.6 with HMAC-SHA512 signing
 - **Authorization**: Method-level security with @PreAuthorize
 - **Security Headers**: Custom security configuration
 - **Audit**: Custom SecurityAuditService with event logging
@@ -582,7 +582,7 @@ sequenceDiagram
 
 ### AI Integration
 
-- **Spring AI**: 2.0.0-M2 with multiple provider support
+- **Spring AI**: 2.0.0-M4 with multiple provider support
 - **Providers**: Azure OpenAI, OpenAI, Anthropic Claude
 - **Streaming**: Native LLM token-by-token streaming
 
@@ -613,7 +613,7 @@ sequenceDiagram
 
 ### Testing (Phase 6)
 
-- **Unit Testing**: JUnit 5, Mockito, 426 tests
+- **Unit Testing**: JUnit 5, Mockito, 536 tests
 - **Integration Testing**: @SpringBootTest, WebTestClient
 - **Reactive Testing**: StepVerifier for Flux/Mono validation
 - **Performance**: Benchmark tests for latency validation
