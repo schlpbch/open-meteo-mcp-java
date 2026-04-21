@@ -251,6 +251,17 @@ public class SecurityController {
     }
 
     /**
+     * List available MCP tools (MCP_CLIENT access).
+     */
+    @GetMapping("/mcp/tools")
+    @PreAuthorize("hasRole('MCP_CLIENT')")
+    public ResponseEntity<List<Map<String, String>>> listMcpTools() {
+        log.info("MCP tools list requested");
+        // Placeholder: tools are defined in McpToolsHandler
+        return ResponseEntity.ok(List.of());
+    }
+
+    /**
      * Security health check (Public endpoint).
      */
     @GetMapping("/health")
@@ -262,7 +273,7 @@ public class SecurityController {
                 "auditEventCount", auditService.getEventCount(),
                 "timestamp", System.currentTimeMillis()
         );
-        
+
         return ResponseEntity.ok(health);
     }
 

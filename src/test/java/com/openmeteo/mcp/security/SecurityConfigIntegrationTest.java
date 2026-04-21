@@ -38,7 +38,7 @@ class SecurityConfigIntegrationTest {
     }
 
     @Test
-    @Disabled("Requires Redis running - health check depends on redis.health.enabled")
+    @Disabled("WebTestClient.bindToApplicationContext() bypasses health check infrastructure")
     @DisplayName("Should allow access to public health endpoint")
     void shouldAllowAccessToPublicHealthEndpoint() {
         webTestClient.get()
@@ -48,7 +48,7 @@ class SecurityConfigIntegrationTest {
     }
 
     @Test
-    @Disabled("Requires Redis running - health check depends on redis.health.enabled")
+    @Disabled("WebTestClient.bindToApplicationContext() bypasses health check infrastructure")
     @DisplayName("Should allow access to public actuator endpoints")
     void shouldAllowAccessToPublicActuatorEndpoints() {
         webTestClient.get()
@@ -132,7 +132,7 @@ class SecurityConfigIntegrationTest {
     }
 
     @Test
-    @Disabled("CORS testing requires actual endpoint - /api/mcp/tools not fully implemented")
+    @Disabled("WebTestClient.bindToApplicationContext() bypasses CORS filter chain")
     @DisplayName("Should include CORS headers for MCP endpoints")
     void shouldIncludeCorsHeadersForMcpEndpoints() {
         webTestClient.get()
@@ -144,7 +144,7 @@ class SecurityConfigIntegrationTest {
     }
 
     @Test
-    @Disabled("CORS OPTIONS preflight requires actual endpoint - /api/mcp/tools not fully implemented")
+    @Disabled("WebTestClient.bindToApplicationContext() bypasses HTTP filter chain")
     @DisplayName("Should handle OPTIONS preflight request")
     void shouldHandleOptionsPreflightRequest() {
         webTestClient.options()
