@@ -1,5 +1,6 @@
 package com.openmeteo.mcp.security;
 
+import com.openmeteo.mcp.config.MockBeansTestConfiguration;
 import com.openmeteo.mcp.service.ApiKeyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -7,16 +8,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 /**
  * Integration tests for Spring Security configuration.
- * 
- * Tests security configuration, API key authentication, 
+ *
+ * Tests security configuration, API key authentication,
  * and authorization as specified in ADR-019.
  */
 @SpringBootTest
+@Import(MockBeansTestConfiguration.class)
 @DisplayName("Security Configuration Integration Tests")
 class SecurityConfigIntegrationTest {
 

@@ -1,30 +1,62 @@
 package com.openmeteo.mcp.integration;
 
+import com.openmeteo.mcp.config.MockBeansTestConfiguration;
+import com.openmeteo.mcp.security.JwtTokenProvider;
+import com.openmeteo.mcp.service.ApiKeyService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Performance benchmark tests for Phase 6 (Integration & Testing).
- * 
+ *
  * Validates performance requirements from Issue #10:
  * - Authentication Latency: <50ms JWT, <100ms API key
  * - Streaming Latency: <2s weather first chunk, <100ms chat tokens
  * - Concurrent Connections: 100+ simultaneous SSE streams
  * - Memory Usage: <2GB under maximum load
- * 
+ *
  * These tests document actual performance metrics for the implementation.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
+@Import(MockBeansTestConfiguration.class)
 class PerformanceBenchmarkTest {
 
     @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private ApiKeyService apiKeyService;
+
     private WebTestClient webTestClient;
+    private String jwtToken;
+
+    @BeforeEach
+    void setUp() {
+        webTestClient = WebTestClient.bindToApplicationContext(applicationContext).build();
+
+        var auth = new UsernamePasswordAuthenticationToken(
+            "testuser",
+            null,
+            Collections.singletonList(new SimpleGrantedAuthority("MCP_CLIENT"))
+        );
+        jwtToken = jwtTokenProvider.generateToken(auth);
+    }
 
     /**
      * Benchmark: Health endpoint performance (reflects auth overhead).
@@ -37,6 +69,7 @@ class PerformanceBenchmarkTest {
         for (int i = 0; i < iterations; i++) {
             webTestClient.get()
                 .uri("/api/health")
+                .header("Authorization", "Bearer " + jwtToken)
                 .exchange()
                 .expectStatus().isOk();
         }
@@ -63,7 +96,11 @@ class PerformanceBenchmarkTest {
 
         // Warmup
         for (int i = 0; i < warmupIterations; i++) {
-            webTestClient.get().uri("/api/health").exchange().expectStatus().isOk();
+            webTestClient.get()
+                .uri("/api/health")
+                .header("Authorization", "Bearer " + jwtToken)
+                .exchange()
+                .expectStatus().isOk();
         }
 
         // Benchmark
@@ -73,6 +110,7 @@ class PerformanceBenchmarkTest {
         for (int i = 0; i < iterations; i++) {
             webTestClient.get()
                 .uri("/api/health")
+                .header("Authorization", "Bearer " + jwtToken)
                 .exchange()
                 .expectStatus().isOk();
             successCount++;
@@ -134,6 +172,7 @@ class PerformanceBenchmarkTest {
         for (int i = 0; i < requests; i++) {
             webTestClient.get()
                 .uri("/api/health")
+                .header("Authorization", "Bearer " + jwtToken)
                 .exchange()
                 .expectStatus().isOk();
             successCount++;
