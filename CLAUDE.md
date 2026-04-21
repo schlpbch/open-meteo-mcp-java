@@ -1,14 +1,8 @@
 # CLAUDE.md - Open-Meteo MCP Java
 
-<<<<<<< HEAD
-**Status**: Phase 6 Complete | **Tests**: 536 (100% pass, 27 disabled) | **Security**: PASSED ✅ | **Updated**: 2026-04-21
+**Status**: v2.1.1 Stable ✅ | **Tests**: 504 (100% pass) | **Coverage**: 65% | **Security**: PASSED ✅ | **Updated**: 2026-04-21
 
 **Tech Stack**: Java 25, Spring Boot 4.0.5, Spring AI 2.0.0-M4, Spring Security 7, WebFlux, Redis, Docker
-=======
-**Status**: Phase 7 ✅ | **Tests**: 515 passing (96%), 72% coverage | **Security**: PASSED ✅ | **Updated**: 2026-03-24
-
-**Tech Stack**: Java 25, Spring Boot 4.1.0-M2, Spring AI 2.0.0-M3, Spring Security 7, WebFlux, Redis, Docker
->>>>>>> a3729c0463cc190cd3e844d65e76199b4d0b56a4
 
 **Capabilities**: MCP server with enterprise security (JWT+API keys), real-time streaming (SSE), conversational AI
 
@@ -92,7 +86,8 @@ search_location | get_weather | get_snow_conditions | get_air_quality | get_weat
 | 4 | ✅ | 70cb82b | Weather Streaming (<2s) |
 | 5 | ✅ | 369fe66 | Chat Streaming (<100ms tokens) |
 | 6 | ✅ | 7baf838 | Integration & Testing (PASSED) |
-| 7 | ✅ | 01d0f4d | Upgrade: Spring AI 2.0.0-M3 + Boot 4.1.0-M2 |
+| 7 | ✅ | 96d50fc | v2.1.1 Stable: Boot 4.0.5, Spring AI 2.0.0-M4, JJWT 0.12.6, Jackson 3.x |
+| 8 | 📋 | TBD | OAuth2 SecurityConfig refactor for 25 infrastructure tests |
 
 **Benchmarks** (All ✅): JWT <50ms | API Key <100ms | Weather <2s | Chat 50ms | 100+ concurrent | <2GB memory
 
