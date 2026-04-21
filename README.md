@@ -1,10 +1,10 @@
 # Open Meteo MCP Server (Java)
 
-[![Version](https://img.shields.io/badge/version-2.0.2-blue.svg)](https://github.com/schlpbch/open-meteo-mcp-java/releases/tag/v2.0.2)
+[![Version](https://img.shields.io/badge/version-2.1.1-blue.svg)](https://github.com/schlpbch/open-meteo-mcp-java/releases/tag/v2.1.1)
 [![Java](https://img.shields.io/badge/Java-25-orange.svg)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.5-green.svg)](https://spring.io/projects/spring-boot)
-[![Tests](https://img.shields.io/badge/tests-536%20passing-brightgreen.svg)](#testing)
-[![Coverage](https://img.shields.io/badge/coverage-72%25-yellow.svg)](#testing)
+[![Tests](https://img.shields.io/badge/tests-504%20passing-brightgreen.svg)](#testing)
+[![Coverage](https://img.shields.io/badge/coverage-65%25-yellow.svg)](#testing)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![MCP](https://img.shields.io/badge/MCP-compatible-purple.svg)](https://modelcontextprotocol.io/)
 
