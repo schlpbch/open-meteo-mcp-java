@@ -127,7 +127,7 @@ mvn test                    # Run all tests
 mvn test jacoco:report      # With coverage report
 ```
 
-**Current:** 536 tests passing (27 disabled for incomplete SSE endpoints), 72% coverage
+**Current:** 536 tests passing (25 disabled for infrastructure gaps), 72% coverage
 
 ## Documentation
 
