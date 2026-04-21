@@ -1,7 +1,7 @@
 package com.openmeteo.mcp.chat.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import com.openmeteo.mcp.chat.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -75,7 +75,7 @@ class RedisConversationMemoryServiceTest {
             // Arrange
             var session = ChatSession.create("test-session-1");
             when(objectMapper.writeValueAsString(session))
-                    .thenThrow(new JsonProcessingException("Serialization error") {});
+                    .thenThrow(new JacksonException("Serialization error") {});
 
             // Act & Assert
             assertThatThrownBy(() -> service.saveSession(session).get())
@@ -121,7 +121,7 @@ class RedisConversationMemoryServiceTest {
             when(redisTemplate.opsForValue()).thenReturn(valueOperations);
             when(valueOperations.get("chat:session:bad-session")).thenReturn(invalidJson);
             when(objectMapper.readValue(invalidJson, ChatSession.class))
-                    .thenThrow(new JsonProcessingException("Parse error") {});
+                    .thenThrow(new JacksonException("Parse error") {});
 
             // Act
             var result = service.getSession("bad-session").get();
@@ -173,7 +173,7 @@ class RedisConversationMemoryServiceTest {
             // Arrange
             var message = Message.user("session-1", "Hello");
             when(objectMapper.writeValueAsString(message))
-                    .thenThrow(new JsonProcessingException("Serialization error") {});
+                    .thenThrow(new JacksonException("Serialization error") {});
 
             // Act & Assert
             assertThatThrownBy(() -> service.saveMessage(message).get())

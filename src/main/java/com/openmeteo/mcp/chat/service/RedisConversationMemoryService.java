@@ -1,7 +1,7 @@
 package com.openmeteo.mcp.chat.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import com.openmeteo.mcp.chat.model.ChatSession;
 import com.openmeteo.mcp.chat.model.Message;
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ public class RedisConversationMemoryService implements ConversationMemoryService
                 var json = objectMapper.writeValueAsString(session);
                 redisTemplate.opsForValue().set(key, json, Duration.ofHours(24));
                 return session;
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 log.error("Error serializing session", e);
                 throw new RuntimeException("Failed to save session", e);
             }
@@ -67,7 +67,7 @@ public class RedisConversationMemoryService implements ConversationMemoryService
                 }
                 var session = objectMapper.readValue(json, ChatSession.class);
                 return Optional.of(session);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 log.error("Error deserializing session", e);
                 return Optional.empty();
             }
@@ -96,7 +96,7 @@ public class RedisConversationMemoryService implements ConversationMemoryService
                 // Set expiration on messages list
                 redisTemplate.expire(key, Duration.ofHours(24));
                 return message;
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 log.error("Error serializing message", e);
                 throw new RuntimeException("Failed to save message", e);
             }
@@ -117,7 +117,7 @@ public class RedisConversationMemoryService implements ConversationMemoryService
                     .map(json -> {
                         try {
                             return objectMapper.readValue(json, Message.class);
-                        } catch (JsonProcessingException e) {
+                        } catch (JacksonException e) {
                             log.error("Error deserializing message", e);
                             return null;
                         }
@@ -150,7 +150,7 @@ public class RedisConversationMemoryService implements ConversationMemoryService
                     .map(json -> {
                         try {
                             return objectMapper.readValue(json, Message.class);
-                        } catch (JsonProcessingException e) {
+                        } catch (JacksonException e) {
                             log.error("Error deserializing message", e);
                             return null;
                         }

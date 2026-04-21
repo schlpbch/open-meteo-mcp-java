@@ -1,6 +1,6 @@
 package com.openmeteo.mcp.prompt;
 
-import org.springaicommunity.mcp.annotation.McpPrompt;
+import org.springframework.ai.mcp.annotation.McpPrompt;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;

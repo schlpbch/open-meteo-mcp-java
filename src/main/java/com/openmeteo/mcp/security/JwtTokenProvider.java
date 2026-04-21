@@ -1,6 +1,11 @@
 package com.openmeteo.mcp.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,12 +71,12 @@ public class JwtTokenProvider {
         Date expiry = new Date(now.getTime() + jwtExpiration);
 
         String token = Jwts.builder()
-                .setSubject(username)
+                .subject(username)
                 .claim("roles", roles)
                 .claim("type", "access")
-                .setIssuedAt(now)
-                .setExpiration(expiry)
-                .signWith(signingKey, SignatureAlgorithm.HS512)
+                .issuedAt(now)
+                .expiration(expiry)
+                .signWith(signingKey, Jwts.SIG.HS512)
                 .compact();
 
         log.debug("Generated JWT token for user: {} with roles: {}", username, roles);
@@ -90,11 +95,11 @@ public class JwtTokenProvider {
         Date expiry = new Date(now.getTime() + jwtRefreshExpiration);
 
         String refreshToken = Jwts.builder()
-                .setSubject(username)
+                .subject(username)
                 .claim("type", "refresh")
-                .setIssuedAt(now)
-                .setExpiration(expiry)
-                .signWith(signingKey, SignatureAlgorithm.HS512)
+                .issuedAt(now)
+                .expiration(expiry)
+                .signWith(signingKey, Jwts.SIG.HS512)
                 .compact();
 
         log.debug("Generated JWT refresh token for user: {}", username);
@@ -202,10 +207,10 @@ public class JwtTokenProvider {
      * @throws JwtException if token is invalid
      */
     private Claims getClaimsFromToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(signingKey)
+        return Jwts.parser()
+                .verifyWith(signingKey)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }
