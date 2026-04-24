@@ -1,6 +1,6 @@
 # CLAUDE.md - Open-Meteo MCP Java
 
-**Status**: Phase 7 ✅ | **Tests**: 515 passing (96%), 72% coverage | **Security**: PASSED ✅ | **Updated**: 2026-04-24
+**Status**: Stable ✅ | **Tests**: 577 passing, 81% coverage | **Security**: PASSED ✅ | **Updated**: 2026-04-24
 
 **Tech Stack**: Java 25, Spring Boot 4.1.0-M4, Spring AI 2.0.0-M4, Spring Security 7.1.0-M3, WebFlux, Redis 8, Docker
 
@@ -75,19 +75,6 @@ search_location | get_weather | get_snow_conditions | get_air_quality | get_weat
 ## Troubleshooting
 
 **Clean build**: `mvn clean install -U` | **Skip tests**: `mvn clean install -DskipTests` | **Specific test**: `mvn test -Dtest=TestName -X`
-
-## Phase Status
-
-| Phase | Status | Commit | Details |
-|-------|--------|--------|---------|
-| 1 | ✅ | 98848aa | Security Foundation (JWT, API keys) |
-| 2 | ✅ | 411fc2c | Security Integration (RBAC, audit) |
-| 3 | ✅ | d25315c | Streaming Infrastructure (SSE, reactive) |
-| 4 | ✅ | 70cb82b | Weather Streaming (<2s) |
-| 5 | ✅ | 369fe66 | Chat Streaming (<100ms tokens) |
-| 6 | ✅ | 7baf838 | Integration & Testing (PASSED) |
-| 7 | ✅ | 96d50fc | v2.1.1 Stable: Boot 4.0.5, Spring AI 2.0.0-M4, JJWT 0.12.6, Jackson 3.x |
-| 8 | 📋 | TBD | OAuth2 SecurityConfig refactor for 25 infrastructure tests |
 
 **Benchmarks** (All ✅): JWT <50ms | API Key <100ms | Weather <2s | Chat 50ms | 100+ concurrent | <2GB memory
 

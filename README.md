@@ -2,9 +2,9 @@
 
 [![Version](https://img.shields.io/badge/version-2.1.1-blue.svg)](https://github.com/schlpbch/open-meteo-mcp-java/releases/tag/v2.1.1)
 [![Java](https://img.shields.io/badge/Java-25-orange.svg)](https://openjdk.org/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.5-green.svg)](https://spring.io/projects/spring-boot)
-[![Tests](https://img.shields.io/badge/tests-504%20passing-brightgreen.svg)](#testing)
-[![Coverage](https://img.shields.io/badge/coverage-65%25-yellow.svg)](#testing)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.0--M4-green.svg)](https://spring.io/projects/spring-boot)
+[![Tests](https://img.shields.io/badge/tests-577%20passing-brightgreen.svg)](#testing)
+[![Coverage](https://img.shields.io/badge/coverage-81%25-brightgreen.svg)](#testing)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![MCP](https://img.shields.io/badge/MCP-compatible-purple.svg)](https://modelcontextprotocol.io/)
 
@@ -127,7 +127,7 @@ mvn test                    # Run all tests
 mvn test jacoco:report      # With coverage report
 ```
 
-**Current:** 536 tests passing (25 disabled for infrastructure gaps), 72% coverage
+**Current:** 577 tests passing, 81% instruction coverage (exceeds 80% target)
 
 ## Documentation
 
@@ -141,10 +141,10 @@ mvn test jacoco:report      # With coverage report
 ## Technology Stack
 
 - **Java 25** with Virtual Threads
-- **Spring Boot 4.0.5** / **Spring AI 2.0.0-M4**
-- **Docker** (Eclipse Temurin) / **Redis**
-- **JUnit 5** + Mockito + AssertJ
-- **JJWT 0.12.6** (JWT authentication) / **Jackson 3** (JSON serialization)
+- **Spring Boot 4.1.0-M4** / **Spring AI 2.0.0-M4** / **Spring Security 7.1.0-M3**
+- **Docker** (Eclipse Temurin) / **Redis 8**
+- **JUnit 5** + Mockito + AssertJ + Reactor Test
+- **JJWT 0.12.7** (JWT authentication) / **Jackson 3** (JSON serialization)
 
 ## License
 
@@ -157,4 +157,4 @@ Apache 2.0 - See [LICENSE](LICENSE)
 
 ---
 
-**v2.0.2** - Enterprise Ready
+**v2.1.1** - Enterprise Ready
