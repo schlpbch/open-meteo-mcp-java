@@ -1,5 +1,5 @@
 # Multi-stage build for Open-Meteo MCP Java Server
-FROM maven:3.9-openjdk-21-slim AS build
+FROM maven:3.9.15-eclipse-temurin-25 AS build
 
 WORKDIR /workspace
 COPY pom.xml .
@@ -9,7 +9,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Runtime stage
-FROM openjdk:21-jdk-slim AS runtime
+FROM eclipse-temurin:25.0.2_10-jre AS runtime
 
 # Install curl for healthchecks
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
@@ -38,7 +38,7 @@ ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC"
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS $JAVA_TOOL_OPTIONS -jar app.jar"]
 
 # Production stage for minimal runtime
-FROM gcr.io/distroless/java21-debian12 AS production
+FROM eclipse-temurin:25.0.2_10-jre AS production
 
 WORKDIR /app
 COPY --from=build /workspace/target/*.jar app.jar
