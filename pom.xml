@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.0-M2</version>
+        <version>4.1.0-M4</version>
         <relativePath />
     </parent>
 
@@ -22,7 +22,7 @@
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-ai.version>2.0.0-M3</spring-ai.version>
+        <spring-ai.version>2.0.0-M4</spring-ai.version>
         <swiss-ai-mcp-commons.version>1.1.0</swiss-ai-mcp-commons.version>
     </properties>
 
@@ -127,18 +127,18 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
-            <version>0.11.5</version>
+            <version>0.12.7</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
-            <version>0.11.5</version>
+            <version>0.12.7</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId>
-            <version>0.11.5</version>
+            <version>0.12.7</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -171,7 +171,7 @@
     </dependencies>
 
     <repositories>
-        <!-- Spring Milestone Repository for Spring AI v2.0.0-M2 -->
+        <!-- Spring Milestone Repository for Spring Boot 4.1.0-M4 and Spring AI 2.0.0-M4 -->
         <repository>
             <id>spring-milestones</id>
             <name>Spring Milestones</name>
@@ -210,7 +210,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>3.15.0</version>
                 <configuration>
                     <source>25</source>
                     <target>25</target>
@@ -223,7 +223,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.5.5</version>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>

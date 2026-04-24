@@ -30,7 +30,7 @@ services:
 
   # Optional: Prometheus for metrics
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.3.0
     container_name: mcp-prometheus
     ports:
       - "9090:9090"

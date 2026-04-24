@@ -1,5 +1,5 @@
 # Multi-stage build for Java Spring Boot application
-FROM eclipse-temurin:25-jdk AS builder
+FROM eclipse-temurin:25.0.2_10-jdk AS builder
 
 # Install Maven
 RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
@@ -20,7 +20,7 @@ COPY src src
 RUN mvn clean package -DskipTests -B
 
 # Production stage
-FROM eclipse-temurin:25-jre
+FROM eclipse-temurin:25.0.2_10-jre
 
 # Set working directory
 WORKDIR /app
