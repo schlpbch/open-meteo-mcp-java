@@ -1,8 +1,8 @@
 # CLAUDE.md - Open-Meteo MCP Java
 
-**Status**: Stable ✅ | **Tests**: 577 passing, 81% coverage | **Security**: PASSED ✅ | **Updated**: 2026-04-24
+**Status**: v2.1.2 Stable ✅ | **Tests**: 577 passing, 81% coverage | **Security**: PASSED ✅ | **Updated**: 2026-04-27
 
-**Tech Stack**: Java 25, Spring Boot 4.1.0-M4, Spring AI 2.0.0-M4, Spring Security 7.1.0-M3, WebFlux, Redis 8, Docker
+**Tech Stack**: Java 25, Spring Boot 4.1.0-M4, Spring AI 2.0.0-M5, Spring Security 7.1.0-M3, WebFlux, Redis 8, Docker
 
 **Capabilities**: MCP server with enterprise security (JWT+API keys), real-time streaming (SSE), conversational AI
 
@@ -75,6 +75,18 @@ search_location | get_weather | get_snow_conditions | get_air_quality | get_weat
 ## Troubleshooting
 
 **Clean build**: `mvn clean install -U` | **Skip tests**: `mvn clean install -DskipTests` | **Specific test**: `mvn test -Dtest=TestName -X`
+
+## Phase Status
+
+| Phase | Status | Commit | Details |
+|-------|--------|--------|---------|
+| 1 | ✅ | 98848aa | Security Foundation (JWT, API keys) |
+| 2 | ✅ | 411fc2c | Security Integration (RBAC, audit) |
+| 3 | ✅ | d25315c | Streaming Infrastructure (SSE, reactive) |
+| 4 | ✅ | 70cb82b | Weather Streaming (<2s) |
+| 5 | ✅ | 369fe66 | Chat Streaming (<100ms tokens) |
+| 6 | ✅ | 7baf838 | Integration & Testing (PASSED) |
+| 7 | ✅ | 8aa20a3 | Spring Boot 4.1.0-M4, Spring AI 2.0.0-M5, JJWT 0.12.7 |
 
 **Benchmarks** (All ✅): JWT <50ms | API Key <100ms | Weather <2s | Chat 50ms | 100+ concurrent | <2GB memory
 
