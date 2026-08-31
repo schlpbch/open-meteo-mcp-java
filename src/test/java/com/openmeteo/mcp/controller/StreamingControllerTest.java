@@ -10,10 +10,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -29,14 +32,14 @@ class StreamingControllerTest {
 
     @BeforeEach
     void setUp() {
-        controller = new StreamingController(weatherService, chatService);
+        controller = new StreamingController(weatherService, Optional.of(chatService));
     }
 
     @Nested
     class StatusTests {
         @Test
         void returnsStreamStatus() {
-            var status = controller.getStatus();
+            var status = controller.getStatus().block();
 
             assertNotNull(status);
             assertTrue(status.enabled());
@@ -230,6 +233,16 @@ class StreamingControllerTest {
 
             verify(chatService).streamChat("session1", "hello");
             verify(chatService, never()).streamWithContext(any(), any(), anyDouble(), anyDouble());
+        }
+
+        @Test
+        void returns503WhenChatServiceDisabled() {
+            var disabledController = new StreamingController(weatherService, Optional.empty());
+            var request = ChatStreamRequest.simple("session1", "hello");
+
+            var exception = assertThrows(ResponseStatusException.class,
+                    () -> disabledController.streamChat(request));
+            assertEquals(HttpStatus.SERVICE_UNAVAILABLE, exception.getStatusCode());
         }
     }
 }

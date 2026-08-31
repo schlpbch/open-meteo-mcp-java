@@ -13,6 +13,7 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -52,9 +53,9 @@ public class SecurityController {
      */
     @GetMapping("/me")
     @PreAuthorize("hasAnyRole('MCP_CLIENT', 'ADMIN')")
-    public ResponseEntity<Map<String, Object>> getCurrentUser(Authentication authentication) {
+    public Mono<ResponseEntity<Map<String, Object>>> getCurrentUser(Authentication authentication) {
         log.info("Authentication info requested by: {}", authentication.getName());
-        
+
         Map<String, Object> userInfo = Map.of(
                 "username", authentication.getName(),
                 "roles", authentication.getAuthorities().stream()
@@ -62,8 +63,8 @@ public class SecurityController {
                         .toList(),
                 "authenticated", authentication.isAuthenticated()
         );
-        
-        return ResponseEntity.ok(userInfo);
+
+        return Mono.just(ResponseEntity.ok(userInfo));
     }
 
     /**
@@ -71,21 +72,21 @@ public class SecurityController {
      */
     @PostMapping("/api-keys")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiKeyResponse> generateApiKey(
+    public Mono<ResponseEntity<ApiKeyResponse>> generateApiKey(
             @RequestBody ApiKeyRequest request,
             Authentication authentication,
             ServerHttpRequest httpRequest) {
-        
+
         try {
-            log.info("Admin {} generating API key for client: {} with roles: {}", 
+            log.info("Admin {} generating API key for client: {} with roles: {}",
                     authentication.getName(), request.clientName(), request.roles());
-            
+
             String apiKey = apiKeyService.generateApiKey(
-                    request.clientName(), 
+                    request.clientName(),
                     request.roles(),
                     request.description()
             );
-            
+
             // Audit log
             auditService.logApiKeyGeneration(
                     authentication.getName(),
@@ -93,19 +94,19 @@ public class SecurityController {
                     request.roles(),
                     getClientIpAddress(httpRequest)
             );
-            
+
             ApiKeyResponse response = ApiKeyResponse.forGeneration(
                     apiKey,
                     request.clientName(),
                     request.roles(),
                     request.description()
             );
-            
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-            
+
+            return Mono.just(ResponseEntity.status(HttpStatus.CREATED).body(response));
+
         } catch (IllegalArgumentException e) {
             log.warn("Invalid API key generation request: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
+            return Mono.just(ResponseEntity.badRequest().build());
         }
     }
 
@@ -114,16 +115,16 @@ public class SecurityController {
      */
     @GetMapping("/api-keys")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<ApiKeyResponse>> listApiKeys(
+    public Mono<ResponseEntity<List<ApiKeyResponse>>> listApiKeys(
             @RequestParam(required = false, defaultValue = "false") boolean includeInactive,
             Authentication authentication) {
-        
+
         log.info("Admin {} requested API key list", authentication.getName());
-        
-        List<ApiKeyService.ApiKeyInfo> apiKeys = includeInactive 
+
+        List<ApiKeyService.ApiKeyInfo> apiKeys = includeInactive
                 ? apiKeyService.listAllApiKeys()
                 : apiKeyService.listActiveApiKeys();
-        
+
         List<ApiKeyResponse> response = apiKeys.stream()
                 .map(info -> ApiKeyResponse.forInfo(
                         info.getName(),
@@ -133,8 +134,8 @@ public class SecurityController {
                         info.getCreatedAt()
                 ))
                 .collect(Collectors.toList());
-        
-        return ResponseEntity.ok(response);
+
+        return Mono.just(ResponseEntity.ok(response));
     }
 
     /**
@@ -142,9 +143,9 @@ public class SecurityController {
      */
     @GetMapping("/api-keys/stats")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Map<String, Long>> getApiKeyStatistics(Authentication authentication) {
+    public Mono<ResponseEntity<Map<String, Long>>> getApiKeyStatistics(Authentication authentication) {
         log.info("Admin {} requested API key statistics", authentication.getName());
-        return ResponseEntity.ok(apiKeyService.getApiKeyStatistics());
+        return Mono.just(ResponseEntity.ok(apiKeyService.getApiKeyStatistics()));
     }
 
     /**
@@ -152,16 +153,16 @@ public class SecurityController {
      */
     @DeleteMapping("/api-keys/{apiKey}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Map<String, String>> revokeApiKey(
+    public Mono<ResponseEntity<Map<String, String>>> revokeApiKey(
             @PathVariable String apiKey,
             Authentication authentication,
             ServerHttpRequest httpRequest) {
-        
+
         String apiKeyPrefix = apiKey.substring(0, Math.min(8, apiKey.length()));
         log.info("Admin {} revoking API key: {}***", authentication.getName(), apiKeyPrefix);
-        
+
         boolean revoked = apiKeyService.revokeApiKey(apiKey);
-        
+
         // Audit log
         auditService.logApiKeyRevocation(
                 authentication.getName(),
@@ -169,14 +170,14 @@ public class SecurityController {
                 revoked,
                 getClientIpAddress(httpRequest)
             );
-        
+
         if (revoked) {
-            return ResponseEntity.ok(Map.of(
+            return Mono.just(ResponseEntity.ok(Map.of(
                     "message", "API key revoked successfully",
                     "status", "revoked"
-            ));
+            )));
         } else {
-            return ResponseEntity.notFound().build();
+            return Mono.just(ResponseEntity.notFound().build());
         }
     }
 
@@ -185,32 +186,32 @@ public class SecurityController {
      */
     @PutMapping("/api-keys/{apiKey}/roles")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Map<String, Object>> updateApiKeyRoles(
+    public Mono<ResponseEntity<Map<String, Object>>> updateApiKeyRoles(
             @PathVariable String apiKey,
             @RequestBody Map<String, List<String>> request,
             Authentication authentication) {
-        
+
         List<String> newRoles = request.get("roles");
         if (newRoles == null || newRoles.isEmpty()) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("error", "roles are required"));
+            return Mono.just(ResponseEntity.badRequest()
+                    .body(Map.of("error", "roles are required")));
         }
-        
+
         try {
             boolean updated = apiKeyService.updateApiKeyRoles(apiKey, newRoles);
-            
+
             if (updated) {
                 log.info("Admin {} updated API key roles", authentication.getName());
-                return ResponseEntity.ok(Map.of(
+                return Mono.just(ResponseEntity.ok(Map.of(
                         "message", "API key roles updated successfully",
                         "roles", newRoles
-                ));
+                )));
             } else {
-                return ResponseEntity.notFound().build();
+                return Mono.just(ResponseEntity.notFound().build());
             }
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("error", e.getMessage()));
+            return Mono.just(ResponseEntity.badRequest()
+                    .body(Map.of("error", e.getMessage())));
         }
     }
 
@@ -219,18 +220,18 @@ public class SecurityController {
      */
     @GetMapping("/audit")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<SecurityAuditEvent>> getAuditEvents(
+    public Mono<ResponseEntity<List<SecurityAuditEvent>>> getAuditEvents(
             @RequestParam(required = false, defaultValue = "100") int limit,
             @RequestParam(required = false) String principal,
             Authentication authentication) {
-        
+
         log.info("Admin {} requested audit events", authentication.getName());
-        
+
         List<SecurityAuditEvent> events = principal != null
                 ? auditService.getEventsByPrincipal(principal, limit)
                 : auditService.getRecentEvents(limit);
-        
-        return ResponseEntity.ok(events);
+
+        return Mono.just(ResponseEntity.ok(events));
     }
 
     /**
@@ -238,16 +239,16 @@ public class SecurityController {
      */
     @GetMapping("/audit/failed-auth")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<SecurityAuditEvent>> getFailedAuthAttempts(
+    public Mono<ResponseEntity<List<SecurityAuditEvent>>> getFailedAuthAttempts(
             @RequestParam(required = false, defaultValue = "24") int hours,
             Authentication authentication) {
-        
+
         log.info("Admin {} requested failed auth attempts", authentication.getName());
-        
+
         Instant since = Instant.now().minus(hours, ChronoUnit.HOURS);
         List<SecurityAuditEvent> events = auditService.getFailedAuthAttempts(since);
-        
-        return ResponseEntity.ok(events);
+
+        return Mono.just(ResponseEntity.ok(events));
     }
 
     /**
@@ -255,10 +256,10 @@ public class SecurityController {
      */
     @GetMapping("/mcp/tools")
     @PreAuthorize("hasRole('MCP_CLIENT')")
-    public ResponseEntity<List<Map<String, String>>> listMcpTools() {
+    public Mono<ResponseEntity<List<Map<String, String>>>> listMcpTools() {
         log.info("MCP tools list requested");
         // Placeholder: tools are defined in McpToolsHandler
-        return ResponseEntity.ok(List.of());
+        return Mono.just(ResponseEntity.ok(List.of()));
     }
 
     /**

@@ -8,16 +8,19 @@ import com.openmeteo.mcp.service.StreamingChatService;
 import com.openmeteo.mcp.service.StreamingWeatherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -42,14 +45,25 @@ public class StreamingController {
     private static final Logger log = LoggerFactory.getLogger(StreamingController.class);
 
     private final StreamingWeatherService streamingWeatherService;
-    private final StreamingChatService streamingChatService;
+    private final Optional<StreamingChatService> streamingChatService;
 
     public StreamingController(
         StreamingWeatherService streamingWeatherService,
-        StreamingChatService streamingChatService
+        Optional<StreamingChatService> streamingChatService
     ) {
         this.streamingWeatherService = streamingWeatherService;
         this.streamingChatService = streamingChatService;
+    }
+
+    /**
+     * Chat streaming ({@code openmeteo.chat.enabled}) is off by default, so
+     * {@link StreamingChatService} may not be registered as a bean. Guard the
+     * /stream/chat/* endpoints instead of letting the whole application fail to start.
+     */
+    private StreamingChatService requireChatService() {
+        return streamingChatService.orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.SERVICE_UNAVAILABLE,
+            "Chat streaming is disabled (set openmeteo.chat.enabled=true and configure an AI provider)"));
     }
 
     /**
@@ -100,7 +114,7 @@ public class StreamingController {
      * @return Flux of ServerSentEvent with data chunks
      */
     @GetMapping(value = "/data", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @PreAuthorize("hasAnyAuthority('MCP_CLIENT', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('MCP_CLIENT', 'ADMIN')")
     public Flux<ServerSentEvent<StreamMessage>> streamData(
             @RequestParam(defaultValue = "5") int count,
             @RequestParam(defaultValue = "100") long delay) {
@@ -149,13 +163,13 @@ public class StreamingController {
      */
     @GetMapping("/status")
     @PreAuthorize("isAuthenticated()")
-    public StreamStatus getStatus() {
-        return new StreamStatus(
+    public Mono<StreamStatus> getStatus() {
+        return Mono.just(new StreamStatus(
                 true,
                 "MCP Streamable HTTP v1.0",
                 100,
                 10000L
-        );
+        ));
     }
 
     /**
@@ -169,7 +183,7 @@ public class StreamingController {
      * @return Flux of ServerSentEvent with current weather
      */
     @GetMapping(value = "/weather/current", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @PreAuthorize("hasAnyAuthority('MCP_CLIENT', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('MCP_CLIENT', 'ADMIN')")
     public Flux<ServerSentEvent<StreamMessage>> streamCurrentWeather(
             @RequestParam double latitude,
             @RequestParam double longitude,
@@ -200,7 +214,7 @@ public class StreamingController {
      * @return Flux of ServerSentEvent with forecast chunks
      */
     @GetMapping(value = "/weather/forecast", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @PreAuthorize("hasAnyAuthority('MCP_CLIENT', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('MCP_CLIENT', 'ADMIN')")
     public Flux<ServerSentEvent<StreamMessage>> streamForecast(
             @RequestParam double latitude,
             @RequestParam double longitude,
@@ -235,7 +249,7 @@ public class StreamingController {
      * @return Flux of ServerSentEvent with historical data chunks
      */
     @GetMapping(value = "/weather/historical", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @PreAuthorize("hasAnyAuthority('MCP_CLIENT', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('MCP_CLIENT', 'ADMIN')")
     public Flux<ServerSentEvent<StreamMessage>> streamHistoricalWeather(
             @RequestParam double latitude,
             @RequestParam double longitude,
@@ -268,7 +282,7 @@ public class StreamingController {
      * @return Flux of ServerSentEvent with progress updates
      */
     @GetMapping(value = "/weather/progress", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @PreAuthorize("hasAnyAuthority('MCP_CLIENT', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('MCP_CLIENT', 'ADMIN')")
     public Flux<ServerSentEvent<StreamMessage>> streamWithProgress(
             @RequestParam double latitude,
             @RequestParam double longitude,
@@ -300,12 +314,11 @@ public class StreamingController {
      * @return Flux of ServerSentEvent with token chunks
      */
     @PostMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @PreAuthorize("hasAnyAuthority('MCP_CLIENT', 'ADMIN')")
-    @ConditionalOnProperty(name = "openmeteo.chat.enabled", havingValue = "true")
+    @PreAuthorize("hasAnyRole('MCP_CLIENT', 'ADMIN')")
     public Flux<ServerSentEvent<StreamMessage>> streamChat(@RequestBody ChatStreamRequest request) {
         log.info("Starting chat stream for session: {}", request.sessionId());
-        
-        return streamingChatService.streamChat(request.sessionId(), request.message())
+
+        return requireChatService().streamChat(request.sessionId(), request.message())
                 .map(message -> ServerSentEvent.<StreamMessage>builder()
                         .event(message.type().toLowerCase())
                         .data(message)
@@ -325,12 +338,11 @@ public class StreamingController {
      * @return Flux of ServerSentEvent with progress and token chunks
      */
     @PostMapping(value = "/chat/progress", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @PreAuthorize("hasAnyAuthority('MCP_CLIENT', 'ADMIN')")
-    @ConditionalOnProperty(name = "openmeteo.chat.enabled", havingValue = "true")
+    @PreAuthorize("hasAnyRole('MCP_CLIENT', 'ADMIN')")
     public Flux<ServerSentEvent<StreamMessage>> streamChatWithProgress(@RequestBody ChatStreamRequest request) {
         log.info("Starting chat stream with progress for session: {}", request.sessionId());
-        
-        return streamingChatService.streamChatWithProgress(request.sessionId(), request.message())
+
+        return requireChatService().streamChatWithProgress(request.sessionId(), request.message())
                 .map(message -> ServerSentEvent.<StreamMessage>builder()
                         .event(message.type().toLowerCase())
                         .data(message)
@@ -350,14 +362,13 @@ public class StreamingController {
      * @return Flux of ServerSentEvent with context-enriched token chunks
      */
     @PostMapping(value = "/chat/context", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @PreAuthorize("hasAnyAuthority('MCP_CLIENT', 'ADMIN')")
-    @ConditionalOnProperty(name = "openmeteo.chat.enabled", havingValue = "true")
+    @PreAuthorize("hasAnyRole('MCP_CLIENT', 'ADMIN')")
     public Flux<ServerSentEvent<StreamMessage>> streamChatWithContext(@RequestBody ChatStreamRequest request) {
-        log.info("Starting context-enriched chat stream for session: {} with weather: {}", 
+        log.info("Starting context-enriched chat stream for session: {} with weather: {}",
             request.sessionId(), request.shouldIncludeWeather());
-        
+
         if (request.shouldIncludeWeather()) {
-            return streamingChatService.streamWithContext(
+            return requireChatService().streamWithContext(
                     request.sessionId(), 
                     request.message(),
                     request.latitude(),

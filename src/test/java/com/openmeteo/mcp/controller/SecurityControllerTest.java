@@ -53,7 +53,7 @@ class SecurityControllerTest {
                     ));
             when(authentication.isAuthenticated()).thenReturn(true);
 
-            var result = controller.getCurrentUser(authentication);
+            var result = controller.getCurrentUser(authentication).block();
 
             assertEquals(HttpStatus.OK, result.getStatusCode());
             assertNotNull(result.getBody());
@@ -78,7 +78,7 @@ class SecurityControllerTest {
             when(apiKeyService.generateApiKey("test-client", List.of("MCP_CLIENT"), "Test"))
                     .thenReturn("generated-key-abc123");
 
-            var result = controller.generateApiKey(request, authentication, httpRequest);
+            var result = controller.generateApiKey(request, authentication, httpRequest).block();
 
             assertEquals(HttpStatus.CREATED, result.getStatusCode());
             assertNotNull(result.getBody());
@@ -94,7 +94,7 @@ class SecurityControllerTest {
             when(apiKeyService.generateApiKey(any(), any(), any()))
                     .thenThrow(new IllegalArgumentException("Invalid role"));
 
-            var result = controller.generateApiKey(request, authentication, httpRequest);
+            var result = controller.generateApiKey(request, authentication, httpRequest).block();
 
             assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
         }
@@ -105,7 +105,7 @@ class SecurityControllerTest {
             var request = new ApiKeyRequest("client", List.of("MCP_CLIENT"), null);
             when(apiKeyService.generateApiKey(any(), any(), any())).thenReturn("key");
 
-            var result = controller.generateApiKey(request, authentication, httpRequest);
+            var result = controller.generateApiKey(request, authentication, httpRequest).block();
 
             assertEquals(HttpStatus.CREATED, result.getStatusCode());
             verify(auditService).logApiKeyGeneration(any(), any(), any(), eq("192.168.1.1"));
@@ -118,7 +118,7 @@ class SecurityControllerTest {
             var request = new ApiKeyRequest("client", List.of("MCP_CLIENT"), null);
             when(apiKeyService.generateApiKey(any(), any(), any())).thenReturn("key");
 
-            var result = controller.generateApiKey(request, authentication, httpRequest);
+            var result = controller.generateApiKey(request, authentication, httpRequest).block();
 
             assertEquals(HttpStatus.CREATED, result.getStatusCode());
             verify(auditService).logApiKeyGeneration(any(), any(), any(), eq("10.0.0.5"));
@@ -137,7 +137,7 @@ class SecurityControllerTest {
             when(info.getCreatedAt()).thenReturn(System.currentTimeMillis());
             when(apiKeyService.listActiveApiKeys()).thenReturn(List.of(info));
 
-            var result = controller.listApiKeys(false, authentication);
+            var result = controller.listApiKeys(false, authentication).block();
 
             assertEquals(HttpStatus.OK, result.getStatusCode());
             assertNotNull(result.getBody());
@@ -150,7 +150,7 @@ class SecurityControllerTest {
         void returnsAllKeysWhenIncludeInactive() {
             when(apiKeyService.listAllApiKeys()).thenReturn(List.of());
 
-            var result = controller.listApiKeys(true, authentication);
+            var result = controller.listApiKeys(true, authentication).block();
 
             assertEquals(HttpStatus.OK, result.getStatusCode());
             verify(apiKeyService).listAllApiKeys();
@@ -164,7 +164,7 @@ class SecurityControllerTest {
             when(apiKeyService.getApiKeyStatistics())
                     .thenReturn(Map.of("total", 5L, "active", 3L));
 
-            var result = controller.getApiKeyStatistics(authentication);
+            var result = controller.getApiKeyStatistics(authentication).block();
 
             assertEquals(HttpStatus.OK, result.getStatusCode());
             assertEquals(5L, result.getBody().get("total"));
@@ -185,7 +185,7 @@ class SecurityControllerTest {
         void revokesExistingKey() {
             when(apiKeyService.revokeApiKey("my-api-key")).thenReturn(true);
 
-            var result = controller.revokeApiKey("my-api-key", authentication, httpRequest);
+            var result = controller.revokeApiKey("my-api-key", authentication, httpRequest).block();
 
             assertEquals(HttpStatus.OK, result.getStatusCode());
             assertEquals("revoked", result.getBody().get("status"));
@@ -195,7 +195,7 @@ class SecurityControllerTest {
         void returns404ForUnknownKey() {
             when(apiKeyService.revokeApiKey("unknown")).thenReturn(false);
 
-            var result = controller.revokeApiKey("unknown", authentication, httpRequest);
+            var result = controller.revokeApiKey("unknown", authentication, httpRequest).block();
 
             assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
         }
@@ -208,7 +208,7 @@ class SecurityControllerTest {
             when(apiKeyService.updateApiKeyRoles("key", List.of("ADMIN"))).thenReturn(true);
 
             var result = controller.updateApiKeyRoles("key",
-                    Map.of("roles", List.of("ADMIN")), authentication);
+                    Map.of("roles", List.of("ADMIN")), authentication).block();
 
             assertEquals(HttpStatus.OK, result.getStatusCode());
             assertEquals(List.of("ADMIN"), result.getBody().get("roles"));
@@ -219,7 +219,7 @@ class SecurityControllerTest {
             when(apiKeyService.updateApiKeyRoles("unknown", List.of("ADMIN"))).thenReturn(false);
 
             var result = controller.updateApiKeyRoles("unknown",
-                    Map.of("roles", List.of("ADMIN")), authentication);
+                    Map.of("roles", List.of("ADMIN")), authentication).block();
 
             assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
         }
@@ -227,14 +227,14 @@ class SecurityControllerTest {
         @Test
         void returnsBadRequestForEmptyRoles() {
             var result = controller.updateApiKeyRoles("key",
-                    Map.of("roles", List.of()), authentication);
+                    Map.of("roles", List.of()), authentication).block();
 
             assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
         }
 
         @Test
         void returnsBadRequestForMissingRoles() {
-            var result = controller.updateApiKeyRoles("key", Map.of(), authentication);
+            var result = controller.updateApiKeyRoles("key", Map.of(), authentication).block();
 
             assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
         }
@@ -245,7 +245,7 @@ class SecurityControllerTest {
                     .thenThrow(new IllegalArgumentException("Bad role"));
 
             var result = controller.updateApiKeyRoles("key",
-                    Map.of("roles", List.of("BAD")), authentication);
+                    Map.of("roles", List.of("BAD")), authentication).block();
 
             assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
         }
@@ -257,7 +257,7 @@ class SecurityControllerTest {
         void returnsRecentEventsWithoutPrincipal() {
             when(auditService.getRecentEvents(50)).thenReturn(List.of());
 
-            var result = controller.getAuditEvents(50, null, authentication);
+            var result = controller.getAuditEvents(50, null, authentication).block();
 
             assertEquals(HttpStatus.OK, result.getStatusCode());
             verify(auditService).getRecentEvents(50);
@@ -267,7 +267,7 @@ class SecurityControllerTest {
         void returnsEventsByPrincipal() {
             when(auditService.getEventsByPrincipal("user1", 10)).thenReturn(List.of());
 
-            var result = controller.getAuditEvents(10, "user1", authentication);
+            var result = controller.getAuditEvents(10, "user1", authentication).block();
 
             assertEquals(HttpStatus.OK, result.getStatusCode());
             verify(auditService).getEventsByPrincipal("user1", 10);
@@ -277,7 +277,7 @@ class SecurityControllerTest {
         void returnsFailedAuthAttempts() {
             when(auditService.getFailedAuthAttempts(any(Instant.class))).thenReturn(List.of());
 
-            var result = controller.getFailedAuthAttempts(24, authentication);
+            var result = controller.getFailedAuthAttempts(24, authentication).block();
 
             assertEquals(HttpStatus.OK, result.getStatusCode());
             verify(auditService).getFailedAuthAttempts(any(Instant.class));
@@ -288,7 +288,7 @@ class SecurityControllerTest {
     class MiscEndpointsTests {
         @Test
         void listsMcpToolsEmpty() {
-            var result = controller.listMcpTools();
+            var result = controller.listMcpTools().block();
 
             assertEquals(HttpStatus.OK, result.getStatusCode());
             assertNotNull(result.getBody());
