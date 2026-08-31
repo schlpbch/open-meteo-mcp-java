@@ -2,7 +2,7 @@
 
 **Status**: v2.1.2 Stable ✅ | **Tests**: 577 passing, 81% coverage | **Security**: PASSED ✅ | **Updated**: 2026-04-27
 
-**Tech Stack**: Java 25, Spring Boot 4.1.0-M4, Spring AI 2.0.0-M5, Spring Security 7.1.0-M3, WebFlux, Redis 8, Docker
+**Tech Stack**: Java 25, Spring Boot 4.1.1, Spring AI 2.0.1, Spring Security 7.1.1, WebFlux, Redis 8, Docker
 
 **Capabilities**: MCP server with enterprise security (JWT+API keys), real-time streaming (SSE), conversational AI
 
