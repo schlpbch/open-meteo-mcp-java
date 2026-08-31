@@ -1,9 +1,39 @@
 # Release Notes - v2.1.2
 
 **Release Date**: April 24, 2026  
+**Last Updated**: August 31, 2026 (dependency GA upgrade — see below)  
 **Status**: Stable ✅  
 **Java Version**: 25  
-**Spring Boot**: 4.1.0-M4
+**Spring Boot**: 4.1.1
+
+---
+
+## Update — August 31, 2026
+
+Moved off the Spring milestone repository onto GA releases, and fixed three
+runtime bugs that upgrade exposed:
+
+- **Spring Boot** 4.1.0-M4 → **4.1.1**, **Spring AI** 2.0.0-M5 → **2.0.1**
+  (brings **Spring Security** to 7.1.1), **JJWT** 0.12.7 → **0.13.0**
+- Removed the now-unneeded `spring-milestones` Maven repository — everything
+  resolves from Maven Central
+- Fixed: the app failed to start out of the box because `StreamingController`
+  required the `StreamingChatService` bean unconditionally, even though it's
+  `@ConditionalOnProperty(openmeteo.chat.enabled)` and disabled by default.
+  `/stream/chat/*` now returns `503` instead of crashing the whole app.
+- Fixed: every `@PreAuthorize`-annotated endpoint in `StreamingController` and
+  `SecurityController` returned a non-reactive type, which throws
+  `IllegalStateException` under `@EnableReactiveMethodSecurity` — these
+  endpoints (weather/data/chat streaming, API key management, audit log,
+  `/me`) were unreachable at runtime despite passing unit tests. All now
+  return `Mono<...>`.
+- Fixed: every `/stream/*` endpoint checked
+  `hasAnyAuthority('MCP_CLIENT', 'ADMIN')`, but granted authorities always
+  carry the `ROLE_` prefix, so the check never matched and every legitimate
+  caller got `403`. Switched to `hasAnyRole(...)`.
+- Test suite: **578 passing tests**, 76% instruction coverage
+
+No application version bump — see commits `37341cb` and `d7853bc`.
 
 ---
 
@@ -52,10 +82,10 @@ Tests use Mockito strict stubs, JUnit 5 nested test classes, and Reactor `StepVe
 ## Technology Stack
 
 - **Java 25** with Virtual Threads
-- **Spring Boot 4.1.0-M4** / **Spring AI 2.0.0-M4** / **Spring Security 7.1.0-M3**
+- **Spring Boot 4.1.1** / **Spring AI 2.0.1** / **Spring Security 7.1.1**
 - **Spring WebFlux** — Reactive streaming (Flux/Mono + SSE)
 - **Redis 8** — Session & conversation memory
-- **JJWT 0.12.7** — JWT authentication (HMAC-SHA512)
+- **JJWT 0.13.0** — JWT authentication (HMAC-SHA512)
 - **Jackson 3** — JSON serialization
 - **Docker** (Eclipse Temurin) — Production deployment
 
@@ -123,8 +153,8 @@ docker run -e JWT_SECRET=<secret> -p 8888:8888 open-meteo-mcp:2.1.2
 
 ## Validation Checklist
 
-- [x] 577 tests passing (0 failures)
-- [x] Code coverage 81% (exceeds 80% target)
+- [x] 578 tests passing (0 failures)
+- [x] Code coverage 76%
 - [x] Security audit passed
 - [x] Performance benchmarks met
 - [x] Docker image builds successfully

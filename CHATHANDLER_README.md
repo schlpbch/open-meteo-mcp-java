@@ -284,7 +284,7 @@ Service Layer
       └─ streamWithContext() - Weather context enriched
       ↓
 AI Integration
-  └─ ChatModel.stream() (Spring AI 2.0.0-M2)
+  └─ ChatModel.stream() (Spring AI 2.0.1)
       ↓
 Supporting Services
   ├─ Memory Service → InMemory/Redis
@@ -370,7 +370,7 @@ docker run -p 8080:8080 \
 
 **Build fails with Spring AI errors**
 
-- Ensure Spring AI 2.0.0-M2 is in dependencies
+- Ensure Spring AI 2.0.1 is in dependencies
 - Check that `ChatModel` bean is available
 - Verify Spring Security dependencies are present
 
@@ -406,6 +406,19 @@ docker run -p 8080:8080 \
 - [ADR-018: ChatHandler Architecture](docs/adr/ADR-018-chathandler-architecture.md)
 
 ## Version History
+
+**Dependency GA upgrade & streaming fixes** (2026-08-31)
+
+- Spring Boot 4.1.1 / Spring AI 2.0.1 / Spring Security 7.1.1 GA (from
+  milestone builds)
+- Fixed: `StreamingController` required the (optional, disabled-by-default)
+  `StreamingChatService` bean unconditionally, so the app failed to start;
+  `/stream/chat/*` now returns `503` instead of crashing the app when chat
+  is disabled
+- Fixed: `/stream/chat/*` and other `/stream/*` endpoints checked
+  `hasAnyAuthority('MCP_CLIENT', 'ADMIN')` instead of `hasAnyRole(...)`, so
+  the role check never matched the `ROLE_`-prefixed granted authorities and
+  every legitimate caller got `403`
 
 **Phase 1-2: Enterprise Security** (2026-02-05)
 

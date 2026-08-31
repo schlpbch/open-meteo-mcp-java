@@ -302,7 +302,7 @@ Per PR | | **System** | All tools + caching + monitoring | QA | Per release | |
 These are locked in for the Java migration:
 
 - **Java 25** (LTS with enhanced virtual threads for async operations)
-- **Spring Boot 4.0.x** (latest stable)
+- **Spring Boot 4.1.x** (latest stable)
 - **Spring WebFlux** (async/non-blocking architecture)
 - **Spring AI 2.0** (AI integration + MCP annotations; see ADR-004)
 - **httpx / Apache HttpClient 5.x** (async HTTP with gzip compression)

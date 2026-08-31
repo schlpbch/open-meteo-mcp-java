@@ -554,20 +554,20 @@ sequenceDiagram
 
 ### Core Runtime
 
-- **Runtime**: Java 25, Spring Boot 4.0.5
+- **Runtime**: Java 25, Spring Boot 4.1.1
 - **Framework**: Spring Framework 7.x with reactive support
 
 ### API Layer
 
-- **REST API**: Spring WebMVC with HTTP/JSON
+- **REST API**: Spring WebFlux with HTTP/JSON
 - **MCP API**: Model Context Protocol with SSE
-- **Chat API**: Spring WebMVC with conversation memory
+- **Chat API**: Spring WebFlux with conversation memory
 - **Streaming API**: Spring WebFlux with Server-Sent Events (SSE)
 
 ### Security
 
-- **Authentication**: Spring Security 7 with OAuth2 Resource Server
-- **JWT**: JJWT 0.12.6 with HMAC-SHA512 signing
+- **Authentication**: Spring Security 7.1.1 with OAuth2 Resource Server
+- **JWT**: JJWT 0.13.0 with HMAC-SHA512 signing
 - **Authorization**: Method-level security with @PreAuthorize
 - **Security Headers**: Custom security configuration
 - **Audit**: Custom SecurityAuditService with event logging
@@ -582,7 +582,7 @@ sequenceDiagram
 
 ### AI Integration
 
-- **Spring AI**: 2.0.0-M4 with multiple provider support
+- **Spring AI**: 2.0.1 with multiple provider support
 - **Providers**: Azure OpenAI, OpenAI, Anthropic Claude
 - **Streaming**: Native LLM token-by-token streaming
 

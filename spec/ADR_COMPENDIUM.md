@@ -1372,18 +1372,18 @@ security:
 <dependency>
     <groupId>io.jsonwebtoken</groupId>
     <artifactId>jjwt-api</artifactId>
-    <version>0.12.7</version>
+    <version>0.13.0</version>
 </dependency>
 <dependency>
     <groupId>io.jsonwebtoken</groupId>
     <artifactId>jjwt-impl</artifactId>
-    <version>0.12.7</version>
+    <version>0.13.0</version>
     <scope>runtime</scope>
 </dependency>
 <dependency>
     <groupId>io.jsonwebtoken</groupId>
     <artifactId>jjwt-jackson</artifactId>
-    <version>0.12.7</version>
+    <version>0.13.0</version>
     <scope>runtime</scope>
 </dependency>
 
@@ -1498,7 +1498,7 @@ Meteo MCP Java project. **16 Accepted** (in production), **3 Proposed** (planned
 - API versioning strategy 🔄
 - Spring Security 7 for authentication and authorization ✅
 
-**Current Stack**: Java 25 | Spring Boot 4.1.0-M4 | Spring AI 2.0.0-M4 | Spring Security 7.1.0-M3 | JJWT 0.12.7 | Redis 8 | WebFlux
+**Current Stack**: Java 25 | Spring Boot 4.1.1 | Spring AI 2.0.1 | Spring Security 7.1.1 | JJWT 0.13.0 | Redis 8 | WebFlux
 
 ---
 

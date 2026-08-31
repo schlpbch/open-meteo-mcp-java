@@ -329,5 +329,36 @@ Approved for production deployment with documented configuration requirements.
 
 ---
 
+## Addendum — August 31, 2026
+
+A dependency upgrade (Spring Boot 4.1.1 / Spring AI 2.0.1 / Spring Security
+7.1.1 GA) surfaced two runtime access-control bugs that unit tests had never
+caught, because they call controller methods directly and bypass the Spring
+Security AOP proxy:
+
+- **Access control silently broken on `/stream/*`**: every streaming endpoint
+  checked `hasAnyAuthority('MCP_CLIENT', 'ADMIN')`, but granted authorities
+  always carry the `ROLE_` prefix (`ROLE_MCP_CLIENT`), so the raw-authority
+  check never matched. Every legitimate caller — not just unauthorized ones —
+  got `403`, i.e. a fail-closed bug rather than a fail-open one, but still a
+  correctness defect in the authorization logic. Fixed by switching to
+  `hasAnyRole(...)`, matching the convention already used correctly in
+  `SecurityController`.
+- **`@PreAuthorize` endpoints throwing 500 instead of enforcing authorization**:
+  several endpoints in `StreamingController` and `SecurityController`
+  returned a non-reactive type (a plain record or `ResponseEntity`) while
+  annotated with `@PreAuthorize` under `@EnableReactiveMethodSecurity`, which
+  requires a `Publisher` return type to propagate the security context. These
+  endpoints (API key management, audit log, `/me`, `/stream/status`) were
+  unreachable at runtime. Fixed by wrapping return types in `Mono<...>`.
+
+Neither bug allowed unauthorized access — both failed closed (403/500) rather
+than open — so this does not retract the "Zero Critical Vulnerabilities"
+finding above, but it does mean the affected admin and streaming endpoints
+were non-functional in practice until fixed. See commits `37341cb` and
+`d7853bc`.
+
+---
+
 **Next Steps**: Proceed to Phase 6 final documentation and deployment
 preparation.

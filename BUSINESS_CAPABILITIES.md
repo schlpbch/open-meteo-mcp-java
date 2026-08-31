@@ -16,7 +16,7 @@ planning, and automation across various business domains.
 - **AI-Native**: Designed specifically for Claude and other AI assistants via Model Context Protocol
 - **Conversational AI**: Natural language weather queries with ChatHandler and token-by-token streaming
 - **Swiss-Optimized**: Pre-configured data for 100+ Swiss locations, mountains, and ski resorts
-- **High Performance**: Spring Boot 4.0.1 with reactive WebFlux for optimal throughput
+- **High Performance**: Spring Boot 4.1.1 with reactive WebFlux for optimal throughput
 
 ---
 
@@ -373,7 +373,7 @@ AI.
 ### Integration & Deployment
 
 - **Model Context Protocol**: Seamless AI assistant integration
-- **Spring Boot 4.0.1**: Enterprise-grade Java framework with reactive WebFlux
+- **Spring Boot 4.1.1**: Enterprise-grade Java framework with reactive WebFlux
 - **Enterprise Security**: Spring Security 7 with JWT + API key dual authentication
 - **Real-Time Streaming**: Server-Sent Events (SSE) with <2s weather, <100ms chat latency
 - **ChatHandler API**: RESTful endpoints for conversational AI with token streaming
@@ -433,7 +433,7 @@ AI.
 - **Production-Ready**: 426 comprehensive tests (100% pass rate)
 - **Security Audit Passed**: Zero critical vulnerabilities
 - **Type-Safe**: Full Java 25 with Records
-- **High Performance**: Spring Boot 4.0.1 with reactive WebFlux
+- **High Performance**: Spring Boot 4.1.1 with reactive WebFlux
 - **Well-Documented**: Complete deployment guide, security audit, API reference
 - **Observability**: Micrometer metrics, security audit logging, health checks
 - **72% Code Coverage**: Comprehensive unit and integration tests
