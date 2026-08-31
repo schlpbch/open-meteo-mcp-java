@@ -1,14 +1,13 @@
-# Release Notes - v2.1.2
+# Release Notes - v2.2.0
 
-**Release Date**: April 24, 2026  
-**Last Updated**: August 31, 2026 (dependency GA upgrade — see below)  
+**Release Date**: August 31, 2026  
 **Status**: Stable ✅  
 **Java Version**: 25  
 **Spring Boot**: 4.1.1
 
 ---
 
-## Update — August 31, 2026
+## v2.2.0 — August 31, 2026
 
 Moved off the Spring milestone repository onto GA releases, and fixed three
 runtime bugs that upgrade exposed:
@@ -32,8 +31,10 @@ runtime bugs that upgrade exposed:
   carry the `ROLE_` prefix, so the check never matched and every legitimate
   caller got `403`. Switched to `hasAnyRole(...)`.
 - Test suite: **578 passing tests**, 76% instruction coverage
+- **CI**: added a GitHub Actions build & test workflow
 
-No application version bump — see commits `37341cb` and `d7853bc`.
+See commits `37341cb`, `d7853bc`, `a1a7e88`, `23d8d32`.
+Full changelog: https://github.com/schlpbch/open-meteo-mcp-java/compare/v2.1.2...v2.2.0
 
 ---
 
@@ -126,13 +127,31 @@ mvn spring-boot:run
 ```bash
 docker compose up --build
 # or
-docker build -t open-meteo-mcp:2.1.2 .
-docker run -e JWT_SECRET=<secret> -p 8888:8888 open-meteo-mcp:2.1.2
+docker build -t open-meteo-mcp:2.2.0 .
+docker run -e JWT_SECRET=<secret> -p 8888:8888 open-meteo-mcp:2.2.0
 ```
 
 ---
 
 ## Migration Guide
+
+### From v2.1.2 → v2.2.0
+
+**Breaking Changes**: None
+
+**Dependencies Updated**:
+```xml
+<!-- Spring Boot: 4.1.0-M4 → 4.1.1 -->
+<version>4.1.1</version>
+
+<!-- Spring AI: 2.0.0-M5 → 2.0.1 (brings Spring Security to 7.1.1) -->
+<spring-ai.version>2.0.1</spring-ai.version>
+
+<!-- JJWT: 0.12.7 → 0.13.0 -->
+<jjwt.version>0.13.0</jjwt.version>
+```
+
+**Configuration Changes**: None required — fully backward compatible.
 
 ### From v2.1.1 → v2.1.2
 
@@ -170,6 +189,6 @@ docker run -e JWT_SECRET=<secret> -p 8888:8888 open-meteo-mcp:2.1.2
 
 ---
 
-**Version**: 2.1.2  
+**Version**: 2.2.0  
 **License**: Apache 2.0  
 **Repository**: [schlpbch/open-meteo-mcp-java](https://github.com/schlpbch/open-meteo-mcp-java)
