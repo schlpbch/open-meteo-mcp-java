@@ -1,6 +1,6 @@
 # Open Meteo MCP Server (Java)
 
-[![Version](https://img.shields.io/badge/version-2.1.2-blue.svg)](https://github.com/schlpbch/open-meteo-mcp-java/releases/tag/v2.1.2)
+[![Version](https://img.shields.io/badge/version-2.2.0-blue.svg)](https://github.com/schlpbch/open-meteo-mcp-java/releases/tag/v2.2.0)
 [![Java](https://img.shields.io/badge/Java-25-orange.svg)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.1-green.svg)](https://spring.io/projects/spring-boot)
 [![Tests](https://img.shields.io/badge/tests-578%20passing-brightgreen.svg)](#testing)
@@ -157,4 +157,4 @@ Apache 2.0 - See [LICENSE](LICENSE)
 
 ---
 
-**v2.1.2** - Enterprise Ready
+**v2.2.0** - Enterprise Ready
